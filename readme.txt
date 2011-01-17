@@ -1,0 +1,34 @@
+=== Simple Local Avatars ===
+Contributors: jakemgold
+Donate link: http://www.thinkoomph.com/plugins-modules/wordpress-simple-local-avatars/
+Tags: avatar, gravatar, user photos, users, profile
+Requires at least: 3.0
+Tested up to: 3.1
+Stable tag: 1.0
+
+Adds an avatar upload field to user profiles if the current user has media permissions. Generates requested sizes on demand just like Gravatar!
+
+== Description ==
+
+Adds an avatar upload field to user profiles if the current user has media permissions. Generates requested sizes on demand just like Gravatar! Simple and lightweight.
+
+Just edit a user profile, and scroll down to the new "Avatar" field. The plug-in will take care of cropping and sizing!
+
+Unlike other avatar plug-ins, Simple Local Avatars:
+
+1. Stores avatars in the "uploads" folder where all of your other media is kept
+1. Has a simple, native interface
+1. Fully supports Gravatar and default avatars if no local avatar is set for the user
+1. Generates the requested avatar size on demand (and stores the new size for efficiency), so it looks great, just like Gravatar!
+
+
+== Installation ==
+
+1. Install easily with the WordPress plugin control panel or manually download the plugin and upload the extracted folder to the `/wp-content/plugins/` directory
+1. Activate the plugin through the 'Plugins' menu in WordPress
+1. Start uploading avatars by editing user profiles!
+
+
+== Screenshots ==
+
+1. Avatar upload field on a user profile page
