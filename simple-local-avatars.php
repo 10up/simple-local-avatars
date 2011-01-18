@@ -3,7 +3,7 @@
  Plugin Name: Simple Local Avatars
  Plugin URI: http://www.thinkoomph.com/plugins-modules/wordpress-simple-local-avatars/
  Description: Adds an avatar upload field to user profiles if the current user has media permissions. Generates requested sizes on demand just like Gravatar! Simple and lightweight.
- Version: 1.0
+ Version: 1.1
  Author: Jake Goldman (Oomph, Inc)
  Author URI: http://www.thinkoomph.com
 
@@ -33,6 +33,8 @@ class simple_local_avatars
 	function simple_local_avatars()
 	{
 		add_filter( 'get_avatar', array( $this, 'get_avatar' ), 10, 5 );
+		
+		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		
 		add_action( 'show_user_profile', array( $this, 'edit_user_profile' ) );
 		add_action( 'edit_user_profile', array( $this, 'edit_user_profile' ) );
@@ -94,20 +96,48 @@ class simple_local_avatars
 		return $avatar;
 	}
 	
+	function admin_init()
+	{
+		load_plugin_textdomain( 'simple-local-avatars', false, dirname( plugin_basename( __FILE__ ) ) . '/localization/' );
+		
+		register_setting( 'discussion', 'simple_local_avatars_caps', array( $this, 'sanitize_options' ) );
+		add_settings_field( 'simple-local-avatars-caps', __('Local Avatar Permissions','simple-local-avatars'), array( $this, 'avatar_settings_field' ), 'discussion', 'avatars' );
+	}
+	
+	function sanitize_options( $input )
+	{
+		$new_input['simple_local_avatars_caps'] = ( isset($input['simple_local_avatars_caps']) && !empty($input['simple_local_avatars_caps']) ) ? 1 : 0;
+		return $new_input;
+	}
+	
+	function avatar_settings_field( $args )
+	{		
+		$options = get_option('simple_local_avatars_caps');
+		
+		echo '
+			<label for="simple_local_avatars_caps">
+				<input type="checkbox" name="simple_local_avatars_caps" id="simple_local_avatars_caps" value="1" ' . @checked( $options['simple_local_avatars_caps'], 1, false ) . ' />
+				' . __('Only allow users with file upload capabilities to upload local avatars (Authors and above)','simple-local-avatars') . '
+			</label>
+		';
+	}
+	
 	function edit_user_profile( $profileuser )
 	{
 	?>
-	<h3><?php _e( 'Avatar' ); ?></h3>
+	<h3><?php _e( 'Avatar','simple-local-avatars' ); ?></h3>
 	
 	<table class="form-table">
 		<tr>
-			<th><label for="simple-local-avatar"><?php _e('Upload Avatar'); ?></label></th>
+			<th><label for="simple-local-avatar"><?php _e('Upload Avatar','simple-local-avatars'); ?></label></th>
 			<td style="width: 50px;" valign="top">
 				<?php echo get_avatar( $profileuser->ID ); ?>
 			</td>
 			<td>
 			<?php
-				if ( current_user_can('upload_files') ) 
+				$options = get_option('simple_local_avatars_caps');
+			
+				if ( !isset($options['simple_local_avatars_caps']) || empty($options['simple_local_avatars_caps']) || current_user_can('upload_files') ) 
 				{
 					do_action( 'simple_local_avatar_notices' ); 
 					wp_nonce_field( 'simple_local_avatar_nonce', '_simple_local_avatar_nonce', false ); 
@@ -115,20 +145,20 @@ class simple_local_avatars
 					<input type="file" name="simple-local-avatar" id="simple-local-avatar" /><br />
 			<?php
 					if ( !isset( $profileuser->simple_local_avatar ) || empty( $profileuser->simple_local_avatar ) )
-						echo '<span class="description">' . __('No local avatar is set. Use the upload field to add a local avatar.') . '</span>';
+						echo '<span class="description">' . __('No local avatar is set. Use the upload field to add a local avatar.','simple-local-avatars') . '</span>';
 					else 
 						echo '
-							<input type="checkbox" name="simple-local-avatar-erase" value="1" /> ' . __('Delete local avatar') . '<br />
-							<span class="description">' . __('Replace the local avatar by uploading a new avatar, or erase the local avatar (falling back to a gravatar) by checking the delete option.') . '</span>
+							<input type="checkbox" name="simple-local-avatar-erase" value="1" /> ' . __('Delete local avatar','simple-local-avatars') . '<br />
+							<span class="description">' . __('Replace the local avatar by uploading a new avatar, or erase the local avatar (falling back to a gravatar) by checking the delete option.','simple-local-avatars') . '</span>
 						';		
 				}
 				else
 				{
 					if ( !isset( $profileuser->simple_local_avatar ) || empty( $profileuser->simple_local_avatar ) )
-						echo '<span class="description">' . __('No local avatar is set. Set up your avatar at Gravatar.com.') . '</span>';
+						echo '<span class="description">' . __('No local avatar is set. Set up your avatar at Gravatar.com.','simple-local-avatars') . '</span>';
 					else 
 						echo '
-							<span class="description">' . __('You do not have media management permissions. To change your local avatar, contact the blog administrator.') . '</span>
+							<span class="description">' . __('You do not have media management permissions. To change your local avatar, contact the blog administrator.','simple-local-avatars') . '</span>
 						';
 				}
 			?>
@@ -147,7 +177,7 @@ class simple_local_avatars
 	
 	function edit_user_profile_update( $user_id )
 	{
-		if ( !wp_verify_nonce( $_POST['_simple_local_avatar_nonce'], 'simple_local_avatar_nonce' ) || !current_user_can('upload_files') )			//security
+		if ( !wp_verify_nonce( $_POST['_simple_local_avatar_nonce'], 'simple_local_avatar_nonce' ) )			//security
 			return;
 	
 		if ( !empty( $_FILES['simple-local-avatar']['name'] ) )
@@ -167,10 +197,10 @@ class simple_local_avatars
 				switch ( $avatar['error'] ) 
 				{
 					case 'File type does not meet security guidelines. Try another.' :
-						add_action( 'user_profile_update_errors', create_function('$a','$a->add("avatar_error",__("Please upload a valid image file for the avatar."));') );				
+						add_action( 'user_profile_update_errors', create_function('$a','$a->add("avatar_error",__("Please upload a valid image file for the avatar.","simple-local-avatars"));') );				
 						break;
 					default :
-						add_action( 'user_profile_update_errors', create_function('$a','$a->add("avatar_error","<strong>".__("There was an error uploading the avatar:")."</strong> ' . esc_attr( $avatar['error'] ) . '");') );
+						add_action( 'user_profile_update_errors', create_function('$a','$a->add("avatar_error","<strong>".__("There was an error uploading the avatar:","simple-local-avatars")."</strong> ' . esc_attr( $avatar['error'] ) . '");') );
 				}
 				
 				return;
@@ -267,4 +297,6 @@ function simple_local_avatars_uninstall()
 			delete_user_meta( $user->$user_id, 'simple_local_avatar' );
 		}
 	}
+	
+	delete_option('simple_local_avatars_caps');
 }
