@@ -3,7 +3,7 @@
  Plugin Name: Simple Local Avatars
  Plugin URI: http://www.thinkoomph.com/plugins-modules/wordpress-simple-local-avatars/
  Description: Adds an avatar upload field to user profiles if the current user has media permissions. Generates requested sizes on demand just like Gravatar! Simple and lightweight.
- Version: 1.1.2
+ Version: 1.1.3
  Author: Jake Goldman (Oomph, Inc)
  Author URI: http://www.thinkoomph.com
 
@@ -57,7 +57,7 @@ class simple_local_avatars
 		elseif ( is_object($id_or_email) && !empty($id_or_email->user_id) )
 			$user_id = (int) $id_or_email->user_id;
 		
-		if ( isset($user_id) )
+		if ( !empty($user_id) )
 			$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
 		
 		if ( !isset($local_avatars) || empty($local_avatars) || !isset($local_avatars['full']) ) 
@@ -78,7 +78,7 @@ class simple_local_avatars
 			$alt = get_the_author_meta( 'display_name', $user_id );
 			
 		// generate a new size
-		if ( !isset( $local_avatars[$size] ) )
+		if ( empty( $local_avatars[$size] ) )
 		{
 			$image_sized = image_resize( ABSPATH . $local_avatars['full'], $size, $size, true );
 				
@@ -137,14 +137,14 @@ class simple_local_avatars
 			<?php
 				$options = get_option('simple_local_avatars_caps');
 			
-				if ( !isset($options['simple_local_avatars_caps']) || empty($options['simple_local_avatars_caps']) || current_user_can('upload_files') ) 
+				if ( empty($options['simple_local_avatars_caps']) || current_user_can('upload_files') ) 
 				{
 					do_action( 'simple_local_avatar_notices' ); 
 					wp_nonce_field( 'simple_local_avatar_nonce', '_simple_local_avatar_nonce', false ); 
 			?>
 					<input type="file" name="simple-local-avatar" id="simple-local-avatar" /><br />
 			<?php
-					if ( !isset( $profileuser->simple_local_avatar ) || empty( $profileuser->simple_local_avatar ) )
+					if ( empty( $profileuser->simple_local_avatar ) )
 						echo '<span class="description">' . __('No local avatar is set. Use the upload field to add a local avatar.','simple-local-avatars') . '</span>';
 					else 
 						echo '
@@ -154,7 +154,7 @@ class simple_local_avatars
 				}
 				else
 				{
-					if ( !isset( $profileuser->simple_local_avatar ) || empty( $profileuser->simple_local_avatar ) )
+					if ( empty( $profileuser->simple_local_avatar ) )
 						echo '<span class="description">' . __('No local avatar is set. Set up your avatar at Gravatar.com.','simple-local-avatars') . '</span>';
 					else 
 						echo '
@@ -192,7 +192,7 @@ class simple_local_avatars
 		
 			$avatar = wp_handle_upload( $_FILES['simple-local-avatar'], array( 'mimes' => $mimes, 'test_form' => false ) );
 			
-			if ( !isset($avatar['file']) )	// handle failures
+			if ( empty($avatar['file']) )	// handle failures
 			{	
 				switch ( $avatar['error'] ) 
 				{
@@ -206,12 +206,18 @@ class simple_local_avatars
 				return;
 			}
 			
-			delete_user_meta( $user_id, 'simple_local_avatar' );
+			// delete old images if successful
+			if ( $old_avatars = get_user_meta( $user_id, 'simple_local_avatar', true ) ) :
 			
-	 		// delete old images if successful
-			$old_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
-			foreach ($old_avatars as $old_avatar ) 
-				@unlink( ABSPATH . $old_avatar );
+				if ( is_array($old_avatars) ) 
+				{
+					foreach ($old_avatars as $old_avatar ) 
+						@unlink( ABSPATH . $old_avatar );
+				}
+				
+				delete_user_meta( $user_id, 'simple_local_avatar' );
+					
+			endif;
 			
 			// set up new avatar meta array
 			$avatar_meta = array();
