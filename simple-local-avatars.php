@@ -3,7 +3,7 @@
  Plugin Name: Simple Local Avatars
  Plugin URI: http://www.thinkoomph.com/plugins-modules/wordpress-simple-local-avatars/
  Description: Adds an avatar upload field to user profiles if the current user has media permissions. Generates requested sizes on demand just like Gravatar! Simple and lightweight.
- Version: 1.1.3
+ Version: 1.2
  Author: Jake Goldman (Oomph, Inc)
  Author URI: http://www.thinkoomph.com
 
@@ -80,18 +80,20 @@ class simple_local_avatars
 		// generate a new size
 		if ( empty( $local_avatars[$size] ) )
 		{
-			$image_sized = image_resize( ABSPATH . $local_avatars['full'], $size, $size, true );
+			$upload_path = wp_upload_dir();
+			$avatar_full_path = str_replace( $upload_path['baseurl'], $upload_path['basedir'], $local_avatars['full'] );
+			$image_sized = image_resize( $avatar_full_path, $size, $size, true );
 				
 			if ( is_wp_error($image_sized) )		// deal with original being >= to original image (or lack of sizing ability)
 				$local_avatars[$size] = $local_avatars['full'];
 			else
-				$local_avatars[$size] = str_replace( ABSPATH, '', $image_sized );	
+				$local_avatars[$size] = str_replace( $upload_path['basedir'], $upload_path['baseurl'], $image_sized );	
 			
 			update_user_meta( $user_id, 'simple_local_avatar', $local_avatars );
 		}
 		
 		$author_class = is_author( $user_id ) ? ' current-author' : '' ;
-		$avatar = "<img alt='" . esc_attr($alt) . "' src='" . site_url( $local_avatars[$size] ) . "' class='avatar avatar-{$size}{$author_class} photo' height='{$size}' width='{$size}' />";
+		$avatar = "<img alt='" . esc_attr($alt) . "' src='" . $local_avatars[$size] . "' class='avatar avatar-{$size}{$author_class} photo' height='{$size}' width='{$size}' />";
 		
 		return $avatar;
 	}
@@ -106,7 +108,7 @@ class simple_local_avatars
 	
 	function sanitize_options( $input )
 	{
-		$new_input['simple_local_avatars_caps'] = ( isset($input['simple_local_avatars_caps']) && !empty($input['simple_local_avatars_caps']) ) ? 1 : 0;
+		$new_input['simple_local_avatars_caps'] = empty($input['simple_local_avatars_caps']) ? 0 : 1;
 		return $new_input;
 	}
 	
@@ -206,50 +208,12 @@ class simple_local_avatars
 				return;
 			}
 			
-			// delete old images if successful
-			if ( $old_avatars = get_user_meta( $user_id, 'simple_local_avatar', true ) ) :
+			$this->avatar_delete( $user_id );	// delete old images if successful
 			
-				if ( is_array($old_avatars) ) 
-				{
-					foreach ($old_avatars as $old_avatar ) 
-						@unlink( ABSPATH . $old_avatar );
-				}
-				
-				delete_user_meta( $user_id, 'simple_local_avatar' );
-					
-			endif;
-			
-			// set up new avatar meta array
-			$avatar_meta = array();
-			$avatar_meta['full'] = str_replace( ABSPATH, '', $avatar['file'] );		
-			
-			// create some common sizes now
-			
-			$sizes = array( 32, 50, 96 );
-			
-			foreach ( $sizes as $size ) :
-				
-				$image_sized = image_resize( $avatar['file'], $size, $size, true );
-				
-				if ( is_wp_error($image_sized) )		// deal with original being >= to original image (or lack of sizing ability)
-					$image_sized = $avatar['file'];
-				
-				$avatar_meta[$size] = str_replace( ABSPATH, '', $image_sized );
-				
-			endforeach;
-			
-			// save user information (overwriting old)
-			update_user_meta( $user_id, 'simple_local_avatar', $avatar_meta );
+			update_user_meta( $user_id, 'simple_local_avatar', array( 'full' => $avatar['url'] ) );		// save user information (overwriting old)
 		}
 		elseif ( isset($_POST['simple-local-avatar-erase']) && $_POST['simple-local-avatar-erase'] == 1 )
-		{
-			// delete old images if successful
-			$old_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
-			foreach ($old_avatars as $old_avatar ) 
-				unlink( ABSPATH . $old_avatar );
-			
-			delete_user_meta( $user_id, 'simple_local_avatar' );
-		}
+			$this->avatar_delete( $user_id );
 	}
 	
 	/**
@@ -259,6 +223,26 @@ class simple_local_avatars
 	{
 		remove_action( 'get_avatar', array( $this, 'get_avatar' ) );
 		return $avatar_defaults;
+	}
+	
+	/**
+	 * delete avatars based on user_id
+	 */
+	function avatar_delete( $user_id )
+	{
+		$old_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
+		$upload_path = wp_upload_dir();
+			
+		if ( is_array($old_avatars) ) 
+		{
+			foreach ($old_avatars as $old_avatar )
+			{
+				$old_avatar_path = str_replace( $upload_path['baseurl'], $upload_path['basedir'], $old_avatar );
+				@unlink( $old_avatar_path );	
+			} 
+		}
+		
+		delete_user_meta( $user_id, 'simple_local_avatar' );
 	}
 }
 
@@ -292,13 +276,17 @@ register_uninstall_hook( __FILE__, 'simple_local_avatars_uninstall' );
 function simple_local_avatars_uninstall() 
 {
 	$users = get_users_of_blog();
+	$upload_path = wp_upload_dir();
 	
 	foreach ( $users as $user )
-	{
+	{		
 		if ( $old_avatars = get_user_meta( $user->$user_id, 'simple_local_avatar', true ) )
 		{
 			foreach ($old_avatars as $old_avatar )
-				unlink( ABSPATH . $old_avatar );
+			{
+				$old_avatar_path = str_replace( $upload_path['baseurl'], $upload_path['basedir'], $old_avatar );
+				@unlink( $old_avatar_path );	
+			}
 			
 			delete_user_meta( $user->$user_id, 'simple_local_avatar' );
 		}
