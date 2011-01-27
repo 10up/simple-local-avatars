@@ -4,7 +4,7 @@ Donate link: http://www.thinkoomph.com/plugins-modules/wordpress-simple-local-av
 Tags: avatar, gravatar, user photos, users, profile
 Requires at least: 3.0
 Tested up to: 3.1
-Stable tag: 1.2
+Stable tag: 1.2.1
 
 Adds an avatar upload field to user profiles if the current user has media permissions. Generates requested sizes on demand just like Gravatar!
 
