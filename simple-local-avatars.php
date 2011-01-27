@@ -3,7 +3,7 @@
  Plugin Name: Simple Local Avatars
  Plugin URI: http://www.thinkoomph.com/plugins-modules/wordpress-simple-local-avatars/
  Description: Adds an avatar upload field to user profiles if the current user has media permissions. Generates requested sizes on demand just like Gravatar! Simple and lightweight.
- Version: 1.2
+ Version: 1.2.1
  Author: Jake Goldman (Oomph, Inc)
  Author URI: http://www.thinkoomph.com
 
@@ -275,22 +275,11 @@ register_uninstall_hook( __FILE__, 'simple_local_avatars_uninstall' );
 
 function simple_local_avatars_uninstall() 
 {
+	$simple_local_avatars = new simple_local_avatars;
 	$users = get_users_of_blog();
-	$upload_path = wp_upload_dir();
 	
 	foreach ( $users as $user )
-	{		
-		if ( $old_avatars = get_user_meta( $user->$user_id, 'simple_local_avatar', true ) )
-		{
-			foreach ($old_avatars as $old_avatar )
-			{
-				$old_avatar_path = str_replace( $upload_path['baseurl'], $upload_path['basedir'], $old_avatar );
-				@unlink( $old_avatar_path );	
-			}
-			
-			delete_user_meta( $user->$user_id, 'simple_local_avatar' );
-		}
-	}
+		$simple_local_avatars->avatar_delete( $user->user_id );
 	
 	delete_option('simple_local_avatars_caps');
 }

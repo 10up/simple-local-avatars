@@ -35,6 +35,10 @@ Unlike other avatar plug-ins, Simple Local Avatars:
 
 == Changelog ==
 
+= 1.2.1 =
+* French localization
+* Simplify uninstall code
+
 = 1.2 =
 * Fix path issues on some IIS servers (resulting in missing avatar images)
 * Fix rare uninstall issues related to deleted avatars
