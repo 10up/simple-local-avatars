@@ -1,6 +1,6 @@
 === Simple Local Avatars ===
-Contributors: jakemgold
-Donate link: http://www.thinkoomph.com/plugins-modules/wordpress-simple-local-avatars/
+Contributors: jakemgold, thinkoomph
+Donate link: http://www.get10up.com/plugins/simple-local-avatars-wordpress/
 Tags: avatar, gravatar, user photos, users, profile
 Requires at least: 3.0
 Tested up to: 3.1
