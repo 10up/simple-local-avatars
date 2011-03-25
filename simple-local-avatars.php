@@ -1,13 +1,13 @@
 <?php
 /**
  Plugin Name: Simple Local Avatars
- Plugin URI: http://www.thinkoomph.com/plugins-modules/wordpress-simple-local-avatars/
+ Plugin URI: http://www.get10up.com/plugins/simple-local-avatars-wordpress/
  Description: Adds an avatar upload field to user profiles if the current user has media permissions. Generates requested sizes on demand just like Gravatar! Simple and lightweight.
  Version: 1.2.2
- Author: Jake Goldman (Oomph, Inc)
- Author URI: http://www.thinkoomph.com
+ Author: Jake Goldman (10up), Oomph Inc
+ Author URI: http://www.get10up.com
 
-    Plugin: Copyright 2011 Oomph, Inc (email : jake@thinkoomph.com)
+    Plugin: Copyright 2011 10up (email : jake@get10up.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
