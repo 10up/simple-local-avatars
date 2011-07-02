@@ -3,7 +3,7 @@
  Plugin Name: Simple Local Avatars
  Plugin URI: http://www.get10up.com/plugins/simple-local-avatars-wordpress/
  Description: Adds an avatar upload field to user profiles if the current user has media permissions. Generates requested sizes on demand just like Gravatar! Simple and lightweight.
- Version: 1.2.3
+ Version: 1.2.4
  Author: Jake Goldman (10up), Oomph Inc
  Author URI: http://www.get10up.com
 
@@ -193,6 +193,10 @@ class simple_local_avatars
 				'bmp' => 'image/bmp',
 				'tif|tiff' => 'image/tiff'
 			);
+		
+			// front end (theme my profile etc) support
+			if ( ! function_exists( 'wp_handle_upload' ) )
+				require_once( ABSPATH . 'wp-admin/includes/file.php' );
 		
 			$avatar = wp_handle_upload( $_FILES['simple-local-avatar'], array( 'mimes' => $mimes, 'test_form' => false ) );
 			
