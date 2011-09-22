@@ -1,10 +1,10 @@
 === Simple Local Avatars ===
-Contributors: jakemgold, thinkoomph
-Donate link: http://www.get10up.com/plugins/simple-local-avatars-wordpress/
+Contributors: jakemgold, 10up, thinkoomph
+Donate link: http://get10up.com/plugins/simple-local-avatars-wordpress/
 Tags: avatar, gravatar, user photos, users, profile
 Requires at least: 3.0
-Tested up to: 3.2
-Stable tag: 1.2.4
+Tested up to: 3.2.1
+Stable tag: 1.3
 
 Adds an avatar upload field to user profiles if the current user has media permissions. Generates requested sizes on demand just like Gravatar!
 
@@ -34,6 +34,11 @@ Unlike other avatar plug-ins, Simple Local Avatars:
 1. Avatar upload field on a user profile page
 
 == Changelog ==
+
+= 1.3 =
+* Avatar file name saved as "user-display-name_avatar" (or other image extension) 
+* Russian localization added
+* Assorted minor code optimizations
 
 = 1.2.4 =
 * Support for front end avatar uploads (e.g. Theme My Profile)
