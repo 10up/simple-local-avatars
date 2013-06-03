@@ -1,12 +1,12 @@
 === Simple Local Avatars ===
 Contributors: jakemgold, 10up, thinkoomph
-Donate link: http://get10up.com/plugins/simple-local-avatars-wordpress/
+Donate link: http://10up.com/plugins/simple-local-avatars-wordpress/
 Tags: avatar, gravatar, user photos, users, profile
-Requires at least: 3.2
-Tested up to: 3.3
-Stable tag: 1.3.1
+Requires at least: 3.5
+Tested up to: 3.6
+Stable tag: 2.0
 
-Adds an avatar upload field to user profiles if the current user has media permissions. Generates requested sizes on demand just like Gravatar!
+Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!
 
 
 == Description ==
@@ -15,13 +15,12 @@ Adds an avatar upload field to user profiles if the current user has media permi
 
 Just edit a user profile, and scroll down to the new "Avatar" field. The plug-in will take care of cropping and sizing!
 
-Unlike other avatar plug-ins, Simple Local Avatars:
-
 1. Stores avatars in the "uploads" folder where all of your other media is kept
 1. Has a simple, native interface
-1. Fully supports Gravatar and default avatars if no local avatar is set for the user
+1. Fully supports Gravatar and default avatars if no local avatar is set for the user - but also allows you turn off Gravatar
 1. Generates the requested avatar size on demand (and stores the new size for efficiency), so it looks great, just like Gravatar!
 1. Let's you decide whether lower privilege users (subscribers, contributors) can upload their own avatar
+1. Enables rating of local avatars, just like Gravatar
 
 
 == Installation ==
@@ -42,6 +41,19 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 
 
 == Changelog ==
+
+= 2.0 =
+* Choose or upload an avatar from the media library (for user's with appropriate capabilities)!
+* Local avatars are rated for appropriateness, just like Gravatar
+* A new setting under Discussion enables administrators to turn off Gravatar (only use local avatars)
+* Delete the local avatar with a single button click (like everywhere else in WordPress)
+* Uploaded avatar file names are appended with the timestamp, addressing browser image caching issues
+* New developer filter for preventing automatic rescaling: simple_local_avatars_dynamic_resize
+* New developer filter for limiting upload size: simple_local_avatars_upload_limit
+* Upgraded functions deprecated since WordPress 3.5
+* Fixed translations not working on front end (although translations are now a bit out of date...)
+* Hungarian translation added (needs further updating again with new version)
+* Assorted refactoring / improvements under the hood
 
 = 1.3.1 =
 * Brazilian Portuguese and Belarusian translations
@@ -88,6 +100,9 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 
 
 == Upgrade Notice ==
+
+= 2.0 =
+Upgraded to take advantage of *WordPress 3.5 and newer*. Does not support older versions! This has also *not* been tested with front end profile plug-ins - feedback welcome. Note that several language strings have been added or modified - revised translations would be welcome!
 
 = 1.3.1 =
 Like WordPress 3.2, now *REQUIRES* PHP 5.2 or newer.
