@@ -18,10 +18,10 @@ class Simple_Local_Avatars {
 
 		$this->options = (array) get_option( 'simple_local_avatars' );
 		$this->avatar_ratings = array(
-			'G' => __('G &#8212; Suitable for all audiences'),
-			'PG' => __('PG &#8212; Possibly offensive, usually for audiences 13 and above'),
-			'R' => __('R &#8212; Intended for adult audiences above 17'),
-			'X' => __('X &#8212; Even more mature than above')
+			'G' => __( 'G &#8212; Suitable for all audiences' , 'simple-local-avatars' ),
+			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above' , 'simple-local-avatars' ),
+			'R' => __( 'R &#8212; Intended for adult audiences above 17' , 'simple-local-avatars' ),
+			'X' => __( 'X &#8212; Even more mature than above' , 'simple-local-avatars' )
 		);
 
 		// supplement remote avatars, but not if inside "local only" mode
@@ -277,7 +277,7 @@ class Simple_Local_Avatars {
 							echo "\n\t<label><input type='radio' name='simple_local_avatar_rating' value='" . esc_attr( $key ) . "' " . checked( $profileuser->simple_local_avatar_rating, $key, false ) . "/> $rating</label><br />";
 						endforeach;
 					?>
-					<p class="description"><?php _e( 'If the local avatar is inappropriate for this site, Gravatar will be attempted.' ); ?></p>
+					<p class="description"><?php _e( 'If the local avatar is inappropriate for this site, Gravatar will be attempted.' , 'simple-local-avatars' ); ?></p>
 				</fieldset></td>
 		</tr>
 	</table>
