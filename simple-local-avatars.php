@@ -7,6 +7,7 @@
  Author: Jake Goldman, 10up
  Author URI: http://10up.com
  License: GPLv2 or later
+ Text Domain: simple-local-avatars
 */
 
 /**
@@ -21,8 +22,6 @@ class Simple_Local_Avatars {
 	 * Set up the hooks and default values
 	 */
 	public function __construct() {
-		load_plugin_textdomain( 'simple-local-avatars', false, dirname( plugin_basename( __FILE__ ) ) . '/localization/' );
-
 		$this->options = (array) get_option( 'simple_local_avatars' );
 		$this->avatar_ratings = array(
 			'G' => __('G &#8212; Suitable for all audiences'),
