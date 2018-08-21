@@ -60,7 +60,7 @@ class Simple_Local_Avatars {
 	 * @param string $alt Alternative text to use in image tag. Defaults to blank
 	 * @return string <img> tag for the user's avatar
 	 */
-	public function get_avatar( $avatar = '', $id_or_email, $size = 96, $default = '', $alt = '' ) {
+	public function get_avatar( $avatar = '', $id_or_email = '', $size = 96, $default = '', $alt = '' ) {
 		if ( is_numeric( $id_or_email ) )
 			$user_id = (int) $id_or_email;
 		elseif ( is_string( $id_or_email ) && ( $user = get_user_by( 'email', $id_or_email ) ) )
@@ -492,7 +492,7 @@ function get_simple_local_avatar( $id_or_email, $size = 96, $default = '', $alt 
 	if ( empty ( $avatar ) ) {
 		remove_action( 'get_avatar', array( $simple_local_avatars, 'get_avatar' ) );
 		$avatar = get_avatar( $id_or_email, $size, $default, $alt );
-		add_action( 'get_avatar', array( $simple_local_avatars, 'get_avatar' ) );
+		add_action( 'get_avatar', array( $simple_local_avatars, 'get_avatar' ), 10, 5 );
 	}
 	
 	return $avatar;
