@@ -153,8 +153,28 @@ class Simple_Local_Avatars {
 		}
 
 		register_setting( 'discussion', 'simple_local_avatars', array( $this, 'sanitize_options' ) );
-		add_settings_field( 'simple-local-avatars-only', __('Local Avatars Only','simple-local-avatars'), array( $this, 'avatar_settings_field' ), 'discussion', 'avatars', array( 'key' => 'only', 'desc' => 'Only allow local avatars (still uses Gravatar for default avatars)' ) );
-		add_settings_field( 'simple-local-avatars-caps', __('Local Upload Permissions','simple-local-avatars'), array( $this, 'avatar_settings_field' ), 'discussion', 'avatars', array( 'key' => 'caps', 'desc' => 'Only allow users with file upload capabilities to upload local avatars (Authors and above)' ) );
+		add_settings_field(
+			'simple-local-avatars-only',
+			__('Local Avatars Only','simple-local-avatars'),
+			array( $this, 'avatar_settings_field' ),
+			'discussion',
+			'avatars',
+			array(
+				'key' => 'only',
+				'desc' => __( 'Only allow local avatars (still uses Gravatar for default avatars)', 'simple-local-avatars' )
+			)
+		);
+		add_settings_field(
+			'simple-local-avatars-caps',
+			__('Local Upload Permissions','simple-local-avatars'),
+			array( $this, 'avatar_settings_field' ),
+			'discussion',
+			'avatars',
+			array(
+				'key' => 'caps',
+				'desc' => __( 'Only allow users with file upload capabilities to upload local avatars (Authors and above)', 'simple-local-avatars' )
+			)
+		);
 	}
 
 	/**
@@ -213,7 +233,7 @@ class Simple_Local_Avatars {
 		echo '
 			<label for="simple-local-avatars-' . $args['key'] . '">
 				<input type="checkbox" name="simple_local_avatars[' . $args['key'] . ']" id="simple-local-avatars-' . $args['key'] . '" value="1" ' . checked( $this->options[$args['key']], 1, false ) . ' />
-				' . __($args['desc'],'simple-local-avatars') . '
+				' . $args['desc'] . '
 			</label>
 		';
 	}
