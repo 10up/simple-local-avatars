@@ -1,7 +1,7 @@
 {
   "name": "10up/simple-local-avatars",
   "description": "Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!",
-  "version": "2.0",
+  "version": "2.1",
   "type": "wordpress-plugin",
   "keywords": [
     "wordpress",
