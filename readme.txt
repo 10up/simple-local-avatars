@@ -2,9 +2,10 @@
 Contributors: jakemgold, 10up, thinkoomph
 Donate link: http://10up.com/plugins/simple-local-avatars-wordpress/
 Tags: avatar, gravatar, user photos, users, profile
-Requires at least: 3.5
+Requires at least: 4.6
 Tested up to: 3.6
 Stable tag: 2.0
+Text Domain: simple-local-avatars
 
 Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!
 
