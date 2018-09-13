@@ -3,7 +3,7 @@
 Plugin Name: Simple Local Avatars
 Plugin URI: http://10up.com/plugins/simple-local-avatars-wordpress/
 Description: Adds an avatar upload field to user profiles. Generates requested sizes on demand, just like Gravatar! Simple and lightweight.
-Version: 2.0
+Version: 2.1
 Author: Jake Goldman, 10up
 Author URI: http://10up.com
 License: GPLv2 or later
@@ -271,11 +271,16 @@ class Simple_Local_Avatars {
 							'_wpnonce'	=> $this->remove_nonce,
 						) );
 						?>
-						<p style="display: inline-block; width: 26em;">
-							<span class="description"><?php _e( 'Choose an image from your computer:' ); ?></span><br />
-							<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
-							<span class="spinner" id="simple-local-avatar-spinner"></span>
-						</p>
+						<?php
+						// if user is author and above hide the choose file option
+						// force them to use the WP Media Selector
+						if ( ! current_user_can( 'upload_files' ) ) { ?>
+							<p style="display: inline-block; width: 26em;">
+								<span class="description"><?php _e( 'Choose an image from your computer:' ); ?></span><br />
+								<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
+								<span class="spinner" id="simple-local-avatar-spinner"></span>
+							</p>
+						<?php } ?>
 						<p>
 							<?php if ( current_user_can( 'upload_files' ) && did_action( 'wp_enqueue_media' ) ) : ?><a href="#" class="button hide-if-no-js" id="simple-local-avatar-media"><?php _e( 'Choose from Media Library', 'simple-local-avatars' ); ?></a> &nbsp;<?php endif; ?>
 							<a href="<?php echo $remove_url; ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-remove"<?php if ( empty( $profileuser->simple_local_avatar ) ) echo ' style="display:none;"'; ?>><?php _e('Delete local avatar','simple-local-avatars'); ?></a>
@@ -361,45 +366,37 @@ class Simple_Local_Avatars {
 			}
 
 			// front end (theme my profile etc) support
-			if ( ! function_exists( 'wp_handle_upload' ) )
-				require_once( ABSPATH . 'wp-admin/includes/file.php' );
+			if ( ! function_exists( 'media_handle_upload' ) )
+				require_once( ABSPATH . 'wp-admin/includes/media.php' );
 
 			// allow developers to override file size upload limit for avatars
 			add_filter( 'upload_size_limit', array( $this, 'upload_size_limit' ) );
 
 			$this->user_id_being_edited = $user_id; // make user_id known to unique_filename_callback function
-			$avatar = wp_handle_upload( $_FILES['simple-local-avatar'], array(
-				'mimes' 					=> array(
-					'jpg|jpeg|jpe'	=> 'image/jpeg',
-					'gif'			=> 'image/gif',
-					'png'			=> 'image/png',
+			$avatar_id = media_handle_upload( 'simple-local-avatar', 0, array(), array(
+				'mimes'                    => array(
+					'jpg|jpeg|jpe' => 'image/jpeg',
+					'gif'          => 'image/gif',
+					'png'          => 'image/png',
 				),
-				'test_form'					=> false,
-				'unique_filename_callback'	=> array( $this, 'unique_filename_callback' )
+				'test_form'                => false,
+				'unique_filename_callback' => array( $this, 'unique_filename_callback' )
 			) );
 
 			remove_filter( 'upload_size_limit', array( $this, 'upload_size_limit' ) );
 
-			if ( empty($avatar['file']) ) {		// handle failures
-				switch ( $avatar['error'] ) {
-					case 'File type does not meet security guidelines. Try another.' :
-						$this->avatar_upload_error = __('Please upload a valid image file for the avatar.','simple-local-avatars');
-						break;
-					default :
-						$this->avatar_upload_error = '<strong>' . __('There was an error uploading the avatar:','simple-local-avatars') . '</strong> ' . esc_html( $avatar['error'] );
-				}
-
+			if ( is_wp_error( $avatar_id ) ) { // handle failures.
+				$this->avatar_upload_error = '<strong>' . __( 'There was an error uploading the avatar:', 'simple-local-avatars' ) . '</strong> ' . esc_html( $avatar_id->get_error_message() );
 				add_action( 'user_profile_update_errors', array( $this, 'user_profile_update_errors' ) );
-
 				return;
 			}
 
-			$this->assign_new_user_avatar( $avatar['url'], $user_id );
+			$this->assign_new_user_avatar( $avatar_id, $user_id );
 
 		endif;
 
 		// handle rating
-		if ( isset( $avatar['url'] ) || $avatar = get_user_meta( $user_id, 'simple_local_avatar', true ) ) {
+		if ( isset( $avatar_id ) || $avatar = get_user_meta( $user_id, 'simple_local_avatar', true ) ) {
 			if ( empty( $_POST['simple_local_avatar_rating'] ) || ! array_key_exists( $_POST['simple_local_avatar_rating'], $this->avatar_ratings ) )
 				$_POST['simple_local_avatar_rating'] = key( $this->avatar_ratings );
 
