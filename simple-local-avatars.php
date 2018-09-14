@@ -48,6 +48,8 @@ class Simple_Local_Avatars {
 		add_action( 'user_edit_form_tag', array( $this, 'user_edit_form_tag' ) );
 
 		add_filter( 'avatar_defaults', array( $this, 'avatar_defaults' ) );
+
+		add_action( 'rest_api_init', array( $this, 'register_rest_fields' ) );
 	}
 
 	/**
@@ -522,6 +524,48 @@ class Simple_Local_Avatars {
 	public function user_profile_update_errors( WP_Error $errors ) {
 		$errors->add( 'avatar_error', $this->avatar_upload_error );
 	}
+
+	/**
+	 * Registers the simple_local_avatar field in the REST API.
+	 */
+	public function register_rest_fields() {
+		register_rest_field( 'user', 'simple_local_avatar', array(
+			'get_callback' => array( $this, 'get_avatar_rest' ),
+			'update_callback' => array( $this, 'set_avatar_rest' ),
+			'schema' => array(
+				'description' => 'The users simple local avatar',
+				'type' => 'object',
+			)
+		));
+	}
+	
+	/**
+	 * Returns the simple_local_avatar meta key for the given user.
+	 * 
+	 * @param object $user User object
+	 */
+	public function get_avatar_rest( $user ) {
+		$local_avatar = get_user_meta( $user['id'], 'simple_local_avatar', true );
+		if ( empty( $local_avatar ) ) {
+			return;
+		}
+		return $local_avatar;
+	}
+
+	/**
+	 * Updates the simple local avatar from a REST request.
+	 *
+	 * Since we are just adding a field to the existing user endpoint
+	 * we don't need to worry about ensuring the calling user has proper permissions.
+	 * Only the user or an administrator would be able to change the avatar.
+	 * 
+	 * @param array $input Input submitted via REST request.
+	 * @param object $user The user making the request.
+	 */
+	public function set_avatar_rest( $input, $user ) {
+		$this->assign_new_user_avatar($input['media_id'], $user->ID);
+	}
+
 }
 
 $simple_local_avatars = new Simple_Local_Avatars;
