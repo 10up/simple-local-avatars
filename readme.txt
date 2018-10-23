@@ -1,10 +1,11 @@
 === Simple Local Avatars ===
 Contributors: jakemgold, 10up, thinkoomph
-Donate link: http://10up.com/plugins/simple-local-avatars-wordpress/
+Donate link: https://10up.com/plugins/simple-local-avatars-wordpress/
 Tags: avatar, gravatar, user photos, users, profile
-Requires at least: 3.5
-Tested up to: 3.6
-Stable tag: 2.0
+Requires at least: 4.6
+Tested up to: 4.9.8
+Stable tag: 2.1
+Text Domain: simple-local-avatars
 
 Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!
 
@@ -42,8 +43,15 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 
 == Changelog ==
 
+= 2.1 =
+* *New:* All avatar uploads now go into the media library. Don't worry - users without the ability to upload files cannot otherwise see the contents of your media library. This allows local avatars to respect other functionality your site may have around uploaded images, such as external hosting.
+* *New:* REST API support for getting and updating.
+* *New:* Use .org language packs rather than bundling translations.
+* *Fixed:* Avoid an `ArgumentCountError`.
+* *Fixed:* A couple of internationalization issues.
+
 = 2.0 =
-* Choose or upload an avatar from the media library (for user's with appropriate capabilities)!
+* Choose or upload an avatar from the media library (for users with appropriate capabilities)!
 * Local avatars are rated for appropriateness, just like Gravatar
 * A new setting under Discussion enables administrators to turn off Gravatar (only use local avatars)
 * Delete the local avatar with a single button click (like everywhere else in WordPress)
@@ -100,6 +108,9 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 
 
 == Upgrade Notice ==
+
+= 2.1 =
+*Important note:* All avatar uploads now go into the media library. Don't worry - users without the ability to upload files cannot otherwise see the contents of your media library. This allows local avatars to respect other functionality your site may have around uploaded images, such as external hosting.
 
 = 2.0 =
 Upgraded to take advantage of *WordPress 3.5 and newer*. Does not support older versions! This has also *not* been tested with front end profile plug-ins - feedback welcome. Note that several language strings have been added or modified - revised translations would be welcome!

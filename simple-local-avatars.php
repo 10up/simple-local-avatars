@@ -1,13 +1,14 @@
 <?php
 /**
- Plugin Name: Simple Local Avatars
- Plugin URI: http://10up.com/plugins/simple-local-avatars-wordpress/
- Description: Adds an avatar upload field to user profiles. Generates requested sizes on demand, just like Gravatar! Simple and lightweight.
- Version: 2.0
- Author: Jake Goldman, 10up
- Author URI: http://10up.com
- License: GPLv2 or later
-*/
+ * Plugin Name: Simple Local Avatars
+ * Plugin URI: https://10up.com/plugins/simple-local-avatars-wordpress/
+ * Description: Adds an avatar upload field to user profiles. Generates requested sizes on demand, just like Gravatar! Simple and lightweight.
+ * Version: 2.1
+ * Author: Jake Goldman, 10up
+ * Author URI: https://10up.com
+ * License: GPLv2 or later
+ * Text Domain: simple-local-avatars
+ */
 
 /**
  * add field to user profiles
@@ -21,8 +22,6 @@ class Simple_Local_Avatars {
 	 * Set up the hooks and default values
 	 */
 	public function __construct() {
-		load_plugin_textdomain( 'simple-local-avatars', false, dirname( plugin_basename( __FILE__ ) ) . '/localization/' );
-
 		$this->options = (array) get_option( 'simple_local_avatars' );
 		$this->avatar_ratings = array(
 			'G' => __('G &#8212; Suitable for all audiences'),
@@ -49,6 +48,8 @@ class Simple_Local_Avatars {
 		add_action( 'user_edit_form_tag', array( $this, 'user_edit_form_tag' ) );
 		
 		add_filter( 'avatar_defaults', array( $this, 'avatar_defaults' ) );
+
+		add_action( 'rest_api_init', array( $this, 'register_rest_fields' ) );
 	}
 
 	/**
@@ -61,7 +62,7 @@ class Simple_Local_Avatars {
 	 * @param string $alt Alternative text to use in image tag. Defaults to blank
 	 * @return string <img> tag for the user's avatar
 	 */
-	public function get_avatar( $avatar = '', $id_or_email, $size = 96, $default = '', $alt = '' ) {
+	public function get_avatar( $avatar = '', $id_or_email = '', $size = 96, $default = '', $alt = '' ) {
 		if ( is_numeric( $id_or_email ) )
 			$user_id = (int) $id_or_email;
 		elseif ( is_string( $id_or_email ) && ( $user = get_user_by( 'email', $id_or_email ) ) )
@@ -154,8 +155,28 @@ class Simple_Local_Avatars {
 		}
 
 		register_setting( 'discussion', 'simple_local_avatars', array( $this, 'sanitize_options' ) );
-		add_settings_field( 'simple-local-avatars-only', __('Local Avatars Only','simple-local-avatars'), array( $this, 'avatar_settings_field' ), 'discussion', 'avatars', array( 'key' => 'only', 'desc' => 'Only allow local avatars (still uses Gravatar for default avatars)' ) );
-		add_settings_field( 'simple-local-avatars-caps', __('Local Upload Permissions','simple-local-avatars'), array( $this, 'avatar_settings_field' ), 'discussion', 'avatars', array( 'key' => 'caps', 'desc' => 'Only allow users with file upload capabilities to upload local avatars (Authors and above)' ) );
+		add_settings_field(
+			'simple-local-avatars-only',
+			__('Local Avatars Only','simple-local-avatars'),
+			array( $this, 'avatar_settings_field' ),
+			'discussion',
+			'avatars',
+			array(
+				'key' => 'only',
+				'desc' => __( 'Only allow local avatars (still uses Gravatar for default avatars)', 'simple-local-avatars' )
+			)
+		);
+		add_settings_field(
+			'simple-local-avatars-caps',
+			__('Local Upload Permissions','simple-local-avatars'),
+			array( $this, 'avatar_settings_field' ),
+			'discussion',
+			'avatars',
+			array(
+				'key' => 'caps',
+				'desc' => __( 'Only allow users with file upload capabilities to upload local avatars (Authors and above)', 'simple-local-avatars' )
+			)
+		);
 	}
 
 	/**
@@ -214,7 +235,7 @@ class Simple_Local_Avatars {
 		echo '
 			<label for="simple-local-avatars-' . $args['key'] . '">
 				<input type="checkbox" name="simple_local_avatars[' . $args['key'] . ']" id="simple-local-avatars-' . $args['key'] . '" value="1" ' . checked( $this->options[$args['key']], 1, false ) . ' />
-				' . __($args['desc'],'simple-local-avatars') . '
+				' . $args['desc'] . '
 			</label>
 		';
 	}
@@ -252,6 +273,16 @@ class Simple_Local_Avatars {
 						'_wpnonce'	=> $this->remove_nonce,
 					) );
 			?>
+						<?php
+						// if user is author and above hide the choose file option
+						// force them to use the WP Media Selector
+						if ( ! current_user_can( 'upload_files' ) ) { ?>
+					<p style="display: inline-block; width: 26em;">
+						<span class="description"><?php _e( 'Choose an image from your computer:' ); ?></span><br />
+						<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
+						<span class="spinner" id="simple-local-avatar-spinner"></span>
+					</p>
+						<?php } ?>
 					<p>
 						<?php if ( current_user_can( 'upload_files' ) && did_action( 'wp_enqueue_media' ) ) : ?><a href="#" class="button hide-if-no-js" id="simple-local-avatar-media"><?php _e( 'Choose from Media Library', 'simple-local-avatars' ); ?></a> &nbsp;<?php endif; ?>
 						<a href="<?php echo $remove_url; ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-remove"<?php if ( empty( $profileuser->simple_local_avatar ) ) echo ' style="display:none;"'; ?>><?php _e('Delete local avatar','simple-local-avatars'); ?></a>
@@ -279,7 +310,7 @@ class Simple_Local_Avatars {
 							echo "\n\t<label><input type='radio' name='simple_local_avatar_rating' value='" . esc_attr( $key ) . "' " . checked( $profileuser->simple_local_avatar_rating, $key, false ) . "/> $rating</label><br />";
 						endforeach;
 					?>
-					<p class="description"><?php _e( 'If the local avatar is inappropriate for this site, Gravatar will be attempted.' ); ?></p>
+					<p class="description"><?php _e( 'If the local avatar is inappropriate for this site, Gravatar will be attempted.', 'simple-local-avatars' ); ?></p>
 				</fieldset></td>
 		</tr>
 	</table>
@@ -326,8 +357,48 @@ class Simple_Local_Avatars {
 		if( empty( $_POST['_simple_local_avatar_nonce'] ) || ! wp_verify_nonce( $_POST['_simple_local_avatar_nonce'], 'simple_local_avatar_nonce' ) )
 			return;
 
+		// check for uploaded files
+		if ( ! empty( $_FILES['simple-local-avatar']['name'] ) ) :
+
+			// need to be more secure since low privelege users can upload
+			if ( false !== strpos( $_FILES['simple-local-avatar']['name'], '.php' ) ) {
+				$this->avatar_upload_error = __('For security reasons, the extension ".php" cannot be in your file name.','simple-local-avatars');
+				add_action( 'user_profile_update_errors', array( $this, 'user_profile_update_errors' ) );
+				return;
+			}
+
+			// front end (theme my profile etc) support
+			if ( ! function_exists( 'media_handle_upload' ) )
+				require_once( ABSPATH . 'wp-admin/includes/media.php' );
+
+			// allow developers to override file size upload limit for avatars
+			add_filter( 'upload_size_limit', array( $this, 'upload_size_limit' ) );
+
+			$this->user_id_being_edited = $user_id; // make user_id known to unique_filename_callback function
+			$avatar_id = media_handle_upload( 'simple-local-avatar', 0, array(), array(
+				'mimes' 					=> array(
+					'jpg|jpeg|jpe'	=> 'image/jpeg',
+					'gif'			=> 'image/gif',
+					'png'			=> 'image/png',
+				),
+				'test_form'					=> false,
+				'unique_filename_callback'	=> array( $this, 'unique_filename_callback' )
+			) );
+
+			remove_filter( 'upload_size_limit', array( $this, 'upload_size_limit' ) );
+
+			if ( is_wp_error( $avatar_id ) ) { // handle failures.
+				$this->avatar_upload_error = '<strong>' . __( 'There was an error uploading the avatar:', 'simple-local-avatars' ) . '</strong> ' . esc_html( $avatar_id->get_error_message() );
+				add_action( 'user_profile_update_errors', array( $this, 'user_profile_update_errors' ) );
+				return;
+			}
+
+			$this->assign_new_user_avatar( $avatar_id, $user_id );
+
+		endif;
+
 		// handle rating
-		if ( isset( $avatar['url'] ) || $avatar = get_user_meta( $user_id, 'simple_local_avatar', true ) ) {
+		if ( isset( $avatar_id ) || $avatar = get_user_meta( $user_id, 'simple_local_avatar', true ) ) {
 			if ( empty( $_POST['simple_local_avatar_rating'] ) || ! array_key_exists( $_POST['simple_local_avatar_rating'], $this->avatar_ratings ) )
 				$_POST['simple_local_avatar_rating'] = key( $this->avatar_ratings );
 
@@ -453,6 +524,48 @@ class Simple_Local_Avatars {
 	public function user_profile_update_errors( WP_Error $errors ) {
 		$errors->add( 'avatar_error', $this->avatar_upload_error );
 	}
+
+	/**
+	 * Registers the simple_local_avatar field in the REST API.
+	 */
+	public function register_rest_fields() {
+		register_rest_field( 'user', 'simple_local_avatar', array(
+			'get_callback' => array( $this, 'get_avatar_rest' ),
+			'update_callback' => array( $this, 'set_avatar_rest' ),
+			'schema' => array(
+				'description' => 'The users simple local avatar',
+				'type' => 'object',
+			)
+		));
+	}
+	
+	/**
+	 * Returns the simple_local_avatar meta key for the given user.
+	 * 
+	 * @param object $user User object
+	 */
+	public function get_avatar_rest( $user ) {
+		$local_avatar = get_user_meta( $user['id'], 'simple_local_avatar', true );
+		if ( empty( $local_avatar ) ) {
+			return;
+		}
+		return $local_avatar;
+	}
+
+	/**
+	 * Updates the simple local avatar from a REST request.
+	 *
+	 * Since we are just adding a field to the existing user endpoint
+	 * we don't need to worry about ensuring the calling user has proper permissions.
+	 * Only the user or an administrator would be able to change the avatar.
+	 * 
+	 * @param array $input Input submitted via REST request.
+	 * @param object $user The user making the request.
+	 */
+	public function set_avatar_rest( $input, $user ) {
+		$this->assign_new_user_avatar($input['media_id'], $user->ID);
+	}
+
 }
 
 $simple_local_avatars = new Simple_Local_Avatars;
@@ -473,7 +586,7 @@ function get_simple_local_avatar( $id_or_email, $size = 96, $default = '', $alt 
 	if ( empty ( $avatar ) ) {
 		remove_action( 'get_avatar', array( $simple_local_avatars, 'get_avatar' ) );
 		$avatar = get_avatar( $id_or_email, $size, $default, $alt );
-		add_action( 'get_avatar', array( $simple_local_avatars, 'get_avatar' ) );
+		add_action( 'get_avatar', array( $simple_local_avatars, 'get_avatar' ), 10, 5 );
 	}
 	
 	return $avatar;
