@@ -43,6 +43,9 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 
 == Changelog ==
 
+= 2.1 =
+* Add compability to use plugins to upload avatar image to cloud (Azure, AWS S3 etc) by using media_handle_upload instead of wp_handle_upload
+
 = 2.0 =
 * Choose or upload an avatar from the media library (for user's with appropriate capabilities)!
 * Local avatars are rated for appropriateness, just like Gravatar
