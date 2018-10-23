@@ -110,7 +110,7 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 == Upgrade Notice ==
 
 = 2.1 =
-*Important note:* All newly uploaded local avatars will appear in the media library, even when uploaded by contributors or subscribers. However, this does not give them access to the media library.
+*Important note:* All avatar uploads now go into the media library. Don't worry - users without the ability to upload files cannot otherwise see the contents of your media library. This allows local avatars to respect other functionality your site may have around uploaded images, such as external hosting.
 
 = 2.0 =
 Upgraded to take advantage of *WordPress 3.5 and newer*. Does not support older versions! This has also *not* been tested with front end profile plug-ins - feedback welcome. Note that several language strings have been added or modified - revised translations would be welcome!
