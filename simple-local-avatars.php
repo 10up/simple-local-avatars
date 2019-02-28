@@ -32,7 +32,7 @@ class Simple_Local_Avatars {
 
 		// supplement remote avatars, but not if inside "local only" mode
 		if ( empty( $this->options['only'] ) )
-			add_filter( 'get_avatar', array( $this, 'get_avatar' ), 10, 5 );
+			add_filter( 'get_avatar', array( $this, 'get_avatar' ), 10, 6 );
 		
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 
@@ -62,7 +62,7 @@ class Simple_Local_Avatars {
 	 * @param string $alt Alternative text to use in image tag. Defaults to blank
 	 * @return string <img> tag for the user's avatar
 	 */
-	public function get_avatar( $avatar = '', $id_or_email = '', $size = 96, $default = '', $alt = '' ) {
+	public function get_avatar( $avatar = '', $id_or_email = '', $size = 96, $default = '', $alt = '', $args = array() ) {
 		if ( is_numeric( $id_or_email ) )
 			$user_id = (int) $id_or_email;
 		elseif ( is_string( $id_or_email ) && ( $user = get_user_by( 'email', $id_or_email ) ) )
@@ -140,6 +140,9 @@ class Simple_Local_Avatars {
 			$local_avatars[$size] = home_url( $local_avatars[$size] );
 		
 		$author_class = is_author( $user_id ) ? ' current-author' : '' ;
+		if( array_key_exists( 'class', $args ) ){
+			$author_class .= ' ' . $args['class'];
+		}
 		$avatar = "<img alt='" . esc_attr( $alt ) . "' src='" . esc_url( $local_avatars[$size] ) . "' class='avatar avatar-{$size}{$author_class} photo' height='{$size}' width='{$size}' />";
 		
 		return apply_filters( 'simple_local_avatar', $avatar );
@@ -579,14 +582,14 @@ $simple_local_avatars = new Simple_Local_Avatars;
  * @param string $alt Alternate text to use in image tag. Defaults to blank
  * @return string <img> tag for the user's avatar
  */
-function get_simple_local_avatar( $id_or_email, $size = 96, $default = '', $alt = '' ) {
+function get_simple_local_avatar( $id_or_email, $size = 96, $default = '', $alt = '', $args = array() ) {
 	global $simple_local_avatars;
-	$avatar = $simple_local_avatars->get_avatar( '', $id_or_email, $size, $default, $alt );
+	$avatar = $simple_local_avatars->get_avatar( '', $id_or_email, $size, $default, $alt, $args );
 	
 	if ( empty ( $avatar ) ) {
 		remove_action( 'get_avatar', array( $simple_local_avatars, 'get_avatar' ) );
-		$avatar = get_avatar( $id_or_email, $size, $default, $alt );
-		add_action( 'get_avatar', array( $simple_local_avatars, 'get_avatar' ), 10, 5 );
+		$avatar = get_avatar( $id_or_email, $size, $default, $alt, $args );
+		add_action( 'get_avatar', array( $simple_local_avatars, 'get_avatar' ), 10, 6 );
 	}
 	
 	return $avatar;
@@ -603,7 +606,7 @@ if ( ! function_exists( 'get_avatar' ) && ( $simple_local_avatars_options = get_
 	 * @param string $alt Alternative text to use in image tag. Defaults to blank
 	 * @return string <img> tag for the user's avatar
 	 */
-	function get_avatar( $id_or_email, $size = 96, $default = '', $alt = '' ) {
+	function get_avatar( $id_or_email, $size = 96, $default = '', $alt = '', $args = array() ) {
 		global $simple_local_avatars;
 
 		if ( ! get_option('show_avatars') )
@@ -614,7 +617,7 @@ if ( ! function_exists( 'get_avatar' ) && ( $simple_local_avatars_options = get_
 		if ( !is_numeric($size) )
 			$size = 96;
 
-		if ( ! $avatar = $simple_local_avatars->get_avatar( '', $id_or_email, $size, $default, $alt ) ) :
+		if ( ! $avatar = $simple_local_avatars->get_avatar( '', $id_or_email, $size, $default, $alt, $args ) ) :
 
 			if ( empty($default) ) {
 				$avatar_default = get_option('avatar_default');
@@ -639,7 +642,7 @@ if ( ! function_exists( 'get_avatar' ) && ( $simple_local_avatars_options = get_
 
 		endif;
 
-		return apply_filters('get_avatar', $avatar, $id_or_email, $size, $default, $alt);
+		return apply_filters('get_avatar', $avatar, $id_or_email, $size, $default, $alt, $args);
 	}
 
 endif;
