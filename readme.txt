@@ -3,8 +3,8 @@ Contributors: jakemgold, 10up, thinkoomph
 Donate link: https://10up.com/plugins/simple-local-avatars-wordpress/
 Tags: avatar, gravatar, user photos, users, profile
 Requires at least: 4.6
-Tested up to: 4.9.8
-Stable tag: 2.1
+Tested up to: 5.2
+Stable tag: 2.1.1
 Text Domain: simple-local-avatars
 
 Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!
@@ -42,6 +42,9 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 
 
 == Changelog ==
+
+= 2.1.1 =
+* Fixed: Do not delete avatars just because they don't exist on the local filesystem.
 
 = 2.1 =
 * *New:* All avatar uploads now go into the media library. Don't worry - users without the ability to upload files cannot otherwise see the contents of your media library. This allows local avatars to respect other functionality your site may have around uploaded images, such as external hosting.
