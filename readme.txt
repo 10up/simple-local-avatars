@@ -44,7 +44,7 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 == Changelog ==
 
 = 2.1.1 =
-* Fixed: Do not delete avatars just because they don't exist on the local filesystem.
+* Fixed: Do not delete avatars just because they don't exist on the local filesystem. This was occasionally dumping avatars when WordPress uploads were stored elsewhere, e.g. a cloud service.
 
 = 2.1 =
 * *New:* All avatar uploads now go into the media library. Don't worry - users without the ability to upload files cannot otherwise see the contents of your media library. This allows local avatars to respect other functionality your site may have around uploaded images, such as external hosting.
