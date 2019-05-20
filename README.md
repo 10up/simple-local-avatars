@@ -1,6 +1,7 @@
 # Simple Local Avatars
 
 > Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!
+
 ![WordPress tested up to version](https://img.shields.io/badge/WordPress-v5.2%20tested-success.svg)
 
 ## Features
