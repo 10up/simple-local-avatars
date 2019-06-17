@@ -1,5 +1,5 @@
 ---
-name: ":interrobang: Need help with Simple Local Avatars?"
+name: "❓Need help with Simple Local Avatars?"
 about: Ask us a question, we're here to help!
 title: ''
 labels: question
