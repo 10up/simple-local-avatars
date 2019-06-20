@@ -2,7 +2,7 @@
 
 > Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!
 
-![WordPress tested up to version](https://img.shields.io/badge/WordPress-v5.2%20tested-success.svg)
+![WordPress tested up to version](https://img.shields.io/badge/WordPress-v5.2%20tested-success.svg) [![GPLv2 License](https://img.shields.io/github/license/10up/simple-local-avatars.svg)](https://github.com/10up/simple-local-avatars/blob/develop/LICENSE.md)
 
 ## Features
 
@@ -31,10 +31,6 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 ## Contributing
 
 Please read [CODE_OF_CONDUCT.md](https://github.com/10up/simple-local-avatars/blob/develop/CODE_OF_CONDUCT.md) for details on our code of conduct and [CONTRIBUTING.md](https://github.com/10up/simple-local-avatars/blob/develop/CONTRIBUTING.md) for details on the process for submitting pull requests to us.
-
-## License
-
-Simple Local Avatars utilizes the [GNU General Public License v2.0 (or later)](https://github.com/10up/simple-local-avatars/blob/develop/LICENSE.md).
 
 ## Like what you see?
 
