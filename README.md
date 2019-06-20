@@ -2,7 +2,7 @@
 
 > Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!
 
-![WordPress tested up to version](https://img.shields.io/badge/WordPress-v5.2%20tested-success.svg) [![GPLv2 License](https://img.shields.io/github/license/10up/simple-local-avatars.svg)](https://github.com/10up/simple-local-avatars/blob/develop/LICENSE.md)
+[![Support Level](https://img.shields.io/badge/support-active-green.svg)](#support-level) ![WordPress tested up to version](https://img.shields.io/badge/WordPress-v5.2%20tested-success.svg) [![GPLv2 License](https://img.shields.io/github/license/10up/simple-local-avatars.svg)](https://github.com/10up/simple-local-avatars/blob/develop/LICENSE.md)
 
 ## Features
 
@@ -27,6 +27,10 @@ Just edit a user profile, and scroll down to the new "Avatar" field. The plug-in
 Use avatars in your theme using WordPress' built in `get_avatar()` function: [http://codex.wordpress.org/Function_Reference/get_avatar](http://codex.wordpress.org/Function_Reference/get_avatar "get_avatar function")
 
 You can also use `get_simple_local_avatar()` (with the same arguments) to retreive local avatars a bit faster, but this will make your theme dependent on this plug-in.
+
+## Support Level
+
+**Active:** 10up is actively working on this, and we expect to continue work for the foreseeable future including keeping tested up to the most recent version of WordPress.  Bug reports, feature requests, questions, and pull requests are welcome.
 
 ## Contributing
 
