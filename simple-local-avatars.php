@@ -3,7 +3,7 @@
  * Plugin Name: Simple Local Avatars
  * Plugin URI: https://10up.com/plugins/simple-local-avatars-wordpress/
  * Description: Adds an avatar upload field to user profiles. Generates requested sizes on demand, just like Gravatar! Simple and lightweight.
- * Version: 2.1
+ * Version: 2.1.1
  * Author: Jake Goldman, 10up
  * Author URI: https://10up.com
  * License: GPLv2 or later
@@ -60,6 +60,7 @@ class Simple_Local_Avatars {
 	 * @param int $size Size of the avatar image
 	 * @param string $default URL to a default image to use if no avatar is available
 	 * @param string $alt Alternative text to use in image tag. Defaults to blank
+	 * @param array $args Extra arguments to retrieve the avatar
 	 * @return string <img> tag for the user's avatar
 	 */
 	public function get_avatar( $avatar = '', $id_or_email = '', $size = 96, $default = '', $alt = '', $args = array() ) {
@@ -92,10 +93,6 @@ class Simple_Local_Avatars {
 		if ( ! empty( $local_avatars['media_id'] ) ) {
 			// has the media been deleted?
 			if ( ! $avatar_full_path = get_attached_file( $local_avatars['media_id'] ) ) {
-				// only allowed logged in users to delete bad data to mitigate performance issues
-				if ( is_user_logged_in() )
-					$this->avatar_delete( $user_id );
-
 				return $avatar;
 			}
 		}
@@ -140,10 +137,8 @@ class Simple_Local_Avatars {
 			$local_avatars[$size] = home_url( $local_avatars[$size] );
 		
 		$author_class = is_author( $user_id ) ? ' current-author' : '' ;
-		if( array_key_exists( 'class', $args ) ){
-			$author_class .= ' ' . $args['class'];
-		}
-		$avatar = "<img alt='" . esc_attr( $alt ) . "' src='" . esc_url( $local_avatars[$size] ) . "' class='avatar avatar-{$size}{$author_class} photo' height='{$size}' width='{$size}' />";
+		$class = array_key_exists( 'class', $args ) ? ' ' . $args['class'] : '';
+		$avatar = "<img alt='" . esc_attr( $alt ) . "' src='" . esc_url( $local_avatars[$size] ) . "' class='avatar avatar-{$size}{$author_class} photo{$class}' height='{$size}' width='{$size}' />";
 		
 		return apply_filters( 'simple_local_avatar', $avatar );
 	}
@@ -580,6 +575,7 @@ $simple_local_avatars = new Simple_Local_Avatars;
  * @param int $size Size of the avatar image
  * @param string $default URL to a default image to use if no avatar is available
  * @param string $alt Alternate text to use in image tag. Defaults to blank
+ * @param array $args Extra arguments to retrieve the avatar
  * @return string <img> tag for the user's avatar
  */
 function get_simple_local_avatar( $id_or_email, $size = 96, $default = '', $alt = '', $args = array() ) {
@@ -604,6 +600,7 @@ if ( ! function_exists( 'get_avatar' ) && ( $simple_local_avatars_options = get_
 	 * @param int $size Size of the avatar image
 	 * @param string $default URL to a default image to use if no avatar is available
 	 * @param string $alt Alternative text to use in image tag. Defaults to blank
+	 * @param array $args Extra arguments to retrieve the avatar
 	 * @return string <img> tag for the user's avatar
 	 */
 	function get_avatar( $id_or_email, $size = 96, $default = '', $alt = '', $args = array() ) {
@@ -613,6 +610,8 @@ if ( ! function_exists( 'get_avatar' ) && ( $simple_local_avatars_options = get_
 			return false;
 
 		$safe_alt =  empty( $alt ) ? '' : esc_attr( $alt );
+
+		$class = array_key_exists( 'class', $args ) ? ' ' . $args['class'] : '';
 
 		if ( !is_numeric($size) )
 			$size = 96;
@@ -638,7 +637,7 @@ if ( ! function_exists( 'get_avatar' ) && ( $simple_local_avatars_options = get_
 			else
 				$default = "$host/avatar/?d=$default&amp;s={$size}";
 
-			$avatar = "<img alt='{$safe_alt}' src='" . $default . "' class='avatar avatar-{$size} photo avatar-default' height='{$size}' width='{$size}' />";
+			$avatar = "<img alt='{$safe_alt}' src='" . $default . "' class='avatar avatar-{$size} photo avatar-default{$class}' height='{$size}' width='{$size}' />";
 
 		endif;
 
