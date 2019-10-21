@@ -564,7 +564,8 @@ class Simple_Local_Avatars {
 
 }
 
-$GLOBALS['simple_local_avatars'] = new Simple_Local_Avatars();
+global $simple_local_avatars;
+$simple_local_avatars = new Simple_Local_Avatars();
 
 /**
  * more efficient to call simple local avatar directly in theme and avoid gravatar setup
