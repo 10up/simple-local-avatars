@@ -30,9 +30,7 @@ class Simple_Local_Avatars {
 			'X' => __('X &#8212; Even more mature than above')
 		);
 
-		// supplement remote avatars, but not if inside "local only" mode
-		if ( empty( $this->options['only'] ) )
-			add_filter( 'get_avatar', array( $this, 'get_avatar' ), 10, 5 );
+		add_filter( 'pre_get_avatar_data', array( $this, 'get_avatar_data' ), 10, 2 );
 		
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 
@@ -53,16 +51,39 @@ class Simple_Local_Avatars {
 	}
 
 	/**
-	 * Retrieve the local avatar for a user who provided a user ID or email address.
+	 * Filter avatar data early to add avatar url if needed. This filter hooks
+	 * before Gravatar setup to prevent wasted requests.
 	 *
-	 * @param string $avatar Avatar return by original function
-	 * @param int|string|object $id_or_email A user ID,  email address, or comment object
-	 * @param int $size Size of the avatar image
-	 * @param string $default URL to a default image to use if no avatar is available
-	 * @param string $alt Alternative text to use in image tag. Defaults to blank
-	 * @return string <img> tag for the user's avatar
+	 * @since 2.2.0
+	 *
+	 * @param array $args        Arguments passed to get_avatar_data(), after processing.
+	 * @param mixed $id_or_email The Gravatar to retrieve. Accepts a user ID, Gravatar MD5 hash,
+	 *                           user email, WP_User object, WP_Post object, or WP_Comment object.
 	 */
-	public function get_avatar( $avatar = '', $id_or_email = '', $size = 96, $default = '', $alt = '' ) {
+	public function get_avatar_data( $args, $id_or_email ) {
+		$simple_local_avatar_url = $this->get_simple_local_avatar_url( $id_or_email, $args['size'] );
+		if( $simple_local_avatar_url ) {
+			$args['url'] = $simple_local_avatar_url;
+		}
+
+		// Local only mode
+		if( ! $simple_local_avatar_url && $this->options['only'] ) {
+			$args['url'] = $this->get_default_avatar_url( $args['size'] );
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Get local avatar url.
+	 *
+	 * @since 2.2.0
+	 *
+	 * @param mixed $id_or_email The Gravatar to retrieve. Accepts a user ID, Gravatar MD5 hash,
+	 *                           user email, WP_User object, WP_Post object, or WP_Comment object.
+	 * @param int   $size        Requested avatar size. 
+	 */
+	public function get_simple_local_avatar_url( $id_or_email, $size ) {
 		if ( is_numeric( $id_or_email ) )
 			$user_id = (int) $id_or_email;
 		elseif ( is_string( $id_or_email ) && ( $user = get_user_by( 'email', $id_or_email ) ) )
@@ -71,46 +92,43 @@ class Simple_Local_Avatars {
 			$user_id = (int) $id_or_email->user_id;
 		
 		if ( empty( $user_id ) )
-			return $avatar;
+			return '';
 
-		// fetch local avatar from meta and make sure it's properly ste
+		// Fetch local avatar from meta and make sure it's properly set.
 		$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
 		if ( empty( $local_avatars['full'] ) )
-			return $avatar;
+			return '';
 
-		// check rating
+		// Check rating.
 		$avatar_rating = get_user_meta( $user_id, 'simple_local_avatar_rating', true );
 		if ( ! empty( $avatar_rating ) && 'G' != $avatar_rating && ( $site_rating = get_option( 'avatar_rating' ) ) ) {
 			$ratings = array_keys( $this->avatar_ratings );
 			$site_rating_weight = array_search( $site_rating, $ratings );
 			$avatar_rating_weight = array_search( $avatar_rating, $ratings );
 			if ( false !== $avatar_rating_weight && $avatar_rating_weight > $site_rating_weight )
-				return $avatar;
+				return '';
 		}
 
-		// handle "real" media
+		// Handle "real" media.
 		if ( ! empty( $local_avatars['media_id'] ) ) {
 			// has the media been deleted?
 			if ( ! $avatar_full_path = get_attached_file( $local_avatars['media_id'] ) ) {
-				return $avatar;
+				return '';
 			}
 		}
 
 		$size = (int) $size;
 			
-		if ( empty( $alt ) )
-			$alt = get_the_author_meta( 'display_name', $user_id );
-			
-		// generate a new size
+		// Generate a new size.
 		if ( ! array_key_exists( $size, $local_avatars ) ) {
 			$local_avatars[$size] = $local_avatars['full']; // just in case of failure elsewhere
 
-			// allow automatic rescaling to be turned off
-			if ( $allow_dynamic_resizing = apply_filters( 'simple_local_avatars_dynamic_resize', true ) ) :
+			// Allow automatic rescaling to be turned off.
+			if ( apply_filters( 'simple_local_avatars_dynamic_resize', true ) ) :
 
 				$upload_path = wp_upload_dir();
 
-				// get path for image by converting URL, unless its already been set, thanks to using media library approach
+				// Get path for image by converting URL, unless its already been set, thanks to using media library approach.
 				if ( ! isset( $avatar_full_path ) )
 					$avatar_full_path = str_replace( $upload_path['baseurl'], $upload_path['basedir'], $local_avatars['full'] );
 
@@ -126,7 +144,7 @@ class Simple_Local_Avatars {
 					}
 				}
 
-				// save updated avatar sizes
+				// Save updated avatar sizes.
 				update_user_meta( $user_id, 'simple_local_avatar', $local_avatars );
 
 			endif;
@@ -134,11 +152,38 @@ class Simple_Local_Avatars {
 
 		if ( 'http' != substr( $local_avatars[$size], 0, 4 ) )
 			$local_avatars[$size] = home_url( $local_avatars[$size] );
-		
-		$author_class = is_author( $user_id ) ? ' current-author' : '' ;
-		$avatar = "<img alt='" . esc_attr( $alt ) . "' src='" . esc_url( $local_avatars[$size] ) . "' class='avatar avatar-{$size}{$author_class} photo' height='{$size}' width='{$size}' />";
-		
-		return apply_filters( 'simple_local_avatar', $avatar );
+
+		return esc_url( $local_avatars[$size] );
+	}
+
+	/**
+	 * Get default avatar url 
+	 *
+	 * @since 2.2.0
+	 *
+	 * @param int $size Requested avatar size. 
+	 */
+	public function get_default_avatar_url( $size ) {
+		if ( empty( $default ) ) {
+			$avatar_default = get_option( 'avatar_default' );
+			if ( empty( $avatar_default ) )
+				$default = 'mystery';
+			else
+				$default = $avatar_default;
+		}
+
+		$host = is_ssl() ? 'https://secure.gravatar.com' : 'http://0.gravatar.com';
+
+		if ( 'mystery' == $default )
+			$default = "$host/avatar/ad516503a11cd5ca435acc9bb6523536?s={$size}"; // ad516503a11cd5ca435acc9bb6523536 == md5('unknown@gravatar.com')
+		elseif ( 'blank' == $default )
+			$default = includes_url( 'images/blank.gif' );
+		elseif ( 'gravatar_default' == $default )
+			$default = "$host/avatar/?s={$size}";
+		else
+			$default = "$host/avatar/?d=$default&amp;s={$size}";
+
+		return $default;
 	}
 	
 	public function admin_init() {
@@ -456,7 +501,7 @@ class Simple_Local_Avatars {
 	 * remove the custom get_avatar hook for the default avatar list output on options-discussion.php
 	 */
 	public function avatar_defaults( $avatar_defaults ) {
-		remove_action( 'get_avatar', array( $this, 'get_avatar' ) );
+		remove_action( 'pre_get_avatar_data', array( $this, 'get_avatar_data' ) );
 		return $avatar_defaults;
 	}
 
@@ -568,78 +613,21 @@ global $simple_local_avatars;
 $simple_local_avatars = new Simple_Local_Avatars();
 
 /**
- * more efficient to call simple local avatar directly in theme and avoid gravatar setup
+ * more efficient to call simple local avatar directly in theme and avoid
+ * gravatar setup. Since 2.2, This function is only a proxy for get_avatar
+ * due to internal changes.
  * 
  * @param int|string|object $id_or_email A user ID,  email address, or comment object
  * @param int $size Size of the avatar image
  * @param string $default URL to a default image to use if no avatar is available
  * @param string $alt Alternate text to use in image tag. Defaults to blank
+ * @param array $args Support new args parameter.
+ *
  * @return string <img> tag for the user's avatar
  */
-function get_simple_local_avatar( $id_or_email, $size = 96, $default = '', $alt = '' ) {
-	global $simple_local_avatars;
-	$avatar = $simple_local_avatars->get_avatar( '', $id_or_email, $size, $default, $alt );
-	
-	if ( empty ( $avatar ) ) {
-		remove_action( 'get_avatar', array( $simple_local_avatars, 'get_avatar' ) );
-		$avatar = get_avatar( $id_or_email, $size, $default, $alt );
-		add_action( 'get_avatar', array( $simple_local_avatars, 'get_avatar' ), 10, 5 );
-	}
-	
-	return $avatar;
+function get_simple_local_avatar( $id_or_email, $size = 96, $default = '', $alt = '', $args = array() ) {
+	return apply_filters( 'simple_local_avatar', get_avatar( $id_or_email, $size, $default, $alt, $args ) );
 }
-
-if ( ! function_exists( 'get_avatar' ) && ( $simple_local_avatars_options = get_option('simple_local_avatars') ) && ! empty( $simple_local_avatars_options['only'] ) ) :
-
-	/**
-	 * Retrieve the avatar for a user who provided a user ID or email address.
-	 *
-	 * @param int|string|object $id_or_email A user ID,  email address, or comment object
-	 * @param int $size Size of the avatar image
-	 * @param string $default URL to a default image to use if no avatar is available
-	 * @param string $alt Alternative text to use in image tag. Defaults to blank
-	 * @return string <img> tag for the user's avatar
-	 */
-	function get_avatar( $id_or_email, $size = 96, $default = '', $alt = '' ) {
-		global $simple_local_avatars;
-
-		if ( ! get_option('show_avatars') )
-			return false;
-
-		$safe_alt =  empty( $alt ) ? '' : esc_attr( $alt );
-
-		if ( !is_numeric($size) )
-			$size = 96;
-
-		if ( ! $avatar = $simple_local_avatars->get_avatar( '', $id_or_email, $size, $default, $alt ) ) :
-
-			if ( empty($default) ) {
-				$avatar_default = get_option('avatar_default');
-				if ( empty($avatar_default) )
-					$default = 'mystery';
-				else
-					$default = $avatar_default;
-			}
-
-			$host = is_ssl() ? 'https://secure.gravatar.com' : 'http://0.gravatar.com';
-
-			if ( 'mystery' == $default )
-				$default = "$host/avatar/ad516503a11cd5ca435acc9bb6523536?s={$size}"; // ad516503a11cd5ca435acc9bb6523536 == md5('unknown@gravatar.com')
-			elseif ( 'blank' == $default )
-				$default = includes_url( 'images/blank.gif' );
-			elseif ( 'gravatar_default' == $default )
-				$default = "$host/avatar/?s={$size}";
-			else
-				$default = "$host/avatar/?d=$default&amp;s={$size}";
-
-			$avatar = "<img alt='{$safe_alt}' src='" . $default . "' class='avatar avatar-{$size} photo avatar-default' height='{$size}' width='{$size}' />";
-
-		endif;
-
-		return apply_filters('get_avatar', $avatar, $id_or_email, $size, $default, $alt);
-	}
-
-endif;
 
 /**
  * on uninstallation, remove the custom field from the users and delete the local avatars
