@@ -99,7 +99,7 @@ class Simple_Local_Avatars {
 		if ( empty( $local_avatars['full'] ) )
 			return '';
 
-		// Check rating.
+		// check rating
 		$avatar_rating = get_user_meta( $user_id, 'simple_local_avatar_rating', true );
 		if ( ! empty( $avatar_rating ) && 'G' != $avatar_rating && ( $site_rating = get_option( 'avatar_rating' ) ) ) {
 			$ratings = array_keys( $this->avatar_ratings );
@@ -109,7 +109,7 @@ class Simple_Local_Avatars {
 				return '';
 		}
 
-		// Handle "real" media.
+		// handle "real" media
 		if ( ! empty( $local_avatars['media_id'] ) ) {
 			// has the media been deleted?
 			if ( ! $avatar_full_path = get_attached_file( $local_avatars['media_id'] ) ) {
@@ -123,12 +123,12 @@ class Simple_Local_Avatars {
 		if ( ! array_key_exists( $size, $local_avatars ) ) {
 			$local_avatars[$size] = $local_avatars['full']; // just in case of failure elsewhere
 
-			// Allow automatic rescaling to be turned off.
+			// allow automatic rescaling to be turned off
 			if ( apply_filters( 'simple_local_avatars_dynamic_resize', true ) ) :
 
 				$upload_path = wp_upload_dir();
 
-				// Get path for image by converting URL, unless its already been set, thanks to using media library approach.
+				// get path for image by converting URL, unless its already been set, thanks to using media library approach
 				if ( ! isset( $avatar_full_path ) )
 					$avatar_full_path = str_replace( $upload_path['baseurl'], $upload_path['basedir'], $local_avatars['full'] );
 
@@ -144,7 +144,7 @@ class Simple_Local_Avatars {
 					}
 				}
 
-				// Save updated avatar sizes.
+				// save updated avatar sizes
 				update_user_meta( $user_id, 'simple_local_avatar', $local_avatars );
 
 			endif;
@@ -501,7 +501,7 @@ class Simple_Local_Avatars {
 	 * remove the custom get_avatar hook for the default avatar list output on options-discussion.php
 	 */
 	public function avatar_defaults( $avatar_defaults ) {
-		remove_action( 'pre_get_avatar_data', array( $this, 'get_avatar_data' ) );
+		remove_action( 'get_avatar', array( $this, 'get_avatar' ) );
 		return $avatar_defaults;
 	}
 
@@ -648,3 +648,4 @@ function simple_local_avatars_uninstall() {
 	
 	delete_option('simple_local_avatars');
 }
+
