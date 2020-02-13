@@ -67,7 +67,7 @@ class Simple_Local_Avatars {
 		}
 
 		// Local only mode
-		if( ! $simple_local_avatar_url && $this->options['only'] ) {
+		if( ! $simple_local_avatar_url && ! empty( $this->options['only'] ) ) {
 			$args['url'] = $this->get_default_avatar_url( $args['size'] );
 		}
 
