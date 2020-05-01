@@ -3,7 +3,7 @@ Contributors: jakemgold, 10up, thinkoomph
 Donate link: https://10up.com/plugins/simple-local-avatars-wordpress/
 Tags: avatar, gravatar, user photos, users, profile
 Requires at least: 4.6
-Tested up to: 5.3
+Tested up to: 5.4
 Stable tag: 2.1.1
 Text Domain: simple-local-avatars
 
@@ -72,7 +72,7 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 * Optimization for WordPress 3.2 / 3.3 (substitutes deprecated function)
 
 = 1.3 =
-* Avatar file name saved as "user-display-name_avatar" (or other image extension) 
+* Avatar file name saved as "user-display-name_avatar" (or other image extension)
 * Russian localization added
 * Assorted minor code optimizations
 
