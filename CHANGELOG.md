@@ -89,3 +89,20 @@ All notable changes to this project will be documented in this file, per [the Ke
 
 ## [1.0] - 2011-01-18
 - Initial release
+
+[Unreleased]: https://github.com/10up/simple-local-avatars/compare/master...develop
+[2.1.1]: https://github.com/10up/simple-local-avatars/compare/2.1...2.1.1
+[2.1]: https://github.com/10up/simple-local-avatars/compare/2.0...2.1
+[2.0]: https://github.com/10up/simple-local-avatars/compare/1.3.1...2.0
+[1.3.1]: https://github.com/10up/simple-local-avatars/compare/1.3...1.3.1
+[1.3]: https://github.com/10up/simple-local-avatars/compare/1.2.4...1.3
+[1.2.4]: https://github.com/10up/simple-local-avatars/compare/1.2.3...1.2.4
+[1.2.3]: https://github.com/10up/simple-local-avatars/compare/1.2.2...1.2.3
+[1.2.2]: https://github.com/10up/simple-local-avatars/compare/1.2.1...1.2.2
+[1.2.1]: https://github.com/10up/simple-local-avatars/compare/1.2...1.2.1
+[1.2]: https://github.com/10up/simple-local-avatars/compare/1.1.3...1.2
+[1.1.3]: https://github.com/10up/simple-local-avatars/compare/1.1.2...1.1.3
+[1.1.2]: https://github.com/10up/simple-local-avatars/compare/1.1.1...1.1.2
+[1.1.1]: https://github.com/10up/simple-local-avatars/compare/1.1...1.1.1
+[1.1]: https://github.com/10up/simple-local-avatars/compare/1.0...1.1
+[1.0]: https://github.com/10up/simple-local-avatars/releases/tag/1.0
