@@ -53,10 +53,10 @@ class Simple_Local_Avatars {
 	}
 
 	/**
-	 * Retrieve the local avatar for a user who provided a user ID or email address.
+	 * Retrieve the local avatar for a user who provided a user ID, email address or post/comment object.
 	 *
 	 * @param string $avatar Avatar return by original function
-	 * @param int|string|object $id_or_email A user ID,  email address, or comment object
+	 * @param int|string|object $id_or_email A user ID, email address, or post/comment object
 	 * @param int $size Size of the avatar image
 	 * @param string $default URL to a default image to use if no avatar is available
 	 * @param string $alt Alternative text to use in image tag. Defaults to blank
@@ -69,7 +69,9 @@ class Simple_Local_Avatars {
 			$user_id = $user->ID;
 		elseif ( is_object( $id_or_email ) && ! empty( $id_or_email->user_id ) )
 			$user_id = (int) $id_or_email->user_id;
-		
+		elseif ( $id_or_email instanceof WP_Post && ! empty( $id_or_email->post_author ) )
+			$user_id = (int) $id_or_email->post_author;
+
 		if ( empty( $user_id ) )
 			return $avatar;
 
@@ -592,9 +594,9 @@ function get_simple_local_avatar( $id_or_email, $size = 96, $default = '', $alt 
 if ( ! function_exists( 'get_avatar' ) && ( $simple_local_avatars_options = get_option('simple_local_avatars') ) && ! empty( $simple_local_avatars_options['only'] ) ) :
 
 	/**
-	 * Retrieve the avatar for a user who provided a user ID or email address.
+	 * Retrieve the avatar for a user who provided a user ID, post/comment object or email address.
 	 *
-	 * @param int|string|object $id_or_email A user ID,  email address, or comment object
+	 * @param int|string|object $id_or_email A user ID, email address, or post/comment object
 	 * @param int $size Size of the avatar image
 	 * @param string $default URL to a default image to use if no avatar is available
 	 * @param string $alt Alternative text to use in image tag. Defaults to blank
