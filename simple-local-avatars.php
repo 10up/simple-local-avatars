@@ -90,9 +90,9 @@ class Simple_Local_Avatars {
 			$user_id = $user->ID;
 		elseif ( is_object( $id_or_email ) && ! empty( $id_or_email->user_id ) )
 			$user_id = (int) $id_or_email->user_id;
-		elseif ( $id_or_email instanceof WP_Post && ! empty( $id_or_email->post_author ) )
+		elseif ( $id_or_email instanceof WP_Post && ! empty( $id_or_email->post_author ) )
 			$user_id = (int) $id_or_email->post_author;
-		
+
 		if ( empty( $user_id ) )
 			return '';
 
@@ -650,4 +650,3 @@ function simple_local_avatars_uninstall() {
 	
 	delete_option('simple_local_avatars');
 }
-
