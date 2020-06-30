@@ -4,8 +4,10 @@ Donate link: https://10up.com/plugins/simple-local-avatars-wordpress/
 Tags: avatar, gravatar, user photos, users, profile
 Requires at least: 4.6
 Tested up to: 5.4
+Requires PHP: 5.3
 Stable tag: 2.1.1
-Text Domain: simple-local-avatars
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!
 
