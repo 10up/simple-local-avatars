@@ -2,44 +2,63 @@
 
 All notable changes to this project will be documented in this file, per [the Keep a Changelog standard](http://keepachangelog.com/).
 
+## [Unreleased] - TBD
+
+## [2.2.0] - TBD
+### Added
+- Ability to retrieve avatar with `WP_Post` object (props [@oscarssanchez](https://github.com/oscarssanchez), [@blobaugh](https://github.com/blobaugh) via [#47](https://github.com/10up/simple-local-avatars/pull/47))
+
+### Changed
+- Bumped WordPress version support to 5.4 (props [@Waka867](https://github.com/Waka867), [@tmoorewp](https://github.com/tmoorewp), [@jeffpaul](https://github.com/jeffpaul) via [#36](https://github.com/10up/simple-local-avatars/pull/36), [#43](https://github.com/10up/simple-local-avatars/pull/43))
+- GitHub Actions from HCL to YAML workflow syntax (props [@jeffpaul](https://github.com/jeffpaul) via [#37](https://github.com/10up/simple-local-avatars/pull/37))
+- Documentation updates (props [@jeffpaul](https://github.com/jeffpaul) via [#29](https://github.com/10up/simple-local-avatars/pull/29), [#30](https://github.com/10up/simple-local-avatars/pull/30), [#33](https://github.com/10up/simple-local-avatars/pull/33), [#45](https://github.com/10up/simple-local-avatars/pull/45), [#50](https://github.com/10up/simple-local-avatars/pull/50))
+
+### Fixed
+- Initialize `Simple_Local_Avatars` on the `$simple_local_avatars` global, enabling bundling plugin with composer (props [@pdewouters](https://github.com/pdewouters), [@adamsilverstein](https://github.com/adamsilverstein) via [#34](https://github.com/10up/simple-local-avatars/pull/34))
+
 ## [2.1.1] - 2019-05-07
-* Fixed: Do not delete avatars just because they don't exist on the local filesystem. This was occasionally dumping avatars when WordPress uploads were stored elsewhere, e.g. a cloud service.
+### Fixed
+- Do not delete avatars just because they don't exist on the local filesystem. This was occasionally dumping avatars when WordPress uploads were stored elsewhere, e.g. a cloud service.
 
 ## [2.1] - 2018-10-24
 ### Added
-* All avatar uploads now go into the media library. Don't worry - users without the ability to upload files cannot otherwise see the contents of your media library. This allows local avatars to respect other functionality your site may have around uploaded images, such as external hosting.
-* REST API support for getting and updating.
-* Use .org language packs rather than bundling translations.
+- All avatar uploads now go into the media library. Don't worry - users without the ability to upload files cannot otherwise see the contents of your media library. This allows local avatars to respect other functionality your site may have around uploaded images, such as external hosting.
+- REST API support for getting and updating.
+- Use .org language packs rather than bundling translations.
+
 ### Fixed
-* Avoid an `ArgumentCountError`.
-* A couple of internationalization issues.
+- Avoid an `ArgumentCountError`.
+- A couple of internationalization issues.
 
 ## [2.0] - 2013-06-02
 ### Added
-* Choose or upload an avatar from the media library (for users with appropriate capabilities)!
-* Local avatars are rated for appropriateness, just like Gravatar
-* A new setting under Discussion enables administrators to turn off Gravatar (only use local avatars)
-* Delete the local avatar with a single button click (like everywhere else in WordPress)
-* Uploaded avatar file names are appended with the timestamp, addressing browser image caching issues
-* New developer filter for preventing automatic rescaling: simple_local_avatars_dynamic_resize
-* New developer filter for limiting upload size: simple_local_avatars_upload_limit
-* Upgraded functions deprecated since WordPress 3.5
-* Hungarian translation added (needs further updating again with new version)
+- Choose or upload an avatar from the media library (for users with appropriate capabilities)!
+- Local avatars are rated for appropriateness, just like Gravatar
+- A new setting under Discussion enables administrators to turn off Gravatar (only use local avatars)
+- Delete the local avatar with a single button click (like everywhere else in WordPress)
+- Uploaded avatar file names are appended with the timestamp, addressing browser image caching issues
+- New developer filter for preventing automatic rescaling: simple_local_avatars_dynamic_resize
+- New developer filter for limiting upload size: simple_local_avatars_upload_limit
+- Upgraded functions deprecated since WordPress 3.5
+- Hungarian translation added (needs further updating again with new version)
+
 ### Fixed
-* Fixed translations not working on front end (although translations are now a bit out of date...)
-* Assorted refactoring / improvements under the hood
+- Fixed translations not working on front end (although translations are now a bit out of date...)
+- Assorted refactoring / improvements under the hood
 
 ## [1.3.1] - 2011-12-29
 ### Added
-* Brazilian Portuguese and Belarusian translations
+- Brazilian Portuguese and Belarusian translations
+
 ### Fixed
-* Bug fixes (most notably correct naming of image files based on user display name)
-* Optimization for WordPress 3.2 / 3.3 (substitutes deprecated function)
+- Bug fixes (most notably correct naming of image files based on user display name)
+- Optimization for WordPress 3.2 / 3.3 (substitutes deprecated function)
 
 ## [1.3] - 2011-09-22
 ### Added
-- Avatar file name saved as "user-display-name_avatar" (or other image extension) 
+- Avatar file name saved as "user-display-name_avatar" (or other image extension)
 - Russian localization added
+
 ### Fixed
 - Assorted minor code optimizations
 
@@ -58,16 +77,18 @@ All notable changes to this project will be documented in this file, per [the Ke
 ## [1.2.1] - 2011-01-26
 ### Added
 - French localization
+
 ### Fixed
 - Simplify uninstall code
 
 ## [1.2] - 2011-01-26
-### Fixed
-- Fix path issues on some IIS servers (resulting in missing avatar images)
-- Fix rare uninstall issues related to deleted avatars
 ### Added
 - Spanish localization
 - Other minor under the hood optimizations
+
+### Fixed
+- Fix path issues on some IIS servers (resulting in missing avatar images)
+- Fix rare uninstall issues related to deleted avatars
 
 ## [1.1.3] - 2011-01-20
 ### Fixed
@@ -90,7 +111,8 @@ All notable changes to this project will be documented in this file, per [the Ke
 ## [1.0] - 2011-01-18
 - Initial release
 
-[Unreleased]: https://github.com/10up/simple-local-avatars/compare/master...develop
+[Unreleased]: https://github.com/10up/simple-local-avatars/compare/trunk...develop
+[2.2.0]: https://github.com/10up/simple-local-avatars/compare/2.1.1...2.2.0
 [2.1.1]: https://github.com/10up/simple-local-avatars/compare/2.1...2.1.1
 [2.1]: https://github.com/10up/simple-local-avatars/compare/2.0...2.1
 [2.0]: https://github.com/10up/simple-local-avatars/compare/1.3.1...2.0
