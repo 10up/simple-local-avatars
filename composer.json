@@ -21,5 +21,9 @@
   },
   "require": {
     "php": ">=5.3"
+  },
+  "minimum-stability": "dev",
+  "require-dev": {
+    "10up/wpacceptance": "dev-master"
   }
 }

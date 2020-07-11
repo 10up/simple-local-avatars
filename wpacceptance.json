@@ -1,0 +1,20 @@
+{
+    "name": "simple-local-avatar",
+    "tests": [
+        "tests/wpa/*.php"
+    ],
+    "exclude": [
+      "node_modules",
+      "vendor"
+    ],
+    "enforce_clean_db": false,
+    "environment_instructions":
+    [
+      [
+        "install wordpress where version is latest and url is http://sla.test",
+        "activate plugin where name is simple-local-avatar",
+        "enable theme where name is twentysixteen"
+      ]
+    ],
+    "project_path": "%WP_ROOT%/wp-content/plugins/simple-local-avatar"
+}
