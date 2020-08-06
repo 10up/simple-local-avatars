@@ -328,7 +328,7 @@ class Simple_Local_Avatars {
 	 * @param int|string $url_or_media_id Local URL for avatar or ID of attachment
 	 * @param int $user_id ID of user to assign image to
 	 */
-	private function assign_new_user_avatar( $url_or_media_id, $user_id ) {
+	public function assign_new_user_avatar( $url_or_media_id, $user_id ) {
 		// delete the old avatar
 		$this->avatar_delete( $user_id );	// delete old images if successful
 
