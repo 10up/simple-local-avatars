@@ -245,7 +245,7 @@ class Simple_Local_Avatars {
 	 */
 	public function edit_user_profile( $profileuser ) {
 	?>
-	<div id="simple-local-avatar-section" class="simple-local-avatar">
+	<div id="simple-local-avatar-section">
 		<h3><?php _e( 'Avatar','simple-local-avatars' ); ?></h3>
 
 		<table class="form-table">
