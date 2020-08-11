@@ -49,6 +49,21 @@ class Simple_Local_Avatars {
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_fields' ) );
 	}
+	/**
+	 * Retrieve the local avatar for a user who provided a user ID, email address or post/comment object.
+	 *
+	 * @param string $avatar Avatar return by original function
+	 * @param int|string|object $id_or_email A user ID, email address, or post/comment object
+	 * @param int $size Size of the avatar image
+	 * @param string $default URL to a default image to use if no avatar is available
+	 * @param string $alt Alternative text to use in image tag. Defaults to blank
+	 * @param array $args Optional. Extra arguments to retrieve the avatar.
+	 *
+	 * @return string <img> tag for the user's avatar
+	 */
+	public function get_avatar( $avatar = '', $id_or_email = '', $size = 96, $default = '', $alt = '', $args = array() ) {
+		return apply_filters( 'simple_local_avatar', get_avatar( $id_or_email, $size, $default, $alt, $args ) );
+	}
 
 	/**
 	 * Filter avatar data early to add avatar url if needed. This filter hooks
@@ -623,7 +638,7 @@ $simple_local_avatars = new Simple_Local_Avatars();
  * @param int $size Size of the avatar image
  * @param string $default URL to a default image to use if no avatar is available
  * @param string $alt Alternate text to use in image tag. Defaults to blank
- * @param array $args Support new args parameter.
+ * @param array $args Optional. Extra arguments to retrieve the avatar.
  *
  * @return string <img> tag for the user's avatar
  */
@@ -631,12 +646,10 @@ function get_simple_local_avatar( $id_or_email, $size = 96, $default = '', $alt 
 	return apply_filters( 'simple_local_avatar', get_avatar( $id_or_email, $size, $default, $alt, $args ) );
 }
 
+register_uninstall_hook( __FILE__, 'simple_local_avatars_uninstall' );
 /**
  * on uninstallation, remove the custom field from the users and delete the local avatars
  */
-
-register_uninstall_hook( __FILE__, 'simple_local_avatars_uninstall' );
-
 function simple_local_avatars_uninstall() {
 	$simple_local_avatars = new Simple_Local_Avatars;
 	$users = get_users(array(
