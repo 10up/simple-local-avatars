@@ -11,9 +11,9 @@
  */
 
 /**
- * add field to user profiles
+ * Class: Simple_Local_Avatars
+ * Adds an avatar upload field to user profiles.
  */
-
 class Simple_Local_Avatars {
 	private $user_id_being_edited, $avatar_upload_error, $remove_nonce, $avatar_ratings;
 	public $options;
