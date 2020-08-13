@@ -85,6 +85,10 @@ class Simple_Local_Avatars {
 			$args['url'] = $this->get_default_avatar_url( $args['size'] );
 		}
 
+		if ( ! empty( $args['url'] ) ) {
+			$args['found_avatar'] = true;
+		}
+
 		return $args;
 	}
 
