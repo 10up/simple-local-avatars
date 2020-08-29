@@ -21,5 +21,17 @@
   },
   "require": {
     "php": ">=5.3"
-  }
+  },
+  "require-dev": {
+    "10up/phpcs-composer": "dev-master"
+  },
+  "scripts": {
+    "lint": [
+      "phpcs ."
+    ],
+    "lint-fix": [
+      "phpcbf ."
+    ]
+  },
+  "minimum-stability": "dev"
 }
