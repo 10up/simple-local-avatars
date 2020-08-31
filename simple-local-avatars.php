@@ -330,90 +330,92 @@ class Simple_Local_Avatars {
 	 * @param object $profileuser User object
 	 */
 	public function edit_user_profile( $profileuser ) {
-		?>
-	<h3><?php esc_html_e( 'Avatar', 'simple-local-avatars' ); ?></h3>
+	?>
+	<div id="simple-local-avatar-section">
+		<h3><?php esc_html_e( 'Avatar', 'simple-local-avatars' ); ?></h3>
 
-	<table class="form-table">
-		<tr>
-			<th scope="row"><label for="simple-local-avatar"><?php esc_html_e( 'Upload Avatar', 'simple-local-avatars' ); ?></label></th>
-			<td style="width: 50px;" id="simple-local-avatar-photo">
-		<?php
-		add_filter( 'pre_option_avatar_rating', '__return_null' );     // ignore ratings here
-		echo get_simple_local_avatar( $profileuser->ID );
-		remove_filter( 'pre_option_avatar_rating', '__return_null' );
-		?>
-			</td>
-			<td>
-		<?php
-		if ( ! $upload_rights = current_user_can( 'upload_files' ) ) {
-			$upload_rights = empty( $this->options['caps'] );
-		}
-
-		if ( $upload_rights ) {
-			do_action( 'simple_local_avatar_notices' );
-			wp_nonce_field( 'simple_local_avatar_nonce', '_simple_local_avatar_nonce', false );
-			$remove_url = add_query_arg(
-				array(
-					'action'   => 'remove-simple-local-avatar',
-					'user_id'  => $profileuser->ID,
-					'_wpnonce' => $this->remove_nonce,
-				)
-			);
+		<table class="form-table">
+			<tr class="upload-avatar-row">
+				<th scope="row"><label for="simple-local-avatar"><?php esc_html_e( 'Upload Avatar', 'simple-local-avatars' ); ?></label></th>
+				<td style="width: 50px;" id="simple-local-avatar-photo">
+			<?php
+			add_filter( 'pre_option_avatar_rating', '__return_null' );     // ignore ratings here
+			echo get_simple_local_avatar( $profileuser->ID );
+			remove_filter( 'pre_option_avatar_rating', '__return_null' );
 			?>
+				</td>
+				<td>
 			<?php
-			// if user is author and above hide the choose file option
-			// force them to use the WP Media Selector
-			if ( ! current_user_can( 'upload_files' ) ) {
-				?>
-					<p style="display: inline-block; width: 26em;">
-						<span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br />
-						<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
-						<span class="spinner" id="simple-local-avatar-spinner"></span>
-					</p>
-			<?php } ?>
-					<p>
-					<?php if ( current_user_can( 'upload_files' ) && did_action( 'wp_enqueue_media' ) ) : ?>
-						<a href="#" class="button hide-if-no-js" id="simple-local-avatar-media"><?php esc_html_e( 'Choose from Media Library', 'simple-local-avatars' ); ?></a> &nbsp;
-					<?php endif; ?>
-						<a
-							href="<?php echo esc_url( $remove_url ); ?>"
-							class="button item-delete submitdelete deletion"
-							id="simple-local-avatar-remove"
-							<?php echo empty( $profileuser->simple_local_avatar ) ? ' style="display:none;"' : ''; ?>
-						>
-							<?php esc_html_e( 'Delete local avatar', 'simple-local-avatars' ); ?>
-						</a>
-					</p>
-			<?php
-		} else {
-			if ( empty( $profileuser->simple_local_avatar ) ) {
-				echo '<span class="description">' . esc_html__( 'No local avatar is set. Set up your avatar at Gravatar.com.', 'simple-local-avatars' ) . '</span>';
-			} else {
-				echo '<span class="description">' . esc_html__( 'You do not have media management permissions. To change your local avatar, contact the blog administrator.', 'simple-local-avatars' ) . '</span>';
+			if ( ! $upload_rights = current_user_can( 'upload_files' ) ) {
+				$upload_rights = empty( $this->options['caps'] );
 			}
-		}
-		?>
-			</td>
-		</tr>
-		<tr>
-			<th scope="row"><?php esc_html_e( 'Rating' ); ?></th>
-			<td colspan="2">
-				<fieldset id="simple-local-avatar-ratings" <?php disabled( empty( $profileuser->simple_local_avatar ) ); ?>>
-					<legend class="screen-reader-text"><span><?php esc_html_e( 'Rating' ); ?></span></legend>
-				<?php
-				if ( empty( $profileuser->simple_local_avatar_rating ) || ! array_key_exists( $profileuser->simple_local_avatar_rating, $this->avatar_ratings ) ) {
-					$profileuser->simple_local_avatar_rating = 'G';
-				}
 
-				foreach ( $this->avatar_ratings as $key => $rating ) :
-					echo "\n\t<label><input type='radio' name='simple_local_avatar_rating' value='" . esc_attr( $key ) . "' " . checked( $profileuser->simple_local_avatar_rating, $key, false ) . "/> $rating</label><br />";
-				endforeach;
+			if ( $upload_rights ) {
+				do_action( 'simple_local_avatar_notices' );
+				wp_nonce_field( 'simple_local_avatar_nonce', '_simple_local_avatar_nonce', false );
+				$remove_url = add_query_arg(
+					array(
+						'action'   => 'remove-simple-local-avatar',
+						'user_id'  => $profileuser->ID,
+						'_wpnonce' => $this->remove_nonce,
+					)
+				);
 				?>
-					<p class="description"><?php esc_html_e( 'If the local avatar is inappropriate for this site, Gravatar will be attempted.', 'simple-local-avatars' ); ?></p>
-				</fieldset></td>
-		</tr>
-	</table>
-		<?php
+				<?php
+				// if user is author and above hide the choose file option
+				// force them to use the WP Media Selector
+				if ( ! current_user_can( 'upload_files' ) ) {
+					?>
+						<p style="display: inline-block; width: 26em;">
+							<span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br />
+							<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
+							<span class="spinner" id="simple-local-avatar-spinner"></span>
+						</p>
+				<?php } ?>
+						<p>
+						<?php if ( current_user_can( 'upload_files' ) && did_action( 'wp_enqueue_media' ) ) : ?>
+							<a href="#" class="button hide-if-no-js" id="simple-local-avatar-media"><?php esc_html_e( 'Choose from Media Library', 'simple-local-avatars' ); ?></a> &nbsp;
+						<?php endif; ?>
+							<a
+								href="<?php echo esc_url( $remove_url ); ?>"
+								class="button item-delete submitdelete deletion"
+								id="simple-local-avatar-remove"
+								<?php echo empty( $profileuser->simple_local_avatar ) ? ' style="display:none;"' : ''; ?>
+							>
+								<?php esc_html_e( 'Delete local avatar', 'simple-local-avatars' ); ?>
+							</a>
+						</p>
+				<?php
+			} else {
+				if ( empty( $profileuser->simple_local_avatar ) ) {
+					echo '<span class="description">' . esc_html__( 'No local avatar is set. Set up your avatar at Gravatar.com.', 'simple-local-avatars' ) . '</span>';
+				} else {
+					echo '<span class="description">' . esc_html__( 'You do not have media management permissions. To change your local avatar, contact the blog administrator.', 'simple-local-avatars' ) . '</span>';
+				}
+			}
+			?>
+				</td>
+			</tr>
+			<tr class="ratings-row">
+				<th scope="row"><?php esc_html_e( 'Rating' ); ?></th>
+				<td colspan="2">
+					<fieldset id="simple-local-avatar-ratings" <?php disabled( empty( $profileuser->simple_local_avatar ) ); ?>>
+						<legend class="screen-reader-text"><span><?php esc_html_e( 'Rating' ); ?></span></legend>
+					<?php
+					if ( empty( $profileuser->simple_local_avatar_rating ) || ! array_key_exists( $profileuser->simple_local_avatar_rating, $this->avatar_ratings ) ) {
+						$profileuser->simple_local_avatar_rating = 'G';
+					}
+
+					foreach ( $this->avatar_ratings as $key => $rating ) :
+						echo "\n\t<label><input type='radio' name='simple_local_avatar_rating' value='" . esc_attr( $key ) . "' " . checked( $profileuser->simple_local_avatar_rating, $key, false ) . "/> $rating</label><br />";
+					endforeach;
+					?>
+						<p class="description"><?php esc_html_e( 'If the local avatar is inappropriate for this site, Gravatar will be attempted.', 'simple-local-avatars' ); ?></p>
+					</fieldset></td>
+			</tr>
+		</table>
+	</div>
+	<?php
 	}
 
 	/**
