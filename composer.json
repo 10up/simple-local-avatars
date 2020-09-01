@@ -23,6 +23,7 @@
     "php": ">=5.3"
   },
   "require-dev": {
+    "10up/wpacceptance": "dev-master",
     "10up/phpcs-composer": "dev-master"
   },
   "scripts": {
