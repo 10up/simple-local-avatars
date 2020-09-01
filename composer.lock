@@ -205,16 +205,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.151.3",
+            "version": "3.145.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "6deca431ad8d061face518bdde2072445385f45a"
+                "reference": "3c5a921f0de917f9fc3d51b2970106d3abfc6b8f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6deca431ad8d061face518bdde2072445385f45a",
-                "reference": "6deca431ad8d061face518bdde2072445385f45a",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3c5a921f0de917f9fc3d51b2970106d3abfc6b8f",
+                "reference": "3c5a921f0de917f9fc3d51b2970106d3abfc6b8f",
                 "shasum": ""
             },
             "require": {
@@ -286,7 +286,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-08-31T18:25:57+00:00"
+            "time": "2020-07-09T18:13:42+00:00"
         },
         {
             "name": "clue/socket-raw",
