@@ -1,5 +1,5 @@
 {
-    "name": "simple-local-avatar",
+    "name": "simple-local-avatars",
     "tests": [
         "tests/wpa/*.php"
     ],
@@ -12,9 +12,9 @@
     [
       [
         "install wordpress where version is latest and url is http://sla.test",
-        "activate plugin where name is simple-local-avatar",
+        "activate plugin where name is simple-local-avatars",
         "enable theme where name is twentysixteen"
       ]
     ],
-    "project_path": "%WP_ROOT%/wp-content/plugins/simple-local-avatar"
+    "project_path": "%WP_ROOT%/wp-content/plugins/simple-local-avatars"
 }
