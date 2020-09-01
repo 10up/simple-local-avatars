@@ -205,16 +205,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.151.2",
+            "version": "3.151.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "7191394eb44edee26db739207c432e408cd6a26f"
+                "reference": "6deca431ad8d061face518bdde2072445385f45a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/7191394eb44edee26db739207c432e408cd6a26f",
-                "reference": "7191394eb44edee26db739207c432e408cd6a26f",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6deca431ad8d061face518bdde2072445385f45a",
+                "reference": "6deca431ad8d061face518bdde2072445385f45a",
                 "shasum": ""
             },
             "require": {
@@ -286,7 +286,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-08-28T18:11:11+00:00"
+            "time": "2020-08-31T18:25:57+00:00"
         },
         {
             "name": "clue/socket-raw",
@@ -3900,12 +3900,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "d33a6a99ae2f165f1f835ebf1645e471280cbcbd"
+                "reference": "48d5baeef99c038f685ef9f488d0673bb120b517"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/d33a6a99ae2f165f1f835ebf1645e471280cbcbd",
-                "reference": "d33a6a99ae2f165f1f835ebf1645e471280cbcbd",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/48d5baeef99c038f685ef9f488d0673bb120b517",
+                "reference": "48d5baeef99c038f685ef9f488d0673bb120b517",
                 "shasum": ""
             },
             "require": {
@@ -3943,7 +3943,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2020-08-21T00:01:49+00:00"
+            "time": "2020-08-31T23:26:17+00:00"
         },
         {
             "name": "symfony/console",
