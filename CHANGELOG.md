@@ -6,15 +6,24 @@ All notable changes to this project will be documented in this file, per [the Ke
 
 ## [2.2.0] - TBD
 ### Added
+- `$args` parameter to `get_simple_local_avatar` function (props [@dinhtungdu](https://github.com/dinhtungdu), [@heyjones](https://github.com/heyjones), [@dkotter](https://github.com/dkotter), [@sumnercreations](https://github.com/sumnercreations), [@dshanske](https://github.com/dshanske) via [#40](https://github.com/10up/simple-local-avatars/pull/40))
+- `Simple_Local_Avatars::get_avatar_data()`, `Simple_Local_Avatars::get_simple_local_avatar_url()`, and `Simple_Local_Avatars::get_default_avatar_url()`, methods (props [@dinhtungdu](https://github.com/dinhtungdu), [@heyjones](https://github.com/heyjones), [@dkotter](https://github.com/dkotter), [@sumnercreations](https://github.com/sumnercreations), [@dshanske](https://github.com/dshanske) via [#40](https://github.com/10up/simple-local-avatars/pull/40))
 - Ability to retrieve avatar with `WP_Post` object (props [@oscarssanchez](https://github.com/oscarssanchez), [@blobaugh](https://github.com/blobaugh) via [#47](https://github.com/10up/simple-local-avatars/pull/47))
+- Add class and ID to Avatar section on Profile Page to allow easier styling of the section (props [@dinhtungdu](https://github.com/dinhtungdu) via [#54](https://github.com/10up/simple-local-avatars/pull/54))
+- [WP Acceptance](https://github.com/10up/wpacceptance/) test coverage (props [@dinhtungdu](https://github.com/dinhtungdu) via [#53](https://github.com/10up/simple-local-avatars/pull/53))
 
 ### Changed
+- Switched to `pre_get_avatar_data` filter (props [@dinhtungdu](https://github.com/dinhtungdu), [@heyjones](https://github.com/heyjones), [@dkotter](https://github.com/dkotter), [@sumnercreations](https://github.com/sumnercreations), [@dshanske](https://github.com/dshanske) via [#40](https://github.com/10up/simple-local-avatars/pull/40))
+- `assign_new_user_avatar` function made public (props [@tripflex](https://github.com/tripflex) via [#48](https://github.com/10up/simple-local-avatars/pull/48))
 - Bumped WordPress version support to 5.4 (props [@Waka867](https://github.com/Waka867), [@tmoorewp](https://github.com/tmoorewp), [@jeffpaul](https://github.com/jeffpaul) via [#36](https://github.com/10up/simple-local-avatars/pull/36), [#43](https://github.com/10up/simple-local-avatars/pull/43))
 - GitHub Actions from HCL to YAML workflow syntax (props [@jeffpaul](https://github.com/jeffpaul) via [#37](https://github.com/10up/simple-local-avatars/pull/37))
 - Documentation updates (props [@jeffpaul](https://github.com/jeffpaul) via [#29](https://github.com/10up/simple-local-avatars/pull/29), [#30](https://github.com/10up/simple-local-avatars/pull/30), [#33](https://github.com/10up/simple-local-avatars/pull/33), [#45](https://github.com/10up/simple-local-avatars/pull/45), [#50](https://github.com/10up/simple-local-avatars/pull/50))
 
 ### Fixed
 - Initialize `Simple_Local_Avatars` on the `$simple_local_avatars` global, enabling bundling plugin with composer (props [@pdewouters](https://github.com/pdewouters), [@adamsilverstein](https://github.com/adamsilverstein) via [#34](https://github.com/10up/simple-local-avatars/pull/34))
+
+### Removed
+- `get_avatar` fuinction that overrides the core function (props [@dinhtungdu](https://github.com/dinhtungdu), [@heyjones](https://github.com/heyjones), [@dkotter](https://github.com/dkotter), [@sumnercreations](https://github.com/sumnercreations), [@dshanske](https://github.com/dshanske) via [#40](https://github.com/10up/simple-local-avatars/pull/40))
 
 ## [2.1.1] - 2019-05-07
 ### Fixed
