@@ -13,12 +13,19 @@ class Simple_Local_Avatars {
 	public function __construct() {
 		$this->options        = (array) get_option( 'simple_local_avatars' );
 		$this->avatar_ratings = array(
-			'G'  => __( 'G &#8212; Suitable for all audiences' ),
-			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above' ),
-			'R'  => __( 'R &#8212; Intended for adult audiences above 17' ),
-			'X'  => __( 'X &#8212; Even more mature than above' ),
+			'G'  => __( 'G &#8212; Suitable for all audiences', 'simple-local-avatars' ),
+			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above', 'simple-local-avatars' ),
+			'R'  => __( 'R &#8212; Intended for adult audiences above 17', 'simple-local-avatars' ),
+			'X'  => __( 'X &#8212; Even more mature than above', 'simple-local-avatars' ),
 		);
 
+		$this->add_hooks();
+	}
+
+	/**
+	 * Register actions and filters.
+	 */
+	public function add_hooks() {
 		add_filter( 'pre_get_avatar_data', array( $this, 'get_avatar_data' ), 10, 2 );
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );

@@ -1,0 +1,22 @@
+<phpunit
+	bootstrap="tests/phpunit/bootstrap.php"
+	backupGlobals="false"
+	processIsolation="false"
+	colors="false">
+	<testsuites>
+		<testsuite name="Simple Local Avatars">
+			<directory suffix="Test.php">./tests/phpunit</directory>
+		</testsuite>
+	</testsuites>
+	<filter>
+		<whitelist>
+			<directory suffix=".php">includes</directory>
+			<exclude></exclude>
+		</whitelist>
+	</filter>
+	<php>
+		<ini name="error_reporting" value="32767" />
+		<ini name="display_errors" value="1" />
+		<ini name="display_startup_errors" value="1" />
+	</php>
+</phpunit>
