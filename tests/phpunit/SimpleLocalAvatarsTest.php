@@ -5,6 +5,23 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 
 	public function setUp(): void {
 		$this->instance = Mockery::mock( 'Simple_Local_Avatars' )->makePartial();
+		$user           = (object) [
+			'ID' => 1
+		];
+
+		WP_Mock::userFunction( 'get_user_by' )
+			->with( 'email', '' )
+			->andReturn( false );
+
+		WP_Mock::userFunction( 'get_user_by' )
+			->with( 'email', Mockery::type( 'string' ) )
+			->andReturn( $user );
+
+		WP_Mock::userFunction( 'get_user_meta' )
+			->with( Mockery::type( 'numeric' ), 'simple_local_avatar', true )
+			->andReturn( [
+				'full' => 'https://example.com/avatar.png'
+			] );
 		parent::setUp();
 	}
 
@@ -50,7 +67,15 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$this->assertEquals( $filtered_img, $this->instance->get_avatar() );
 	}
 
-	public function test_get_avatar_data() {
+	//public function test_get_avatar_data() {
 		
+	//}
+
+	public function test_get_simple_local_avatar_url_with_empty_id() {
+		$this->assertEmpty( $this->instance->get_simple_local_avatar_url( '', 96 ) );
+	}
+
+	public function test_get_simple_local_avatar_url_with_valid_user_id() {
+		$this->assertEquals( 'https://example.com/avatar.png', $this->instance->get_simple_local_avatar_url( '1', 96 ) );
 	}
 }
