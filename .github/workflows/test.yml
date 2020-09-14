@@ -25,5 +25,22 @@ jobs:
     - name: Install dependencies
       run: composer install
 
-    - name: Test
+    - name: WP Accptance Test
       run: ./vendor/bin/wpacceptance run
+  test_phpunit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set PHP version
+      uses: shivammathur/setup-php@v1
+      with:
+        php-version: '7.2'
+        coverage: none
+
+    - name: Install dependencies
+      run: composer install
+
+    - name: PHPUnit Test
+      run: ./vendor/bin/phpunit
