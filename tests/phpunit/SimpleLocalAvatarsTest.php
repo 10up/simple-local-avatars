@@ -4,6 +4,8 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 	private $instance;
 
 	public function setUp(): void {
+		parent::setUp();
+
 		$this->instance = Mockery::mock( 'Simple_Local_Avatars' )->makePartial();
 		$user           = (object) [
 			'ID' => 1
@@ -18,11 +20,22 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 			->andReturn( $user );
 
 		WP_Mock::userFunction( 'get_user_meta' )
-			->with( Mockery::type( 'numeric' ), 'simple_local_avatar', true )
+			->with( 1, 'simple_local_avatar', true )
 			->andReturn( [
-				'full' => 'https://example.com/avatar.png'
-			] );
-		parent::setUp();
+				'media_id' => 101,
+				'full'     => 'https://example.com/avatar.png',
+				'96'       => 'https://example.com/avatar-96x96.png',
+			] )
+			->byDefault();
+
+		WP_Mock::userFunction( 'get_user_meta' )
+			->with( Mockery::type( 'numeric' ), 'simple_local_avatar_rating', true )
+			->andReturn( 'G' );
+
+		WP_Mock::userFunction( 'get_attached_file' )
+			->with( 101 )
+			->andReturn( '/avatar.png' );
+
 	}
 
 	public function tearDown(): void {
@@ -67,15 +80,85 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$this->assertEquals( $filtered_img, $this->instance->get_avatar() );
 	}
 
-	//public function test_get_avatar_data() {
-		
-	//}
+	public function test_get_avatar_data() {
+			$avatar_data = $this->instance->get_avatar_data( [ 'size' => 96 ], 1 );
+			$this->assertEquals( 'https://example.com/avatar-96x96.png', $avatar_data['url'] );
+	}
 
 	public function test_get_simple_local_avatar_url_with_empty_id() {
 		$this->assertEmpty( $this->instance->get_simple_local_avatar_url( '', 96 ) );
 	}
 
-	public function test_get_simple_local_avatar_url_with_valid_user_id() {
-		$this->assertEquals( 'https://example.com/avatar.png', $this->instance->get_simple_local_avatar_url( '1', 96 ) );
+	public function test_get_simple_local_avatar_url_user_with_no_avatar() {
+		WP_Mock::userFunction( 'get_user_meta' )
+			->with( 2, 'simple_local_avatar', true )
+			->andReturn( [] );
+		$this->assertEquals( '', $this->instance->get_simple_local_avatar_url( 2, 96 ) );
+	}
+
+	public function test_get_simple_local_avatar_url_media_file_deleted() {
+		WP_Mock::userFunction( 'get_user_meta' )
+			->with( 2, 'simple_local_avatar', true )
+			->andReturn( ['media_id' => 102 ] );
+		WP_Mock::userFunction( 'get_attached_file' )
+			->with( 102 )
+			->andReturn( false );
+		$this->assertEquals( '', $this->instance->get_simple_local_avatar_url( 2, 96 ) );
+	}
+
+	public function test_get_simple_local_avatar_url() {
+		$this->assertEquals( 'https://example.com/avatar-96x96.png', $this->instance->get_simple_local_avatar_url( 1, 96 ) );
+	}
+
+	public function test_admin_init() {
+		WP_Mock::userFunction( 'get_option' )
+			->with( 'simple_local_avatars_caps' )
+			->andReturn( false );
+
+		WP_Mock::userFunction( 'register_setting' );
+		WP_Mock::userFunction( 'add_settings_field' );
+
+		$this->instance->admin_init();
+	}
+
+	public function test_admin_enqueue_scripts_wrong_screen() {
+		WP_Mock::userFunction( 'current_user_can' )->never();
+		$this->instance->admin_enqueue_scripts( 'index.php' );
+	}
+
+	public function test_sanitize_options() {
+		$input = [
+			'caps' => true,
+		];
+		$new_input = $this->instance->sanitize_options( $input );
+		$this->assertArrayHasKey( 'caps', $new_input );
+		$this->assertArrayHasKey( 'only', $new_input );
+		$this->assertSame( 1, $new_input['caps'] );
+		$this->assertSame( 0, $new_input['only'] );
+	}
+
+	public function test_user_edit_form_tag() {
+		ob_start();
+		$this->instance->user_edit_form_tag();
+		$output = ob_get_clean();
+		$this->assertEquals( 'enctype="multipart/form-data"', $output );
+	}
+
+	public function test_upload_size_limit() {
+		WP_Mock::onFilter( 'simple_local_avatars_upload_limit' )
+			->with( 2048 )
+			->reply( 4096 );
+		$this->assertEquals( 4096, $this->instance->upload_size_limit( 2048 ) );
+	}
+
+	public function test_avatar_delete() {
+		WP_Mock::userFunction( 'get_user_meta' )
+			->with( 1, 'simple_local_avatar', true )
+			->andReturn( [] );
+
+		WP_Mock::userFunction( 'delete_user_meta' )
+			->never();
+
+		$this->instance->avatar_delete( 1 );
 	}
 }
