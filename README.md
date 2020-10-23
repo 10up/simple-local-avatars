@@ -17,6 +17,8 @@ Just edit a user profile, and scroll down to the new "Avatar" field. The plug-in
 5. Let's you decide whether lower privilege users (subscribers, contributors) can upload their own avatar
 6. Enables rating of local avatars, just like Gravatar
 
+![Avatar upload field on a user profile page](.wordpress-org/screenshot-1.png "Screenshot of Simple Local Avatars section within a User Profile")
+
 ## Installation
 
 1. Install easily with the WordPress plugin control panel or manually download the plugin and upload the extracted folder to the `/wp-content/plugins/` directory
