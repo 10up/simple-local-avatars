@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 ### Changed
 - Switched to `pre_get_avatar_data` filter (props [@dinhtungdu](https://github.com/dinhtungdu), [@heyjones](https://github.com/heyjones), [@dkotter](https://github.com/dkotter), [@sumnercreations](https://github.com/sumnercreations), [@dshanske](https://github.com/dshanske) via [#40](https://github.com/10up/simple-local-avatars/pull/40))
 - `assign_new_user_avatar` function made public (props [@tripflex](https://github.com/tripflex) via [#48](https://github.com/10up/simple-local-avatars/pull/48))
+- Split the main class into its own file, added unit tests, and set up testing GitHub action (props [@dinhtungdu](https://github.com/dinhtungdu), [@helen](https://github.com/helen), [@stevegrunwell](https://github.com/stevegrunwell) via [#59](https://github.com/10up/simple-local-avatars/pull/59))
 - New plugin banner and icon (props [@JackieKjome](https://github.com/JackieKjome) via [#52](https://github.com/10up/simple-local-avatars/pull/52))
 - Bumped WordPress version support to 5.4 (props [@Waka867](https://github.com/Waka867), [@tmoorewp](https://github.com/tmoorewp), [@jeffpaul](https://github.com/jeffpaul) via [#36](https://github.com/10up/simple-local-avatars/pull/36), [#43](https://github.com/10up/simple-local-avatars/pull/43))
 - GitHub Actions from HCL to YAML workflow syntax (props [@jeffpaul](https://github.com/jeffpaul) via [#37](https://github.com/10up/simple-local-avatars/pull/37))
