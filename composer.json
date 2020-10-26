@@ -1,14 +1,13 @@
 {
   "name": "10up/simple-local-avatars",
   "description": "Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!",
-  "version": "2.1.1",
   "type": "wordpress-plugin",
   "keywords": [
     "wordpress",
     "10up"
   ],
   "homepage": "https://github.com/10up/simple-local-avatars",
-  "license": ["GPL-2.0-only"],
+  "license": ["GPL-2.0-or-later"],
   "authors": [
     {
       "name": "10up",
@@ -21,5 +20,19 @@
   },
   "require": {
     "php": ">=5.3"
-  }
+  },
+  "require-dev": {
+    "10up/wpacceptance": "dev-master",
+    "10up/phpcs-composer": "dev-master",
+    "10up/wp_mock": "0.4.2"
+  },
+  "scripts": {
+    "lint": [
+      "phpcs ."
+    ],
+    "lint-fix": [
+      "phpcbf ."
+    ]
+  },
+  "minimum-stability": "dev"
 }

@@ -1,7 +1,8 @@
 # Simple Local Avatars
 
 > Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!
-![WordPress tested up to version](https://img.shields.io/badge/WordPress-v5.2%20tested-success.svg)
+
+[![Support Level](https://img.shields.io/badge/support-active-green.svg)](#support-level) [![Release Version](https://img.shields.io/github/release/10up/simple-local-avatars.svg)](https://github.com/10up/simple-local-avatars/releases/latest) ![WordPress tested up to version](https://img.shields.io/badge/WordPress-v5.5%20tested-success.svg) [![GPLv2 License](https://img.shields.io/github/license/10up/simple-local-avatars.svg)](https://github.com/10up/simple-local-avatars/blob/develop/LICENSE.md)
 
 ## Features
 
@@ -16,6 +17,8 @@ Just edit a user profile, and scroll down to the new "Avatar" field. The plug-in
 5. Let's you decide whether lower privilege users (subscribers, contributors) can upload their own avatar
 6. Enables rating of local avatars, just like Gravatar
 
+![Avatar upload field on a user profile page](.wordpress-org/screenshot-1.png "Screenshot of Simple Local Avatars section within a User Profile")
+
 ## Installation
 
 1. Install easily with the WordPress plugin control panel or manually download the plugin and upload the extracted folder to the `/wp-content/plugins/` directory
@@ -27,16 +30,16 @@ Use avatars in your theme using WordPress' built in `get_avatar()` function: [ht
 
 You can also use `get_simple_local_avatar()` (with the same arguments) to retreive local avatars a bit faster, but this will make your theme dependent on this plug-in.
 
+## Support Level
+
+**Active:** 10up is actively working on this, and we expect to continue work for the foreseeable future including keeping tested up to the most recent version of WordPress.  Bug reports, feature requests, questions, and pull requests are welcome.
+
 ## Contributing
 
 Please read [CODE_OF_CONDUCT.md](https://github.com/10up/simple-local-avatars/blob/develop/CODE_OF_CONDUCT.md) for details on our code of conduct and [CONTRIBUTING.md](https://github.com/10up/simple-local-avatars/blob/develop/CONTRIBUTING.md) for details on the process for submitting pull requests to us.
 
-## License
-
-Simple Local Avatars utilizes the [GNU General Public License v2.0 (or later)](https://github.com/10up/simple-local-avatars/blob/develop/LICENSE.md).
-
 ## Like what you see?
 
 <p align="center">
-<a href="http://10up.com/contact/"><img src="https://10updotcom-wpengine.s3.amazonaws.com/uploads/2016/10/10up-Github-Banner.png" width="850"></a>
+<a href="http://10up.com/contact/"><img src="https://10up.com/uploads/2016/10/10up-Github-Banner.png" width="850"></a>
 </p>
