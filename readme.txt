@@ -3,12 +3,13 @@ Contributors: jakemgold, 10up, thinkoomph
 Donate link: https://10up.com/plugins/simple-local-avatars-wordpress/
 Tags: avatar, gravatar, user photos, users, profile
 Requires at least: 4.6
-Tested up to: 5.4
-Stable tag: 2.1.1
-Text Domain: simple-local-avatars
+Tested up to: 5.5
+Requires PHP: 5.3
+Stable tag: 2.2.0
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!
-
 
 == Description ==
 
@@ -23,7 +24,6 @@ Just edit a user profile, and scroll down to the new "Avatar" field. The plug-in
 1. Let's you decide whether lower privilege users (subscribers, contributors) can upload their own avatar
 1. Enables rating of local avatars, just like Gravatar
 
-
 == Installation ==
 
 1. Install easily with the WordPress plugin control panel or manually download the plugin and upload the extracted folder to the `/wp-content/plugins/` directory
@@ -35,13 +35,18 @@ Use avatars in your theme using WordPress' built in `get_avatar()` function: [ht
 
 You can also use `get_simple_local_avatar()` (with the same arguments) to retreive local avatars a bit faster, but this will make your theme dependent on this plug-in.
 
-
 == Screenshots ==
 
 1. Avatar upload field on a user profile page
 
-
 == Changelog ==
+
+= 2.2.0 =
+* **Added:** Ability to retrieve avatar with `WP_Post` object (props [@oscarssanchez](https://profiles.wordpress.org/oscarssanchez), [@blobaugh](https://profiles.wordpress.org/blobaugh))
+* **Changed:** Bumped WordPress version support to 5.4 (props [@Waka867](https://github.com/Waka867), [@tmoorewp](https://profiles.wordpress.org/tmoorewp), [@jeffpaul](https://profiles.wordpress.org/jeffpaul))
+* **Changed:** GitHub Actions from HCL to YAML workflow syntax (props [@jeffpaul](https://profiles.wordpress.org/jeffpaul))
+* **Changed:** Documentation updates (props [@jeffpaul](https://profiles.wordpress.org/jeffpaul))
+* **Fixed:** Initialize `Simple_Local_Avatars` on the `$simple_local_avatars` global, enabling bundling plugin with composer (props [@pauldewouters](https://profiles.wordpress.org/pauldewouters/), [@adamsilverstein](https://profiles.wordpress.org/adamsilverstein))
 
 = 2.1.1 =
 * Fixed: Do not delete avatars just because they don't exist on the local filesystem. This was occasionally dumping avatars when WordPress uploads were stored elsewhere, e.g. a cloud service.
@@ -108,7 +113,6 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 = 1.1 =
 * All users (regardless of capabilities) can upload avatars by default. To limit avatar uploading to users with upload files capabilities (Authors and above), check the applicable option under Settings > Discussion. This was the default behavior in 1.0.
 * Localization support; German included
-
 
 == Upgrade Notice ==
 

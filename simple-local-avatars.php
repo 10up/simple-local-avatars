@@ -1,13 +1,16 @@
 <?php
 /**
- * Plugin Name: Simple Local Avatars
- * Plugin URI: https://10up.com/plugins/simple-local-avatars-wordpress/
- * Description: Adds an avatar upload field to user profiles. Generates requested sizes on demand, just like Gravatar! Simple and lightweight.
- * Version: 2.1.1
- * Author: Jake Goldman, 10up
- * Author URI: https://10up.com
- * License: GPLv2 or later
- * Text Domain: simple-local-avatars
+ * Plugin Name:       Simple Local Avatars
+ * Plugin URI:        https://10up.com/plugins/simple-local-avatars-wordpress/
+ * Description:       Adds an avatar upload field to user profiles. Generates requested sizes on demand, just like Gravatar! Simple and lightweight.
+ * Version:           2.2.0
+ * Requires at least: 4.6
+ * Requires PHP:      5.3
+ * Author:            Jake Goldman, 10up
+ * Author URI:        https://10up.com
+ * License:           GPLv2 or later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:       simple-local-avatars
  */
 
 require_once dirname( __FILE__ ) . '/includes/class-simple-local-avatars.php';

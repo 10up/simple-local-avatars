@@ -71,6 +71,10 @@ class Simple_Local_Avatars {
 	 *                           user email, WP_User object, WP_Post object, or WP_Comment object.
 	 */
 	public function get_avatar_data( $args, $id_or_email ) {
+		if ( ! empty( $args['force_default'] ) ) {
+			return $args;
+		}
+
 		$simple_local_avatar_url = $this->get_simple_local_avatar_url( $id_or_email, $args['size'] );
 		if ( $simple_local_avatar_url ) {
 			$args['url'] = $simple_local_avatar_url;

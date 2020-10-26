@@ -2,7 +2,7 @@
 
 > Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!
 
-[![Support Level](https://img.shields.io/badge/support-active-green.svg)](#support-level) [![Release Version](https://img.shields.io/github/release/10up/simple-local-avatars.svg)](https://github.com/10up/simple-local-avatars/releases/latest) ![WordPress tested up to version](https://img.shields.io/badge/WordPress-v5.4%20tested-success.svg) [![GPLv2 License](https://img.shields.io/github/license/10up/simple-local-avatars.svg)](https://github.com/10up/simple-local-avatars/blob/develop/LICENSE.md)
+[![Support Level](https://img.shields.io/badge/support-active-green.svg)](#support-level) [![Release Version](https://img.shields.io/github/release/10up/simple-local-avatars.svg)](https://github.com/10up/simple-local-avatars/releases/latest) ![WordPress tested up to version](https://img.shields.io/badge/WordPress-v5.5%20tested-success.svg) [![GPLv2 License](https://img.shields.io/github/license/10up/simple-local-avatars.svg)](https://github.com/10up/simple-local-avatars/blob/develop/LICENSE.md)
 
 ## Features
 
@@ -16,6 +16,8 @@ Just edit a user profile, and scroll down to the new "Avatar" field. The plug-in
 4. Generates the requested avatar size on demand (and stores the new size for efficiency), so it looks great, just like Gravatar!
 5. Let's you decide whether lower privilege users (subscribers, contributors) can upload their own avatar
 6. Enables rating of local avatars, just like Gravatar
+
+![Avatar upload field on a user profile page](.wordpress-org/screenshot-1.png "Screenshot of Simple Local Avatars section within a User Profile")
 
 ## Installation
 
@@ -39,5 +41,5 @@ Please read [CODE_OF_CONDUCT.md](https://github.com/10up/simple-local-avatars/bl
 ## Like what you see?
 
 <p align="center">
-<a href="http://10up.com/contact/"><img src="https://10updotcom-wpengine.s3.amazonaws.com/uploads/2016/10/10up-Github-Banner.png" width="850"></a>
+<a href="http://10up.com/contact/"><img src="https://10up.com/uploads/2016/10/10up-Github-Banner.png" width="850"></a>
 </p>
