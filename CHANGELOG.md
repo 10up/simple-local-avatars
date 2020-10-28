@@ -7,14 +7,14 @@ All notable changes to this project will be documented in this file, per [the Ke
 ## [2.2.0] - TBD
 ### Added
 - `$args` parameter to `get_simple_local_avatar` function (props [@dinhtungdu](https://github.com/dinhtungdu), [@heyjones](https://github.com/heyjones), [@dkotter](https://github.com/dkotter), [@sumnercreations](https://github.com/sumnercreations), [@dshanske](https://github.com/dshanske) via [#40](https://github.com/10up/simple-local-avatars/pull/40))
-- `Simple_Local_Avatars::get_avatar_data()`, `Simple_Local_Avatars::get_simple_local_avatar_url()`, and `Simple_Local_Avatars::get_default_avatar_url()`, methods (props [@dinhtungdu](https://github.com/dinhtungdu), [@heyjones](https://github.com/heyjones), [@dkotter](https://github.com/dkotter), [@sumnercreations](https://github.com/sumnercreations), [@dshanske](https://github.com/dshanske) via [#40](https://github.com/10up/simple-local-avatars/pull/40))
+- `Simple_Local_Avatars::get_avatar_data()`, `Simple_Local_Avatars::get_simple_local_avatar_url()`, and `Simple_Local_Avatars::get_default_avatar_url()` methods (props [@dinhtungdu](https://github.com/dinhtungdu), [@heyjones](https://github.com/heyjones), [@dkotter](https://github.com/dkotter), [@sumnercreations](https://github.com/sumnercreations), [@dshanske](https://github.com/dshanske) via [#40](https://github.com/10up/simple-local-avatars/pull/40))
 - Ability to retrieve avatar with `WP_Post` object (props [@oscarssanchez](https://github.com/oscarssanchez), [@blobaugh](https://github.com/blobaugh) via [#47](https://github.com/10up/simple-local-avatars/pull/47))
-- Add class and ID to Avatar section on Profile Page to allow easier styling of the section (props [@dinhtungdu](https://github.com/dinhtungdu) via [#54](https://github.com/10up/simple-local-avatars/pull/54))
+- Add class and ID to Avatar section on Profile Page to allow easier styling (props [@dinhtungdu](https://github.com/dinhtungdu) via [#54](https://github.com/10up/simple-local-avatars/pull/54))
 - [WP Acceptance](https://github.com/10up/wpacceptance/) test coverage (props [@dinhtungdu](https://github.com/dinhtungdu) via [#53](https://github.com/10up/simple-local-avatars/pull/53))
 
 ### Changed
 - Switched to `pre_get_avatar_data` filter (props [@dinhtungdu](https://github.com/dinhtungdu), [@heyjones](https://github.com/heyjones), [@dkotter](https://github.com/dkotter), [@sumnercreations](https://github.com/sumnercreations), [@dshanske](https://github.com/dshanske) via [#40](https://github.com/10up/simple-local-avatars/pull/40))
-- `assign_new_user_avatar` function made public (props [@tripflex](https://github.com/tripflex) via [#48](https://github.com/10up/simple-local-avatars/pull/48))
+- Changed `assign_new_user_avatar` function to public (props [@tripflex](https://github.com/tripflex) via [#48](https://github.com/10up/simple-local-avatars/pull/48))
 - Split the main class into its own file, added unit tests, and set up testing GitHub action (props [@dinhtungdu](https://github.com/dinhtungdu), [@helen](https://github.com/helen), [@stevegrunwell](https://github.com/stevegrunwell) via [#59](https://github.com/10up/simple-local-avatars/pull/59))
 - New plugin banner and icon (props [@JackieKjome](https://github.com/JackieKjome) via [#52](https://github.com/10up/simple-local-avatars/pull/52))
 - Bump WordPress version "tested up to" 5.5 (props [@Waka867](https://github.com/Waka867), [@tmoorewp](https://github.com/tmoorewp), [@jeffpaul](https://github.com/jeffpaul), [@dinhtungdu](https://github.com/dinhtungdu) via [#36](https://github.com/10up/simple-local-avatars/pull/36), [#43](https://github.com/10up/simple-local-avatars/pull/43), [#52](https://github.com/10up/simple-local-avatars/pull/52))
@@ -25,7 +25,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 - Initialize `Simple_Local_Avatars` on the `$simple_local_avatars` global, enabling bundling plugin with composer (props [@pdewouters](https://github.com/pdewouters), [@adamsilverstein](https://github.com/adamsilverstein) via [#34](https://github.com/10up/simple-local-avatars/pull/34))
 
 ### Removed
-- `get_avatar` fuinction that overrides the core function (props [@dinhtungdu](https://github.com/dinhtungdu), [@heyjones](https://github.com/heyjones), [@dkotter](https://github.com/dkotter), [@sumnercreations](https://github.com/sumnercreations), [@dshanske](https://github.com/dshanske) via [#40](https://github.com/10up/simple-local-avatars/pull/40))
+- `get_avatar` function that overrides the core function (props [@dinhtungdu](https://github.com/dinhtungdu), [@heyjones](https://github.com/heyjones), [@dkotter](https://github.com/dkotter), [@sumnercreations](https://github.com/sumnercreations), [@dshanske](https://github.com/dshanske) via [#40](https://github.com/10up/simple-local-avatars/pull/40))
 
 ## [2.1.1] - 2019-05-07
 ### Fixed
