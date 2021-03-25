@@ -1,5 +1,5 @@
 {
-  "name": "diodoe/simple-local-avatars",
+  "name": "10up/simple-local-avatars", 
   "description": "Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!",
   "type": "wordpress-plugin",
   "keywords": [
@@ -7,7 +7,9 @@
     "10up"
   ],
   "homepage": "https://github.com/10up/simple-local-avatars",
-  "license": ["GPL-2.0-or-later"],
+  "license": [
+    "GPL-2.0-or-later"
+  ],
   "authors": [
     {
       "name": "10up",
