@@ -438,7 +438,8 @@ class Simple_Local_Avatars {
 		$meta_value = array();
 
 		// set the new avatar
-		if ( is_numeric( $url_or_media_id ) ) {
+		if ( is_numeric( $url_or_media_id ) 
+				&& ((float)$url_or_media_id - (int)$url_or_media_id) == 0 ) {
 			$meta_value['media_id'] = $url_or_media_id;
 			$url_or_media_id        = wp_get_attachment_url( $url_or_media_id );
 		}
