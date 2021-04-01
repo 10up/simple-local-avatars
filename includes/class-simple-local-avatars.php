@@ -42,6 +42,8 @@ class Simple_Local_Avatars {
 		add_action( 'user_edit_form_tag', array( $this, 'user_edit_form_tag' ) );
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_fields' ) );
+
+		add_action( 'wpmu_new_blog', array( $this, 'set_defaults' ) );
 	}
 
 	/**
@@ -805,4 +807,20 @@ class Simple_Local_Avatars {
 	public function set_avatar_rest( $input, $user ) {
 		$this->assign_new_user_avatar( $input['media_id'], $user->ID );
 	}
+
+	/**
+	 * Set plugin defaults for a new site
+	 *
+	 * @param int $blog_id Blog ID.
+	 */
+	public function set_defaults( $blog_id ) {
+		if ( 'enforce' === $this->get_network_mode() ) {
+			return;
+		}
+
+		switch_to_blog( $blog_id );
+		update_option( 'simple_local_avatars', $this->sanitize_options( $this->options ) );
+		restore_current_blog();
+	}
+
 }
