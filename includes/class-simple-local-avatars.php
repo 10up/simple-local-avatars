@@ -75,6 +75,23 @@ class Simple_Local_Avatars {
 	}
 
 	/**
+	 * Determines if settings handling is enforced on a network level
+	 *
+	 * Important: this is only meant for admin UI purposes.
+	 *
+	 * @return boolean
+	 */
+	public function is_enforced() {
+		if (
+			( ! is_network_admin() && ( SLA_IS_NETWORK && 'enforce' === $this->get_network_mode() ) )
+		) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Retrieve the local avatar for a user who provided a user ID, email address or post/comment object.
 	 *
 	 * @param string            $avatar      Avatar return by original function
@@ -266,8 +283,9 @@ class Simple_Local_Avatars {
 			'discussion',
 			'avatars',
 			array(
-				'key'  => 'only',
-				'desc' => __( 'Only allow local avatars (still uses Gravatar for default avatars)', 'simple-local-avatars' ),
+				'class' => 'simple-local-avatars',
+				'key'   => 'only',
+				'desc'  => __( 'Only allow local avatars (still uses Gravatar for default avatars)', 'simple-local-avatars' ),
 			)
 		);
 		add_settings_field(
@@ -277,15 +295,26 @@ class Simple_Local_Avatars {
 			'discussion',
 			'avatars',
 			array(
-				'key'  => 'caps',
-				'desc' => __( 'Only allow users with file upload capabilities to upload local avatars (Authors and above)', 'simple-local-avatars' ),
+				'class' => 'simple-local-avatars',
+				'key'   => 'caps',
+				'desc'  => __( 'Only allow users with file upload capabilities to upload local avatars (Authors and above)', 'simple-local-avatars' ),
 			)
 		);
+
+		add_action( 'load-options-discussion.php', array( $this, 'load_discussion_page' ) );
 
 		// This is for network site settings
 		if ( SLA_IS_NETWORK && is_network_admin() ) {
 			add_action( 'load-settings.php', array( $this, 'load_network_settings' ) );
 		}
+	}
+
+	/**
+	 * Fire code on the Discussion page
+	 */
+	public function load_discussion_page() {
+		add_action( 'admin_print_styles', array( $this, 'admin_print_styles' ) );
+		add_action( 'admin_body_class', array( $this, 'admin_body_class' ) );
 	}
 
 	/**
@@ -451,6 +480,19 @@ class Simple_Local_Avatars {
 				' . esc_html( $args['desc'] ) . '
 			</label>
 		';
+
+		// Output warning if needed
+		if (
+			SLA_IS_NETWORK // If network activated
+			&& $this->is_enforced() // And in enforce mode
+			&& 'caps' === $args['key'] // And we are displaying the last setting
+		) {
+			echo '
+				<div class="notice notice-warning inline">
+					<p><strong>' . esc_html__( 'Simple Local Avatar settings are currently enforced across all sites on the network.', 'simple-local-avatars' ) . '</strong></p>
+				</div>
+			';
+		}
 	}
 
 	/**
@@ -821,6 +863,43 @@ class Simple_Local_Avatars {
 		switch_to_blog( $blog_id );
 		update_option( 'simple_local_avatars', $this->sanitize_options( $this->options ) );
 		restore_current_blog();
+	}
+
+	/**
+	 * Add some basic styling on the Discussion page
+	 */
+	public function admin_print_styles() {
+		?>
+<style>
+.sla-enforced .simple-local-avatars th,
+.sla-enforced .simple-local-avatars label {
+	opacity: 0.5;
+	pointer-events: none;
+}
+.sla-enforced .simple-local-avatars .notice {
+	margin-top: 20px;
+}
+@media screen and (min-width: 783px) {
+	.sla-enforced .simple-local-avatars .notice {
+		left: -220px;
+		position: relative;
+	}
+}
+</style>
+		<?php
+	}
+	/**
+	 * Adds admin body classes to the Discussion options screen
+	 *
+	 * @param  string $classes Space-separated list of classes to apply to the body element.
+	 * @return string
+	 */
+	public function admin_body_class( $classes ) {
+		if ( $this->is_enforced() ) {
+			$classes .= ' sla-enforced';
+		}
+
+		return $classes;
 	}
 
 }
