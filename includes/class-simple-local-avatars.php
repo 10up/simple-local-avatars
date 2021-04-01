@@ -11,6 +11,8 @@ class Simple_Local_Avatars {
 	 * Set up the hooks and default values
 	 */
 	public function __construct() {
+		$this->add_hooks();
+
 		$this->options        = (array) get_option( 'simple_local_avatars' );
 		$this->avatar_ratings = array(
 			'G'  => __( 'G &#8212; Suitable for all audiences', 'simple-local-avatars' ),
@@ -18,8 +20,6 @@ class Simple_Local_Avatars {
 			'R'  => __( 'R &#8212; Intended for adult audiences above 17', 'simple-local-avatars' ),
 			'X'  => __( 'X &#8212; Even more mature than above', 'simple-local-avatars' ),
 		);
-
-		$this->add_hooks();
 	}
 
 	/**
@@ -27,6 +27,7 @@ class Simple_Local_Avatars {
 	 */
 	public function add_hooks() {
 		add_filter( 'pre_get_avatar_data', array( $this, 'get_avatar_data' ), 10, 2 );
+		add_filter( 'pre_option_simple_local_avatars', array( $this, 'pre_option_simple_local_avatars' ), 10, 1 );
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 
@@ -314,14 +315,14 @@ class Simple_Local_Avatars {
 	 */
 	public function load_discussion_page() {
 		add_action( 'admin_print_styles', array( $this, 'admin_print_styles' ) );
-		add_action( 'admin_body_class', array( $this, 'admin_body_class' ) );
+		add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
 	}
 
 	/**
 	 * Load needed hooks to handle network settings
 	 */
 	public function load_network_settings() {
-		$this->options = (array) get_site_option( 'simple_local_avatars' );
+		$this->options = (array) get_site_option( 'simple_local_avatars', [] );
 
 		add_action( 'wpmu_options', array( $this, 'show_network_settings' ) );
 		add_action( 'update_wpmu_options', array( $this, 'save_network_settings' ) );
@@ -848,6 +849,20 @@ class Simple_Local_Avatars {
 	 */
 	public function set_avatar_rest( $input, $user ) {
 		$this->assign_new_user_avatar( $input['media_id'], $user->ID );
+	}
+
+	/**
+	 * Short-circuit filter the `simple_local_avatars` option to match network if necessary
+	 *
+	 * @param bool $value Value of `simple_local_avatars` option, typically false.
+	 * @return array
+	 */
+	public function pre_option_simple_local_avatars( $value ) {
+		if ( SLA_IS_NETWORK && 'enforce' === $this->get_network_mode() ) {
+			$value = get_site_option( 'simple_local_avatars', [] );
+		}
+
+		return $value;
 	}
 
 	/**
