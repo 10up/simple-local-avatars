@@ -45,6 +45,34 @@ class Simple_Local_Avatars {
 	}
 
 	/**
+	 * Determine if plugin is network activated.
+	 *
+	 * @param string $plugin The plugin slug to check.
+	 *
+	 * @return boolean
+	 */
+	public static function is_network( $plugin ) {
+		$plugins = get_site_option( 'active_sitewide_plugins' );
+
+		if ( is_multisite() && isset( $plugins[ $plugin ] ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get current plugin network mode
+	 */
+	private function get_network_mode() {
+		if ( SLA_IS_NETWORK ) {
+			return get_site_option( 'simple_local_avatars_mode', 'default' );
+		}
+
+		return 'default';
+	}
+
+	/**
 	 * Retrieve the local avatar for a user who provided a user ID, email address or post/comment object.
 	 *
 	 * @param string            $avatar      Avatar return by original function
@@ -251,6 +279,105 @@ class Simple_Local_Avatars {
 				'desc' => __( 'Only allow users with file upload capabilities to upload local avatars (Authors and above)', 'simple-local-avatars' ),
 			)
 		);
+
+		// This is for network site settings
+		if ( SLA_IS_NETWORK && is_network_admin() ) {
+			add_action( 'load-settings.php', array( $this, 'load_network_settings' ) );
+		}
+	}
+
+	/**
+	 * Load needed hooks to handle network settings
+	 */
+	public function load_network_settings() {
+		$this->options = (array) get_site_option( 'simple_local_avatars' );
+
+		add_action( 'wpmu_options', array( $this, 'show_network_settings' ) );
+		add_action( 'update_wpmu_options', array( $this, 'save_network_settings' ) );
+	}
+
+	/**
+	 * Show the network settings
+	 */
+	public function show_network_settings() {
+		$mode = $this->get_network_mode();
+		?>
+
+		<h2><?php esc_html_e( 'Simple Local Avatars Settings', 'simple-local-avatars' ); ?></h2>
+		<table id="simple-local-avatars" class="form-table">
+			<tr>
+				<th scope="row">
+					<?php esc_html_e( 'Mode', 'simple-local-avatars' ); ?>
+				</th>
+				<td>
+					<fieldset>
+						<legend class="screen-reader-text"><?php esc_html_e( 'Mode', 'simple-local-avatars' ); ?></legend>
+						<label><input name="simple_local_avatars[mode]" type="radio" id="sla-mode-default" value="default"<?php checked( $mode, 'default' ); ?> /> <?php esc_html_e( 'Default to the settings below when creating a new site', 'simple-local-avatars' ); ?></label><br />
+						<label><input name="simple_local_avatars[mode]" type="radio" id="sla-mode-enforce" value="enforce"<?php checked( $mode, 'enforce' ); ?> /> <?php esc_html_e( 'Enforce the settings below across all sites', 'simple-local-avatars' ); ?></label><br />
+					</fieldset>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">
+					<?php esc_html_e( 'Local avatars only', 'simple-local-avatars' ); ?>
+				</th>
+				<td>
+					<?php
+						$this->avatar_settings_field(
+							array(
+								'key'  => 'only',
+								'desc' => __( 'Only allow local avatars (still uses Gravatar for default avatars)	', 'simple-local-avatars' ),
+							)
+						);
+					?>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">
+					<?php esc_html_e( 'Local upload permissions', 'simple-local-avatars' ); ?>
+				</th>
+				<td>
+					<?php
+						$this->avatar_settings_field(
+							array(
+								'key'  => 'caps',
+								'desc' => __( 'Only allow users with file upload capabilities to upload local avatars (Authors and above)', 'simple-local-avatars' ),
+							)
+						);
+					?>
+				</td>
+			</tr>
+		</table>
+
+		<?php
+	}
+
+	/**
+	 * Handle saving the network settings
+	 */
+	public static function save_network_settings() {
+		$options   = array(
+			'caps',
+			'mode',
+			'only',
+		);
+		$sanitized = array();
+
+		foreach ( $options as $option_name ) {
+			if ( ! isset( $_POST['simple_local_avatars'][ $option_name ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+				continue;
+			}
+
+			switch ( $option_name ) {
+				case 'mode':
+					update_site_option( 'simple_local_avatars_mode', sanitize_text_field( $_POST['simple_local_avatars'][ $option_name ] ) );
+					break;
+				default:
+					$sanitized[ $option_name ] = empty( $_POST['simple_local_avatars'][ $option_name ] ) ? 0 : 1;
+			}
+		}
+
+		update_site_option( 'simple_local_avatars', $sanitized );
 	}
 
 	/**

@@ -21,6 +21,10 @@ require_once dirname( __FILE__ ) . '/includes/class-simple-local-avatars.php';
 global $simple_local_avatars;
 $simple_local_avatars = new Simple_Local_Avatars();
 
+if ( ! defined( 'SLA_IS_NETWORK' ) ) {
+	define( 'SLA_IS_NETWORK', $simple_local_avatars::is_network( plugin_basename( __FILE__ ) ) );
+}
+
 /**
  * More efficient to call simple local avatar directly in theme and avoid
  * gravatar setup.
