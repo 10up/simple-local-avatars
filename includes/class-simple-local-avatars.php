@@ -4,7 +4,7 @@
  * Adds an avatar upload field to user profiles.
  */
 class Simple_Local_Avatars {
-	private $user_id_being_edited, $avatar_upload_error, $remove_nonce, $avatar_ratings;
+	private $user_id_being_edited, $avatar_upload_error, $remove_nonce, $avatar_ratings, $user_key, $rating_key;
 	public $options;
 
 	/**
@@ -14,12 +14,32 @@ class Simple_Local_Avatars {
 		$this->add_hooks();
 
 		$this->options        = (array) get_option( 'simple_local_avatars' );
+		$this->user_key       = 'simple_local_avatar';
+		$this->rating_key     = 'simple_local_avatar_rating';
 		$this->avatar_ratings = array(
 			'G'  => __( 'G &#8212; Suitable for all audiences', 'simple-local-avatars' ),
 			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above', 'simple-local-avatars' ),
 			'R'  => __( 'R &#8212; Intended for adult audiences above 17', 'simple-local-avatars' ),
 			'X'  => __( 'X &#8212; Even more mature than above', 'simple-local-avatars' ),
 		);
+
+		if (
+			! $this->is_avatar_shared() // Are we sharing avatars?
+			&& (
+				( // And either an ajax request not in the network admin
+					defined( 'DOING_AJAX' ) && DOING_AJAX
+					&& ! preg_match( '#^' . network_admin_url() . '#i', $_SERVER['HTTP_REFERER'] )
+				)
+				||
+				( // Or normal request not in the network admin
+					( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX )
+					&& ! is_network_admin()
+				)
+			)
+		) {
+			$this->user_key   = sprintf( $this->user_key . '_%d', get_current_blog_id() );
+			$this->rating_key = sprintf( $this->rating_key . '_%d', get_current_blog_id() );
+		}
 	}
 
 	/**
@@ -85,6 +105,26 @@ class Simple_Local_Avatars {
 	public function is_enforced() {
 		if (
 			( ! is_network_admin() && ( SLA_IS_NETWORK && 'enforce' === $this->get_network_mode() ) )
+		) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determine if avatars should be shared
+	 *
+	 * @return boolean
+	 */
+	public function is_avatar_shared() {
+		if (
+			is_multisite() // Are we on multisite
+			&& ! isset( $this->options['shared'] ) // And our shared option doesn't exist
+			|| (
+				isset( $this->options['shared'] ) // Or our shared option is set
+				&& 1 === $this->options['shared']
+			)
 		) {
 			return true;
 		}
@@ -165,13 +205,13 @@ class Simple_Local_Avatars {
 		}
 
 		// Fetch local avatar from meta and make sure it's properly set.
-		$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
+		$local_avatars = get_user_meta( $user_id, $this->user_key, true );
 		if ( empty( $local_avatars['full'] ) ) {
 			return '';
 		}
 
 		// check rating
-		$avatar_rating = get_user_meta( $user_id, 'simple_local_avatar_rating', true );
+		$avatar_rating = get_user_meta( $user_id, $this->rating_key, true );
 		if ( ! empty( $avatar_rating ) && 'G' !== $avatar_rating && ( $site_rating = get_option( 'avatar_rating' ) ) ) {
 			$ratings              = array_keys( $this->avatar_ratings );
 			$site_rating_weight   = array_search( $site_rating, $ratings );
@@ -183,9 +223,18 @@ class Simple_Local_Avatars {
 
 		// handle "real" media
 		if ( ! empty( $local_avatars['media_id'] ) ) {
+			// If using shared avatars, make sure we validate the URL on the main site
+			if ( $this->is_avatar_shared() ) {
+				switch_to_blog( get_main_site_id() );
+			}
+
 			// has the media been deleted?
 			if ( ! $avatar_full_path = get_attached_file( $local_avatars['media_id'] ) ) {
 				return '';
+			}
+
+			if ( $this->is_avatar_shared() ) {
+				restore_current_blog();
 			}
 		}
 
@@ -219,7 +268,7 @@ class Simple_Local_Avatars {
 				}
 
 				// save updated avatar sizes
-				update_user_meta( $user_id, 'simple_local_avatar', $local_avatars );
+				update_user_meta( $user_id, $this->user_key, $local_avatars );
 
 			endif;
 		}
@@ -644,7 +693,7 @@ class Simple_Local_Avatars {
 	 */
 	public function assign_new_user_avatar( $url_or_media_id, $user_id ) {
 		// delete the old avatar
-		$this->avatar_delete( $user_id );    // delete old images if successful
+		$this->avatar_delete( $user_id ); // delete old images if successful
 
 		$meta_value = array();
 
@@ -656,7 +705,7 @@ class Simple_Local_Avatars {
 
 		$meta_value['full'] = $url_or_media_id;
 
-		update_user_meta( $user_id, 'simple_local_avatar', $meta_value );    // save user information (overwriting old)
+		update_user_meta( $user_id, $this->user_key, $meta_value ); // save user information (overwriting old)
 	}
 
 	/**
@@ -717,12 +766,12 @@ class Simple_Local_Avatars {
 		endif;
 
 		// Handle ratings
-		if ( isset( $avatar_id ) || $avatar = get_user_meta( $user_id, 'simple_local_avatar', true ) ) {
+		if ( isset( $avatar_id ) || $avatar = get_user_meta( $user_id, $this->user_key, true ) ) {
 			if ( empty( $_POST['simple_local_avatar_rating'] ) || ! array_key_exists( $_POST['simple_local_avatar_rating'], $this->avatar_ratings ) ) {
 				$_POST['simple_local_avatar_rating'] = key( $this->avatar_ratings );
 			}
 
-			update_user_meta( $user_id, 'simple_local_avatar_rating', $_POST['simple_local_avatar_rating'] );
+			update_user_meta( $user_id, $this->rating_key, $_POST['simple_local_avatar_rating'] );
 		}
 	}
 
@@ -787,7 +836,7 @@ class Simple_Local_Avatars {
 	 * @param int $user_id User ID.
 	 */
 	public function avatar_delete( $user_id ) {
-		$old_avatars = (array) get_user_meta( $user_id, 'simple_local_avatar', true );
+		$old_avatars = (array) get_user_meta( $user_id, $this->user_key, true );
 
 		if ( empty( $old_avatars ) ) {
 			return;
@@ -810,8 +859,8 @@ class Simple_Local_Avatars {
 			}
 		}
 
-		delete_user_meta( $user_id, 'simple_local_avatar' );
-		delete_user_meta( $user_id, 'simple_local_avatar_rating' );
+		delete_user_meta( $user_id, $this->user_key );
+		delete_user_meta( $user_id, $this->rating_key );
 	}
 
 	/**
@@ -869,7 +918,7 @@ class Simple_Local_Avatars {
 	 * @param object $user User object
 	 */
 	public function get_avatar_rest( $user ) {
-		$local_avatar = get_user_meta( $user['id'], 'simple_local_avatar', true );
+		$local_avatar = get_user_meta( $user['id'], $this->user_key, true );
 		if ( empty( $local_avatar ) ) {
 			return;
 		}
