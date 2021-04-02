@@ -75,7 +75,7 @@ class Simple_Local_Avatars {
 	 * @return boolean
 	 */
 	public static function is_network( $plugin ) {
-		$plugins = get_site_option( 'active_sitewide_plugins' );
+		$plugins = get_site_option( 'active_sitewide_plugins', [] );
 
 		if ( is_multisite() && isset( $plugins[ $plugin ] ) ) {
 			return true;
@@ -87,7 +87,7 @@ class Simple_Local_Avatars {
 	/**
 	 * Get current plugin network mode
 	 */
-	private function get_network_mode() {
+	public function get_network_mode() {
 		if ( SLA_IS_NETWORK ) {
 			return get_site_option( 'simple_local_avatars_mode', 'default' );
 		}
