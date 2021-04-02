@@ -302,6 +302,22 @@ class Simple_Local_Avatars {
 			)
 		);
 
+		if ( is_multisite() ) {
+			add_settings_field(
+				'simple-local-avatars-shared',
+				__( 'Shared network avatars', 'simple-local-avatars' ),
+				array( $this, 'avatar_settings_field' ),
+				'discussion',
+				'avatars',
+				array(
+					'class'   => 'simple-local-avatars',
+					'key'     => 'shared',
+					'desc'    => __( 'Uploaded avatars will be shared across the entire network, instead of being unique per site', 'simple-local-avatars' ),
+					'default' => 1,
+				)
+			);
+		}
+
 		add_action( 'load-options-discussion.php', array( $this, 'load_discussion_page' ) );
 
 		// This is for network site settings
@@ -379,6 +395,22 @@ class Simple_Local_Avatars {
 					?>
 				</td>
 			</tr>
+			<tr>
+				<th scope="row">
+					<?php esc_html_e( 'Shared network avatars', 'simple-local-avatars' ); ?>
+				</th>
+				<td>
+					<?php
+						$this->avatar_settings_field(
+							array(
+								'key'     => 'shared',
+								'desc'    => __( 'Uploaded avatars will be shared across the entire network, instead of being unique per site', 'simple-local-avatars' ),
+								'default' => 1,
+							)
+						);
+					?>
+				</td>
+			</tr>
 		</table>
 
 		<?php
@@ -392,6 +424,7 @@ class Simple_Local_Avatars {
 			'caps',
 			'mode',
 			'only',
+			'shared',
 		);
 		$sanitized = array();
 
@@ -454,6 +487,11 @@ class Simple_Local_Avatars {
 	public function sanitize_options( $input ) {
 		$new_input['caps'] = empty( $input['caps'] ) ? 0 : 1;
 		$new_input['only'] = empty( $input['only'] ) ? 0 : 1;
+
+		if ( is_multisite() ) {
+			$new_input['shared'] = empty( $input['shared'] ) ? 0 : 1;
+		}
+
 		return $new_input;
 	}
 
@@ -466,13 +504,14 @@ class Simple_Local_Avatars {
 		$args = wp_parse_args(
 			$args,
 			array(
-				'key'  => '',
-				'desc' => '',
+				'key'     => '',
+				'desc'    => '',
+				'default' => 0,
 			)
 		);
 
-		if ( empty( $this->options[ $args['key'] ] ) ) {
-			$this->options[ $args['key'] ] = 0;
+		if ( ! isset( $this->options[ $args['key'] ] ) ) {
+			$this->options[ $args['key'] ] = $args['default'];
 		}
 
 		echo '
@@ -486,7 +525,7 @@ class Simple_Local_Avatars {
 		if (
 			SLA_IS_NETWORK // If network activated
 			&& $this->is_enforced() // And in enforce mode
-			&& 'caps' === $args['key'] // And we are displaying the last setting
+			&& 'shared' === $args['key'] // And we are displaying the last setting
 		) {
 			echo '
 				<div class="notice notice-warning inline">
