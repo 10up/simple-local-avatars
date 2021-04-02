@@ -228,13 +228,15 @@ class Simple_Local_Avatars {
 				switch_to_blog( get_main_site_id() );
 			}
 
-			// has the media been deleted?
-			if ( ! $avatar_full_path = get_attached_file( $local_avatars['media_id'] ) ) {
-				return '';
-			}
+			$avatar_full_path = get_attached_file( $local_avatars['media_id'] );
 
 			if ( $this->is_avatar_shared() ) {
 				restore_current_blog();
+			}
+
+			// has the media been deleted?
+			if ( ! $avatar_full_path ) {
+				return '';
 			}
 		}
 
