@@ -1,7 +1,18 @@
-var simple_local_avatar_frame, avatar_spinner, avatar_ratings, avatar_container, avatar_form_button;
+var simple_local_avatar_frame,
+	avatar_spinner,
+	avatar_ratings,
+	avatar_container,
+	avatar_form_button,
+	avatar_preview,
+	avatar_input,
+	avatar_blob,
+	current_avatar;
 var avatar_working = false;
 
 jQuery(document).ready(function($){
+	avatar_input = $( '#simple-local-avatar' );
+	avatar_preview = $( '#simple-local-avatar-photo img' );
+	current_avatar = avatar_preview.attr( 'src' );
 	$( document.getElementById('simple-local-avatar-media') ).on( 'click', function(event) {
 		event.preventDefault();
 
@@ -54,6 +65,18 @@ jQuery(document).ready(function($){
 			}
 		});
 	});
+
+	avatar_input.on( 'change', function( event ) {
+		avatar_preview.attr( 'srcset', '' );
+		avatar_preview.attr( 'height', 'auto' );
+		URL.revokeObjectURL( avatar_blob );
+		if ( event.target.files.length > 0 ) {
+			avatar_blob = URL.createObjectURL(event.target.files[0]);
+			avatar_preview.attr( 'src', avatar_blob );
+		} else {
+			avatar_preview.attr( 'src', current_avatar );
+		}
+	} );
 });
 
 function avatar_lock( lock_or_unlock ) {
