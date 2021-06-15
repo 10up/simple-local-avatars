@@ -1,21 +1,21 @@
 <phpunit
-	bootstrap="tests/phpunit/bootstrap.php"
+	bootstrap="../bootstrap.php"
 	backupGlobals="false"
 	processIsolation="false"
 	colors="false">
 	<testsuites>
-		<testsuite name="Simple Local Avatars">
-			<directory suffix="Test.php">./tests/phpunit</directory>
-			<exclude>tests/phpunit/multisite</exclude>
+		<testsuite name="Simple Local Avatars Network Test">
+			<directory suffix="Test.php">./</directory>
 		</testsuite>
 	</testsuites>
 	<filter>
 		<whitelist>
-			<directory suffix=".php">includes</directory>
+			<directory suffix=".php">../../../../../includes</directory>
 			<exclude></exclude>
 		</whitelist>
 	</filter>
 	<php>
+		<const name="WP_TESTS_MULTISITE" value="1" />
 		<ini name="error_reporting" value="32767" />
 		<ini name="display_errors" value="1" />
 		<ini name="display_startup_errors" value="1" />

@@ -44,3 +44,6 @@ jobs:
 
     - name: PHPUnit Test
       run: ./vendor/bin/phpunit
+
+    - name: PHPUnit Network Test
+      run: ./vendor/bin/phpunit -c tests/phpunit/multisite/multisite.xml

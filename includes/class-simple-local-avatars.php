@@ -4,14 +4,18 @@
  * Adds an avatar upload field to user profiles.
  */
 class Simple_Local_Avatars {
-	private $user_id_being_edited, $avatar_upload_error, $remove_nonce, $avatar_ratings;
+	private $user_id_being_edited, $avatar_upload_error, $remove_nonce, $avatar_ratings, $user_key, $rating_key;
 	public $options;
 
 	/**
 	 * Set up the hooks and default values
 	 */
 	public function __construct() {
+		$this->add_hooks();
+
 		$this->options        = (array) get_option( 'simple_local_avatars' );
+		$this->user_key       = 'simple_local_avatar';
+		$this->rating_key     = 'simple_local_avatar_rating';
 		$this->avatar_ratings = array(
 			'G'  => __( 'G &#8212; Suitable for all audiences', 'simple-local-avatars' ),
 			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above', 'simple-local-avatars' ),
@@ -19,7 +23,23 @@ class Simple_Local_Avatars {
 			'X'  => __( 'X &#8212; Even more mature than above', 'simple-local-avatars' ),
 		);
 
-		$this->add_hooks();
+		if (
+			! $this->is_avatar_shared() // Are we sharing avatars?
+			&& (
+				( // And either an ajax request not in the network admin
+					defined( 'DOING_AJAX' ) && DOING_AJAX
+					&& ! preg_match( '#^' . network_admin_url() . '#i', $_SERVER['HTTP_REFERER'] )
+				)
+				||
+				( // Or normal request not in the network admin
+					( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX )
+					&& ! is_network_admin()
+				)
+			)
+		) {
+			$this->user_key   = sprintf( $this->user_key . '_%d', get_current_blog_id() );
+			$this->rating_key = sprintf( $this->rating_key . '_%d', get_current_blog_id() );
+		}
 	}
 
 	/**
@@ -27,6 +47,7 @@ class Simple_Local_Avatars {
 	 */
 	public function add_hooks() {
 		add_filter( 'pre_get_avatar_data', array( $this, 'get_avatar_data' ), 10, 2 );
+		add_filter( 'pre_option_simple_local_avatars', array( $this, 'pre_option_simple_local_avatars' ), 10, 1 );
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 
@@ -42,6 +63,73 @@ class Simple_Local_Avatars {
 		add_action( 'user_edit_form_tag', array( $this, 'user_edit_form_tag' ) );
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_fields' ) );
+
+		add_action( 'wpmu_new_blog', array( $this, 'set_defaults' ) );
+	}
+
+	/**
+	 * Determine if plugin is network activated.
+	 *
+	 * @param string $plugin The plugin slug to check.
+	 *
+	 * @return boolean
+	 */
+	public static function is_network( $plugin ) {
+		$plugins = get_site_option( 'active_sitewide_plugins', [] );
+
+		if ( is_multisite() && isset( $plugins[ $plugin ] ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get current plugin network mode
+	 */
+	public function get_network_mode() {
+		if ( SLA_IS_NETWORK ) {
+			return get_site_option( 'simple_local_avatars_mode', 'default' );
+		}
+
+		return 'default';
+	}
+
+	/**
+	 * Determines if settings handling is enforced on a network level
+	 *
+	 * Important: this is only meant for admin UI purposes.
+	 *
+	 * @return boolean
+	 */
+	public function is_enforced() {
+		if (
+			( ! is_network_admin() && ( SLA_IS_NETWORK && 'enforce' === $this->get_network_mode() ) )
+		) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determine if avatars should be shared
+	 *
+	 * @return boolean
+	 */
+	public function is_avatar_shared() {
+		if (
+			is_multisite() // Are we on multisite
+			&& ! isset( $this->options['shared'] ) // And our shared option doesn't exist
+			|| (
+				isset( $this->options['shared'] ) // Or our shared option is set
+				&& 1 === $this->options['shared']
+			)
+		) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -117,13 +205,13 @@ class Simple_Local_Avatars {
 		}
 
 		// Fetch local avatar from meta and make sure it's properly set.
-		$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
+		$local_avatars = get_user_meta( $user_id, $this->user_key, true );
 		if ( empty( $local_avatars['full'] ) ) {
 			return '';
 		}
 
 		// check rating
-		$avatar_rating = get_user_meta( $user_id, 'simple_local_avatar_rating', true );
+		$avatar_rating = get_user_meta( $user_id, $this->rating_key, true );
 		if ( ! empty( $avatar_rating ) && 'G' !== $avatar_rating && ( $site_rating = get_option( 'avatar_rating' ) ) ) {
 			$ratings              = array_keys( $this->avatar_ratings );
 			$site_rating_weight   = array_search( $site_rating, $ratings );
@@ -135,8 +223,19 @@ class Simple_Local_Avatars {
 
 		// handle "real" media
 		if ( ! empty( $local_avatars['media_id'] ) ) {
+			// If using shared avatars, make sure we validate the URL on the main site
+			if ( $this->is_avatar_shared() ) {
+				switch_to_blog( get_main_site_id() );
+			}
+
+			$avatar_full_path = get_attached_file( $local_avatars['media_id'] );
+
+			if ( $this->is_avatar_shared() ) {
+				restore_current_blog();
+			}
+
 			// has the media been deleted?
-			if ( ! $avatar_full_path = get_attached_file( $local_avatars['media_id'] ) ) {
+			if ( ! $avatar_full_path ) {
 				return '';
 			}
 		}
@@ -171,7 +270,7 @@ class Simple_Local_Avatars {
 				}
 
 				// save updated avatar sizes
-				update_user_meta( $user_id, 'simple_local_avatar', $local_avatars );
+				update_user_meta( $user_id, $this->user_key, $local_avatars );
 
 			endif;
 		}
@@ -236,8 +335,9 @@ class Simple_Local_Avatars {
 			'discussion',
 			'avatars',
 			array(
-				'key'  => 'only',
-				'desc' => __( 'Only allow local avatars (still uses Gravatar for default avatars)', 'simple-local-avatars' ),
+				'class' => 'simple-local-avatars',
+				'key'   => 'only',
+				'desc'  => __( 'Only allow local avatars (still uses Gravatar for default avatars)', 'simple-local-avatars' ),
 			)
 		);
 		add_settings_field(
@@ -247,10 +347,153 @@ class Simple_Local_Avatars {
 			'discussion',
 			'avatars',
 			array(
-				'key'  => 'caps',
-				'desc' => __( 'Only allow users with file upload capabilities to upload local avatars (Authors and above)', 'simple-local-avatars' ),
+				'class' => 'simple-local-avatars',
+				'key'   => 'caps',
+				'desc'  => __( 'Only allow users with file upload capabilities to upload local avatars (Authors and above)', 'simple-local-avatars' ),
 			)
 		);
+
+		if ( is_multisite() ) {
+			add_settings_field(
+				'simple-local-avatars-shared',
+				__( 'Shared network avatars', 'simple-local-avatars' ),
+				array( $this, 'avatar_settings_field' ),
+				'discussion',
+				'avatars',
+				array(
+					'class'   => 'simple-local-avatars',
+					'key'     => 'shared',
+					'desc'    => __( 'Uploaded avatars will be shared across the entire network, instead of being unique per site', 'simple-local-avatars' ),
+					'default' => 1,
+				)
+			);
+		}
+
+		add_action( 'load-options-discussion.php', array( $this, 'load_discussion_page' ) );
+
+		// This is for network site settings
+		if ( SLA_IS_NETWORK && is_network_admin() ) {
+			add_action( 'load-settings.php', array( $this, 'load_network_settings' ) );
+		}
+	}
+
+	/**
+	 * Fire code on the Discussion page
+	 */
+	public function load_discussion_page() {
+		add_action( 'admin_print_styles', array( $this, 'admin_print_styles' ) );
+		add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
+	}
+
+	/**
+	 * Load needed hooks to handle network settings
+	 */
+	public function load_network_settings() {
+		$this->options = (array) get_site_option( 'simple_local_avatars', [] );
+
+		add_action( 'wpmu_options', array( $this, 'show_network_settings' ) );
+		add_action( 'update_wpmu_options', array( $this, 'save_network_settings' ) );
+	}
+
+	/**
+	 * Show the network settings
+	 */
+	public function show_network_settings() {
+		$mode = $this->get_network_mode();
+		?>
+
+		<h2><?php esc_html_e( 'Simple Local Avatars Settings', 'simple-local-avatars' ); ?></h2>
+		<table id="simple-local-avatars" class="form-table">
+			<tr>
+				<th scope="row">
+					<?php esc_html_e( 'Mode', 'simple-local-avatars' ); ?>
+				</th>
+				<td>
+					<fieldset>
+						<legend class="screen-reader-text"><?php esc_html_e( 'Mode', 'simple-local-avatars' ); ?></legend>
+						<label><input name="simple_local_avatars[mode]" type="radio" id="sla-mode-default" value="default"<?php checked( $mode, 'default' ); ?> /> <?php esc_html_e( 'Default to the settings below when creating a new site', 'simple-local-avatars' ); ?></label><br />
+						<label><input name="simple_local_avatars[mode]" type="radio" id="sla-mode-enforce" value="enforce"<?php checked( $mode, 'enforce' ); ?> /> <?php esc_html_e( 'Enforce the settings below across all sites', 'simple-local-avatars' ); ?></label><br />
+					</fieldset>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">
+					<?php esc_html_e( 'Local avatars only', 'simple-local-avatars' ); ?>
+				</th>
+				<td>
+					<?php
+						$this->avatar_settings_field(
+							array(
+								'key'  => 'only',
+								'desc' => __( 'Only allow local avatars (still uses Gravatar for default avatars)	', 'simple-local-avatars' ),
+							)
+						);
+					?>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">
+					<?php esc_html_e( 'Local upload permissions', 'simple-local-avatars' ); ?>
+				</th>
+				<td>
+					<?php
+						$this->avatar_settings_field(
+							array(
+								'key'  => 'caps',
+								'desc' => __( 'Only allow users with file upload capabilities to upload local avatars (Authors and above)', 'simple-local-avatars' ),
+							)
+						);
+					?>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">
+					<?php esc_html_e( 'Shared network avatars', 'simple-local-avatars' ); ?>
+				</th>
+				<td>
+					<?php
+						$this->avatar_settings_field(
+							array(
+								'key'     => 'shared',
+								'desc'    => __( 'Uploaded avatars will be shared across the entire network, instead of being unique per site', 'simple-local-avatars' ),
+								'default' => 1,
+							)
+						);
+					?>
+				</td>
+			</tr>
+		</table>
+
+		<?php
+	}
+
+	/**
+	 * Handle saving the network settings
+	 */
+	public static function save_network_settings() {
+		$options   = array(
+			'caps',
+			'mode',
+			'only',
+			'shared',
+		);
+		$sanitized = array();
+
+		foreach ( $options as $option_name ) {
+			if ( ! isset( $_POST['simple_local_avatars'][ $option_name ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+				continue;
+			}
+
+			switch ( $option_name ) {
+				case 'mode':
+					update_site_option( 'simple_local_avatars_mode', sanitize_text_field( $_POST['simple_local_avatars'][ $option_name ] ) );
+					break;
+				default:
+					$sanitized[ $option_name ] = empty( $_POST['simple_local_avatars'][ $option_name ] ) ? 0 : 1;
+			}
+		}
+
+		update_site_option( 'simple_local_avatars', $sanitized );
 	}
 
 	/**
@@ -295,6 +538,11 @@ class Simple_Local_Avatars {
 	public function sanitize_options( $input ) {
 		$new_input['caps'] = empty( $input['caps'] ) ? 0 : 1;
 		$new_input['only'] = empty( $input['only'] ) ? 0 : 1;
+
+		if ( is_multisite() ) {
+			$new_input['shared'] = empty( $input['shared'] ) ? 0 : 1;
+		}
+
 		return $new_input;
 	}
 
@@ -307,13 +555,14 @@ class Simple_Local_Avatars {
 		$args = wp_parse_args(
 			$args,
 			array(
-				'key'  => '',
-				'desc' => '',
+				'key'     => '',
+				'desc'    => '',
+				'default' => 0,
 			)
 		);
 
-		if ( empty( $this->options[ $args['key'] ] ) ) {
-			$this->options[ $args['key'] ] = 0;
+		if ( ! isset( $this->options[ $args['key'] ] ) ) {
+			$this->options[ $args['key'] ] = $args['default'];
 		}
 
 		echo '
@@ -322,6 +571,19 @@ class Simple_Local_Avatars {
 				' . esc_html( $args['desc'] ) . '
 			</label>
 		';
+
+		// Output warning if needed
+		if (
+			SLA_IS_NETWORK // If network activated
+			&& $this->is_enforced() // And in enforce mode
+			&& 'shared' === $args['key'] // And we are displaying the last setting
+		) {
+			echo '
+				<div class="notice notice-warning inline">
+					<p><strong>' . esc_html__( 'Simple Local Avatar settings are currently enforced across all sites on the network.', 'simple-local-avatars' ) . '</strong></p>
+				</div>
+			';
+		}
 	}
 
 	/**
@@ -433,7 +695,7 @@ class Simple_Local_Avatars {
 	 */
 	public function assign_new_user_avatar( $url_or_media_id, $user_id ) {
 		// delete the old avatar
-		$this->avatar_delete( $user_id );    // delete old images if successful
+		$this->avatar_delete( $user_id ); // delete old images if successful
 
 		$meta_value = array();
 
@@ -445,7 +707,7 @@ class Simple_Local_Avatars {
 
 		$meta_value['full'] = $url_or_media_id;
 
-		update_user_meta( $user_id, 'simple_local_avatar', $meta_value );    // save user information (overwriting old)
+		update_user_meta( $user_id, $this->user_key, $meta_value ); // save user information (overwriting old)
 	}
 
 	/**
@@ -506,12 +768,12 @@ class Simple_Local_Avatars {
 		endif;
 
 		// Handle ratings
-		if ( isset( $avatar_id ) || $avatar = get_user_meta( $user_id, 'simple_local_avatar', true ) ) {
+		if ( isset( $avatar_id ) || $avatar = get_user_meta( $user_id, $this->user_key, true ) ) {
 			if ( empty( $_POST['simple_local_avatar_rating'] ) || ! array_key_exists( $_POST['simple_local_avatar_rating'], $this->avatar_ratings ) ) {
 				$_POST['simple_local_avatar_rating'] = key( $this->avatar_ratings );
 			}
 
-			update_user_meta( $user_id, 'simple_local_avatar_rating', $_POST['simple_local_avatar_rating'] );
+			update_user_meta( $user_id, $this->rating_key, $_POST['simple_local_avatar_rating'] );
 		}
 	}
 
@@ -576,7 +838,7 @@ class Simple_Local_Avatars {
 	 * @param int $user_id User ID.
 	 */
 	public function avatar_delete( $user_id ) {
-		$old_avatars = (array) get_user_meta( $user_id, 'simple_local_avatar', true );
+		$old_avatars = (array) get_user_meta( $user_id, $this->user_key, true );
 
 		if ( empty( $old_avatars ) ) {
 			return;
@@ -599,8 +861,8 @@ class Simple_Local_Avatars {
 			}
 		}
 
-		delete_user_meta( $user_id, 'simple_local_avatar' );
-		delete_user_meta( $user_id, 'simple_local_avatar_rating' );
+		delete_user_meta( $user_id, $this->user_key );
+		delete_user_meta( $user_id, $this->rating_key );
 	}
 
 	/**
@@ -658,7 +920,7 @@ class Simple_Local_Avatars {
 	 * @param object $user User object
 	 */
 	public function get_avatar_rest( $user ) {
-		$local_avatar = get_user_meta( $user['id'], 'simple_local_avatar', true );
+		$local_avatar = get_user_meta( $user['id'], $this->user_key, true );
 		if ( empty( $local_avatar ) ) {
 			return;
 		}
@@ -678,4 +940,71 @@ class Simple_Local_Avatars {
 	public function set_avatar_rest( $input, $user ) {
 		$this->assign_new_user_avatar( $input['media_id'], $user->ID );
 	}
+
+	/**
+	 * Short-circuit filter the `simple_local_avatars` option to match network if necessary
+	 *
+	 * @param bool $value Value of `simple_local_avatars` option, typically false.
+	 * @return array
+	 */
+	public function pre_option_simple_local_avatars( $value ) {
+		if ( SLA_IS_NETWORK && 'enforce' === $this->get_network_mode() ) {
+			$value = get_site_option( 'simple_local_avatars', [] );
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Set plugin defaults for a new site
+	 *
+	 * @param int $blog_id Blog ID.
+	 */
+	public function set_defaults( $blog_id ) {
+		if ( 'enforce' === $this->get_network_mode() ) {
+			return;
+		}
+
+		switch_to_blog( $blog_id );
+		update_option( 'simple_local_avatars', $this->sanitize_options( $this->options ) );
+		restore_current_blog();
+	}
+
+	/**
+	 * Add some basic styling on the Discussion page
+	 */
+	public function admin_print_styles() {
+		?>
+<style>
+.sla-enforced .simple-local-avatars th,
+.sla-enforced .simple-local-avatars label {
+	opacity: 0.5;
+	pointer-events: none;
+}
+.sla-enforced .simple-local-avatars .notice {
+	margin-top: 20px;
+}
+@media screen and (min-width: 783px) {
+	.sla-enforced .simple-local-avatars .notice {
+		left: -220px;
+		position: relative;
+	}
+}
+</style>
+		<?php
+	}
+	/**
+	 * Adds admin body classes to the Discussion options screen
+	 *
+	 * @param  string $classes Space-separated list of classes to apply to the body element.
+	 * @return string
+	 */
+	public function admin_body_class( $classes ) {
+		if ( $this->is_enforced() ) {
+			$classes .= ' sla-enforced';
+		}
+
+		return $classes;
+	}
+
 }
