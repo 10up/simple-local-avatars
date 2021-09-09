@@ -7,7 +7,7 @@ var simple_local_avatar_frame,
 	avatar_input,
 	avatar_blob,
 	current_avatar,
-	mediaUploader;
+	simple_local_avatar_frame;
 var avatar_working = false;
 
 jQuery(document).ready(function($){
@@ -107,12 +107,12 @@ jQuery(document).ready(function($){
 	/* NOTE: Need to set this up every time instead of reusing if already there 
 	as the toolbar button does not get reset when doing the following:
 
-	mediaUploader.setState('library');
-    mediaUploader.open();
+	simple_local_avatar_frame.setState('library');
+    simple_local_avatar_frame.open();
 
     */
 
-	mediaUploader = wp.media({
+	simple_local_avatar_frame = wp.media({
         button: {
             text: 'Select and Crop', // l10n.selectAndCrop,
             close: false
@@ -134,7 +134,7 @@ jQuery(document).ready(function($){
         ]
     });
 
-	mediaUploader.on('cropped', function(croppedImage) {
+	simple_local_avatar_frame.on('cropped', function(croppedImage) {
 
         var url = croppedImage.url,
             attachmentId = croppedImage.id,
@@ -145,7 +145,7 @@ jQuery(document).ready(function($){
 
     });
 
-    mediaUploader.on('skippedcrop', function(selection) {
+    simple_local_avatar_frame.on('skippedcrop', function(selection) {
 
         var url = selection.get('url'),
             w = selection.get('width'),
@@ -155,23 +155,23 @@ jQuery(document).ready(function($){
 
     });        
 
-    mediaUploader.on("select", function() {
+    simple_local_avatar_frame.on("select", function() {
 
-        var attachment = mediaUploader.state().get( 'selection' ).first().toJSON();
+        var attachment = simple_local_avatar_frame.state().get( 'selection' ).first().toJSON();
 
         if (     cropControl.params.width  === attachment.width 
             &&   cropControl.params.height === attachment.height 
             && ! cropControl.params.flex_width 
             && ! cropControl.params.flex_height ) {
                 myTheme_setImageFromAttachment( attachment );
-            mediaUploader.close();
+            simple_local_avatar_frame.close();
         } else {
-            mediaUploader.setState( 'cropper' );
+            simple_local_avatar_frame.setState( 'cropper' );
         }
 
     });
 
-	mediaUploader.open();
+	simple_local_avatar_frame.open();
 
   });
 
@@ -296,8 +296,7 @@ function myTheme_setImageFromURL(url, attachmentId, width, height) {
         data.height = height;
     }
 
-	console.log(data);
-
+	// We set multiple to false so only get one image from the uploader
 	avatar_lock('lock');
     jQuery.post( ajaxurl, { action: 'assign_simple_local_avatar_media', media_id: attachmentId, user_id: i10n_SimpleLocalAvatars.user_id, _wpnonce: i10n_SimpleLocalAvatars.mediaNonce }, function(data) {
 		if ( data != '' ) {
@@ -311,8 +310,8 @@ function myTheme_setImageFromURL(url, attachmentId, width, height) {
 }
 
 function myTheme_setImageFromAttachment(attachment) {
-	console.log(attachment);
 
+	// We set multiple to false so only get one image from the uploader
 	avatar_lock('lock');
 	jQuery.post( ajaxurl, { action: 'assign_simple_local_avatar_media', media_id: attachment.id, user_id: i10n_SimpleLocalAvatars.user_id, _wpnonce: i10n_SimpleLocalAvatars.mediaNonce }, function(data) {
 		if ( data != '' ) {
