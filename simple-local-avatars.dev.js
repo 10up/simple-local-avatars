@@ -1,169 +1,164 @@
-var simple_local_avatar_frame,
-	avatar_spinner,
-	avatar_ratings,
-	avatar_container,
-	avatar_form_button,
-	avatar_preview,
-	avatar_input,
-	avatar_blob,
-	current_avatar,
-	simple_local_avatar_frame;
-var avatar_working = false;
+let simple_local_avatar_frame;
+let avatar_spinner;
+let avatar_ratings;
+let avatar_container;
+let avatar_form_button;
+let avatar_preview;
+let avatar_input;
+let avatar_blob;
+let current_avatar;
+let avatar_working = false;
 
-jQuery(document).ready(function($){
-	avatar_input = $( '#simple-local-avatar' );
-	avatar_preview = $( '#simple-local-avatar-photo img' );
-	current_avatar = avatar_preview.attr( 'src' );
-	avatar_ratings = $( '#simple-local-avatar-ratings' );
-	avatar_container = $( '#simple-local-avatar-photo' );
-	$( document.getElementById('simple-local-avatar-media') ).on( 'click', function(event) {
+jQuery(document).ready(function ($) {
+	avatar_input = $('#simple-local-avatar');
+	avatar_preview = $('#simple-local-avatar-photo img');
+	current_avatar = avatar_preview.attr('src');
+	avatar_ratings = $('#simple-local-avatar-ratings');
+	avatar_container = $('#simple-local-avatar-photo');
+	$(document.getElementById('simple-local-avatar-media')).on('click', function (event) {
 		event.preventDefault();
 
-		if ( avatar_working )
-			return;
-
-		if ( simple_local_avatar_frame ) {
-			simple_local_avatar_frame.open();
+		if (avatar_working) {
 			return;
 		}
-		
+
 		/* We need to setup a Crop control that contains a few parameters
 		and a method to indicate if the CropController can skip cropping the image.
 		In this example I am just creating a control on the fly with the expected properties.
 		However, the controls used by WordPress Admin are api.CroppedImageControl and api.SiteIconControl
 		*/
-		
-		var cropControl = {
-			id: "control-id",
-			params : {
-				flex_width : false,  // set to true if the width of the cropped image can be different to the width defined here
-		  		flex_height : false, // set to true if the height of the cropped image can be different to the height defined here
-		  		width : 100,  // set the desired width of the destination image here
-		  		height : 100, // set the desired height of the destination image here
-			}
+
+		const cropControl = {
+			id: 'control-id',
+			params: {
+				flex_width: false, // set to true if the width of the cropped image can be different to the width defined here
+				flex_height: false, // set to true if the height of the cropped image can be different to the height defined here
+				width: 200, // set the desired width of the destination image here
+				height: 200, // set the desired height of the destination image here
+			},
 		};
 
-	cropControl.mustBeCropped = function(flexW, flexH, dstW, dstH, imgW, imgH) {
+		cropControl.mustBeCropped = function (flexW, flexH, dstW, dstH, imgW, imgH) {
+			// If the width and height are both flexible
+			// then the user does not need to crop the image.
 
-		// If the width and height are both flexible
-		// then the user does not need to crop the image.
-	
-		if ( true === flexW && true === flexH ) {
-			return false;
-		}
-	
-		// If the width is flexible and the cropped image height matches the current image height, 
-		// then the user does not need to crop the image.
-		if ( true === flexW && dstH === imgH ) {
-			return false;
-		}
-	
-		// If the height is flexible and the cropped image width matches the current image width, 
-		// then the user does not need to crop the image.        
-		if ( true === flexH && dstW === imgW ) {
-			return false;
-		}
-	
-		// If the cropped image width matches the current image width, 
-		// and the cropped image height matches the current image height
-		// then the user does not need to crop the image.               
-		if ( dstW === imgW && dstH === imgH ) {
-			return false;
-		}
-	
-		// If the destination width is equal to or greater than the cropped image width
-		// then the user does not need to crop the image...
-		if ( imgW <= dstW ) {
-			return false;
-		}
-	
-		return true;        
-	
-	};
+			if ( true === flexW && true === flexH ) {
+				return false;
+			}
 
-	/* NOTE: Need to set this up every time instead of reusing if already there 
-	as the toolbar button does not get reset when doing the following:
+			// If the width is flexible and the cropped image height matches the current image height,
+			// then the user does not need to crop the image.
+			if ( true === flexW && dstH === imgH ) {
+				return false;
+			}
 
-	simple_local_avatar_frame.setState('library');
-    simple_local_avatar_frame.open();
+			// If the height is flexible and the cropped image width matches the current image width,
+			// then the user does not need to crop the image.
+			if ( true === flexH && dstW === imgW ) {
+				return false;
+			}
 
-    */
+			// If the cropped image width matches the current image width,
+			// and the cropped image height matches the current image height
+			// then the user does not need to crop the image.
+			if ( dstW === imgW && dstH === imgH ) {
+				return false;
+			}
 
-	simple_local_avatar_frame = wp.media({
-        button: {
-            text: i10n_SimpleLocalAvatars.selectCrop, // l10n.selectAndCrop,
-            close: false
-        },
-        states: [
-            new wp.media.controller.Library({
-                title:    i10n_SimpleLocalAvatars.selectCrop, // l10n.selectAndCrop,
-                library:   wp.media.query({ type: 'image' }),
-                multiple:  false, // We set multiple to false so only get one image from the uploader
-                date:      false,
-                priority:  20,
-                suggestedWidth: 100,
-                suggestedHeight: 100
-            }),
-            new wp.media.controller.CustomizeImageCropper({ 
-                imgSelectOptions: myTheme_calculateImageSelectOptions,
-                control: cropControl
-            })
-        ]
-    });
+			// If the destination width is equal to or greater than the cropped image width
+			// then the user does not need to crop the image...
+			if ( imgW <= dstW ) {
+				return false;
+			}
 
-	simple_local_avatar_frame.on('cropped', function(croppedImage) {
+			return true;
+		};
 
-        var url = croppedImage.url,
-            attachmentId = croppedImage.id,
-            w = croppedImage.width,
-            h = croppedImage.height;
+		/* NOTE: Need to set this up every time instead of reusing if already there
+		as the toolbar button does not get reset when doing the following:
+		
+		simple_local_avatar_frame.setState('library');
+		simple_local_avatar_frame.open();
+		*/
 
-            simple_local_avatar_set_image_from_url(url, attachmentId, w, h);            
+		simple_local_avatar_frame = wp.media({
+			button: {
+				text: i10n_SimpleLocalAvatars.selectCrop, // l10n.selectAndCrop,
+				close: false,
+			},
+			states: [
+				new wp.media.controller.Library({
+					title: i10n_SimpleLocalAvatars.selectCrop, // l10n.selectAndCrop,
+					library: wp.media.query({ type: 'image' }),
+					multiple: false, // We set multiple to false so only get one image from the uploader
+					date: false,
+					priority: 20,
+					suggestedWidth: 200,
+					suggestedHeight: 200,
+				}),
+				new wp.media.controller.CustomizeImageCropper({
+					imgSelectOptions: myTheme_calculateImageSelectOptions,
+					control: cropControl,
+				}),
+			],
+		});
 
-    });
+		simple_local_avatar_frame.on('cropped', function (croppedImage) {
+			const { url } = croppedImage;
+			const attachmentId = croppedImage.id;
+			const w = croppedImage.width;
+			const h = croppedImage.height;
 
-    simple_local_avatar_frame.on('skippedcrop', function(selection) {
+			simple_local_avatar_set_image_from_url(url, attachmentId, w, h);
+		});
 
-        var url = selection.get('url'),
-            w = selection.get('width'),
-            h = selection.get('height');
+		simple_local_avatar_frame.on('skippedcrop', function (selection) {
+			const url = selection.get('url');
+			const w = selection.get('width');
+			const h = selection.get('height');
 
-            simple_local_avatar_set_image_from_url(url, selection.id, w, h);            
+			simple_local_avatar_set_image_from_url(url, selection.id, w, h);
+		});
 
-    });        
+		simple_local_avatar_frame.on('select', function () {
+			const avatarAttachment = simple_local_avatar_frame
+				.state()
+				.get('selection')
+				.first()
+				.toJSON();
 
-    simple_local_avatar_frame.on("select", function() {
+			if (
+				cropControl.params.width === avatarAttachment.width &&
+				cropControl.params.height === avatarAttachment.height &&
+				!cropControl.params.flex_width &&
+				!cropControl.params.flex_height
+			) {
+				avatarAttachment.dst_width = avatarAttachment.width;
+				avatarAttachment.dst_height = avatarAttachment.height;
+				simple_local_avatar_set_image_from_attachment(avatarAttachment);
+				simple_local_avatar_frame.close();
+			} else {
+				simple_local_avatar_frame.setState('cropper');
+			}
+		});
 
-        var avatarAttachment = simple_local_avatar_frame.state().get( 'selection' ).first().toJSON();
+		simple_local_avatar_frame.open();
+	});
 
-        if (     cropControl.params.width  === avatarAttachment.width 
-            &&   cropControl.params.height === avatarAttachment.height 
-            && ! cropControl.params.flex_width 
-            && ! cropControl.params.flex_height ) {
-                simple_local_avatar_set_image_from_attachment( avatarAttachment );
-            simple_local_avatar_frame.close();
-        } else {
-            simple_local_avatar_frame.setState( 'cropper' );
-        }
-
-    });
-
-	simple_local_avatar_frame.open();
-
-  });
-
-	$( document.getElementById('simple-local-avatar-remove') ).on('click',function(event){
+	$(document.getElementById('simple-local-avatar-remove')).on('click', function (event) {
 		event.preventDefault();
 
-		if ( avatar_working )
-			return;
+		if (avatar_working) return;
 
 		avatar_lock('lock');
-		$.get( ajaxurl, { action: 'remove_simple_local_avatar', user_id: i10n_SimpleLocalAvatars.user_id, _wpnonce: i10n_SimpleLocalAvatars.deleteNonce })
-		.done(function(data) {
-			if ( data != '' ) {
+		$.get(ajaxurl, {
+			action: 'remove_simple_local_avatar',
+			user_id: i10n_SimpleLocalAvatars.user_id,
+			_wpnonce: i10n_SimpleLocalAvatars.deleteNonce,
+		}).done(function (data) {
+			if (data != '') {
 				avatar_container.innerHTML = data;
-				$( document.getElementById('simple-local-avatar-remove') ).hide();
+				$(document.getElementById('simple-local-avatar-remove')).hide();
 				avatar_ratings.disabled = true;
 				avatar_lock('unlock');
 			}
@@ -203,96 +198,112 @@ function avatar_lock( lock_or_unlock ) {
 }
 
 function myTheme_calculateImageSelectOptions(attachment, controller) {
+	const control = controller.get('control');
 
-    var control = controller.get( 'control' );
+	const flexWidth = !!parseInt(control.params.flex_width, 10);
+	const flexHeight = !!parseInt(control.params.flex_height, 10);
 
-    var flexWidth = !! parseInt( control.params.flex_width, 10 );
-    var flexHeight = !! parseInt( control.params.flex_height, 10 );
+	const realWidth = attachment.get('width');
+	const realHeight = attachment.get('height');
 
-    var realWidth = attachment.get( 'width' );
-    var realHeight = attachment.get( 'height' );
+	let xInit = parseInt(control.params.width, 10);
+	let yInit = parseInt(control.params.height, 10);
 
-    var xInit = parseInt(control.params.width, 10);
-    var yInit = parseInt(control.params.height, 10);
+	const ratio = xInit / yInit;
 
-    var ratio = xInit / yInit;
+	controller.set(
+		'canSkipCrop',
+		!control.mustBeCropped(flexWidth, flexHeight, xInit, yInit, realWidth, realHeight),
+	);
 
-    controller.set( 'canSkipCrop', ! control.mustBeCropped( flexWidth, flexHeight, xInit, yInit, realWidth, realHeight ) );
+	const xImg = xInit;
+	const yImg = yInit;
 
-    var xImg = xInit;
-    var yImg = yInit;
+	if (realWidth / realHeight > ratio) {
+		yInit = realHeight;
+		xInit = yInit * ratio;
+	} else {
+		xInit = realWidth;
+		yInit = xInit / ratio;
+	}
 
-    if ( realWidth / realHeight > ratio ) {
-        yInit = realHeight;
-        xInit = yInit * ratio;
-    } else {
-        xInit = realWidth;
-        yInit = xInit / ratio;
-    }        
+	const x1 = (realWidth - xInit) / 2;
+	const y1 = (realHeight - yInit) / 2;
 
-    var x1 = ( realWidth - xInit ) / 2;
-    var y1 = ( realHeight - yInit ) / 2;        
+	const imgSelectOptions = {
+		handles: true,
+		keys: true,
+		instance: true,
+		persistent: true,
+		imageWidth: realWidth,
+		imageHeight: realHeight,
+		minWidth: xImg > xInit ? xInit : xImg,
+		minHeight: yImg > yInit ? yInit : yImg,
+		x1,
+		y1,
+		x2: xInit + x1,
+		y2: yInit + y1,
+	};
 
-    var imgSelectOptions = {
-        handles: true,
-        keys: true,
-        instance: true,
-        persistent: true,
-        imageWidth: realWidth,
-        imageHeight: realHeight,
-        minWidth: xImg > xInit ? xInit : xImg,
-        minHeight: yImg > yInit ? yInit : yImg,            
-        x1: x1,
-        y1: y1,
-        x2: xInit + x1,
-        y2: yInit + y1
-    };
-
-    return imgSelectOptions;
-} 
+	return imgSelectOptions;
+}
 
 function simple_local_avatar_set_image_from_url(url, attachmentId, width, height) {
-	
-	var data = {};
+	const data = {};
 
-    data.url = url;
-    data.thumbnail_url = url;
-    data.timestamp = _.now();
+	data.url = url;
+	data.thumbnail_url = url;
+	data.timestamp = _.now();
 
-    if (attachmentId) {
-        data.attachment_id = attachmentId;
-    }
+	if (attachmentId) {
+		data.attachment_id = attachmentId;
+	}
 
-    if (width) {
-        data.width = width;
-    }
+	if (width) {
+		data.width = width;
+	}
 
-    if (height) {
-        data.height = height;
-    }
+	if (height) {
+		data.height = height;
+	}
 
 	avatar_lock('lock');
-    jQuery.post( ajaxurl, { action: 'assign_simple_local_avatar_media', media_id: attachmentId, user_id: i10n_SimpleLocalAvatars.user_id, _wpnonce: i10n_SimpleLocalAvatars.mediaNonce }, function(data) {
-		if ( data != '' ) {
-			avatar_container.innerHTML = data;
-			jQuery( document.getElementById('simple-local-avatar-remove') ).show();
-			avatar_ratings.disabled = false;
-			avatar_lock('unlock');
-		}
-	});
-
+	jQuery.post(
+		ajaxurl,
+		{
+			action: 'assign_simple_local_avatar_media',
+			media_id: attachmentId,
+			user_id: i10n_SimpleLocalAvatars.user_id,
+			_wpnonce: i10n_SimpleLocalAvatars.mediaNonce,
+		},
+		function (data) {
+			if (data != '') {
+				avatar_container.innerHTML = data;
+				jQuery(document.getElementById('simple-local-avatar-remove')).show();
+				avatar_ratings.disabled = false;
+				avatar_lock('unlock');
+			}
+		},
+	);
 }
 
 function simple_local_avatar_set_image_from_attachment(attachment) {
-
 	avatar_lock('lock');
-	jQuery.post( ajaxurl, { action: 'assign_simple_local_avatar_media', media_id: attachment.id, user_id: i10n_SimpleLocalAvatars.user_id, _wpnonce: i10n_SimpleLocalAvatars.mediaNonce }, function(data) {
-		if ( data != '' ) {
-			avatar_container.innerHTML = data;
-			jQuery( document.getElementById('simple-local-avatar-remove') ).show();
-			avatar_ratings.disabled = false;
-			avatar_lock('unlock');
-		}
-	});           
-
+	jQuery.post(
+		ajaxurl,
+		{
+			action: 'assign_simple_local_avatar_media',
+			media_id: attachment.id,
+			user_id: i10n_SimpleLocalAvatars.user_id,
+			_wpnonce: i10n_SimpleLocalAvatars.mediaNonce,
+		},
+		function (data) {
+			if (data != '') {
+				avatar_container.innerHTML = data;
+				jQuery(document.getElementById('simple-local-avatar-remove')).show();
+				avatar_ratings.disabled = false;
+				avatar_lock('unlock');
+			}
+		},
+	);
 }
