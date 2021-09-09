@@ -14,8 +14,8 @@ jQuery(document).ready(function($){
 	avatar_input = $( '#simple-local-avatar' );
 	avatar_preview = $( '#simple-local-avatar-photo img' );
 	current_avatar = avatar_preview.attr( 'src' );
-	avatar_ratings = document.getElementById('simple-local-avatar-ratings');
-	avatar_container = document.getElementById('simple-local-avatar-photo');
+	avatar_ratings = $( '#simple-local-avatar-ratings' );
+	avatar_container = $( '#simple-local-avatar-photo' );
 	$( document.getElementById('simple-local-avatar-media') ).on( 'click', function(event) {
 		event.preventDefault();
 
@@ -26,45 +26,22 @@ jQuery(document).ready(function($){
 			simple_local_avatar_frame.open();
 			return;
 		}
-
-    	// simple_local_avatar_frame = wp.media.frames.simple_local_avatar_frame = wp.media({
-		// 	title: i10n_SimpleLocalAvatars.insertMediaTitle,
-		// 	button: { text: i10n_SimpleLocalAvatars.insertIntoPost },
-		// 	library : { type : 'image'},
-		// 	multiple: false
-		// });
-
-    // simple_local_avatar_frame.on( 'select', function() {
-    // 	// We set multiple to false so only get one image from the uploader
-    // 	avatar_lock('lock');
-    // 	var avatar_url = simple_local_avatar_frame.state().get('selection').first().toJSON().id;
-    // 	jQuery.post( ajaxurl, { action: 'assign_simple_local_avatar_media', media_id: avatar_url, user_id: i10n_SimpleLocalAvatars.user_id, _wpnonce: i10n_SimpleLocalAvatars.mediaNonce }, function(data) {
-    // 		if ( data != '' ) {
-    // 			avatar_container.innerHTML = data;
-    // 			$( document.getElementById('simple-local-avatar-remove') ).show();
-    // 			avatar_ratings.disabled = false;
-    // 			avatar_lock('unlock');
-    // 		}
-    // 	});
-    // });
-
-    // simple_local_avatar_frame.open();
-
-    /* We need to setup a Crop control that contains a few parameters
-       and a method to indicate if the CropController can skip cropping the image.
-       In this example I am just creating a control on the fly with the expected properties.
-       However, the controls used by WordPress Admin are api.CroppedImageControl and api.SiteIconControl
-    */
-
-	   var cropControl = {
-		id: "control-id",
-		params : {
-		  flex_width : false,  // set to true if the width of the cropped image can be different to the width defined here
-		  flex_height : false, // set to true if the height of the cropped image can be different to the height defined here
-		  width : 300,  // set the desired width of the destination image here
-		  height : 200, // set the desired height of the destination image here
-		}
-	};
+		
+		/* We need to setup a Crop control that contains a few parameters
+		and a method to indicate if the CropController can skip cropping the image.
+		In this example I am just creating a control on the fly with the expected properties.
+		However, the controls used by WordPress Admin are api.CroppedImageControl and api.SiteIconControl
+		*/
+		
+		var cropControl = {
+			id: "control-id",
+			params : {
+				flex_width : false,  // set to true if the width of the cropped image can be different to the width defined here
+		  		flex_height : false, // set to true if the height of the cropped image can be different to the height defined here
+		  		width : 100,  // set the desired width of the destination image here
+		  		height : 100, // set the desired height of the destination image here
+			}
+		};
 
 	cropControl.mustBeCropped = function(flexW, flexH, dstW, dstH, imgW, imgH) {
 
@@ -114,18 +91,18 @@ jQuery(document).ready(function($){
 
 	simple_local_avatar_frame = wp.media({
         button: {
-            text: 'Select and Crop', // l10n.selectAndCrop,
+            text: i10n_SimpleLocalAvatars.selectCrop, // l10n.selectAndCrop,
             close: false
         },
         states: [
             new wp.media.controller.Library({
-                title:     'Select and Crop', // l10n.chooseImage,
+                title:    i10n_SimpleLocalAvatars.selectCrop, // l10n.selectAndCrop,
                 library:   wp.media.query({ type: 'image' }),
-                multiple:  false,
+                multiple:  false, // We set multiple to false so only get one image from the uploader
                 date:      false,
                 priority:  20,
-                suggestedWidth: 300,
-                suggestedHeight: 200
+                suggestedWidth: 100,
+                suggestedHeight: 100
             }),
             new wp.media.controller.CustomizeImageCropper({ 
                 imgSelectOptions: myTheme_calculateImageSelectOptions,
@@ -141,7 +118,7 @@ jQuery(document).ready(function($){
             w = croppedImage.width,
             h = croppedImage.height;
 
-            myTheme_setImageFromURL(url, attachmentId, w, h);            
+            simple_local_avatar_set_image_from_url(url, attachmentId, w, h);            
 
     });
 
@@ -151,19 +128,19 @@ jQuery(document).ready(function($){
             w = selection.get('width'),
             h = selection.get('height');
 
-            myTheme_setImageFromURL(url, selection.id, w, h);            
+            simple_local_avatar_set_image_from_url(url, selection.id, w, h);            
 
     });        
 
     simple_local_avatar_frame.on("select", function() {
 
-        var attachment = simple_local_avatar_frame.state().get( 'selection' ).first().toJSON();
+        var avatarAttachment = simple_local_avatar_frame.state().get( 'selection' ).first().toJSON();
 
-        if (     cropControl.params.width  === attachment.width 
-            &&   cropControl.params.height === attachment.height 
+        if (     cropControl.params.width  === avatarAttachment.width 
+            &&   cropControl.params.height === avatarAttachment.height 
             && ! cropControl.params.flex_width 
             && ! cropControl.params.flex_height ) {
-                myTheme_setImageFromAttachment( attachment );
+                simple_local_avatar_set_image_from_attachment( avatarAttachment );
             simple_local_avatar_frame.close();
         } else {
             simple_local_avatar_frame.setState( 'cropper' );
@@ -213,8 +190,6 @@ function avatar_lock( lock_or_unlock ) {
 		avatar_container = document.getElementById('simple-local-avatar-photo');
 		avatar_form_button = jQuery(avatar_ratings).closest('form').find('input[type=submit]');
 	}
-
-	console.log(lock_or_unlock)
 
 	if ( lock_or_unlock == 'unlock' ) {
 		avatar_working = false;
@@ -276,9 +251,9 @@ function myTheme_calculateImageSelectOptions(attachment, controller) {
     return imgSelectOptions;
 } 
 
-function myTheme_setImageFromURL(url, attachmentId, width, height) {
+function simple_local_avatar_set_image_from_url(url, attachmentId, width, height) {
 	
-    var choice, data = {};
+	var data = {};
 
     data.url = url;
     data.thumbnail_url = url;
@@ -296,7 +271,6 @@ function myTheme_setImageFromURL(url, attachmentId, width, height) {
         data.height = height;
     }
 
-	// We set multiple to false so only get one image from the uploader
 	avatar_lock('lock');
     jQuery.post( ajaxurl, { action: 'assign_simple_local_avatar_media', media_id: attachmentId, user_id: i10n_SimpleLocalAvatars.user_id, _wpnonce: i10n_SimpleLocalAvatars.mediaNonce }, function(data) {
 		if ( data != '' ) {
@@ -309,9 +283,8 @@ function myTheme_setImageFromURL(url, attachmentId, width, height) {
 
 }
 
-function myTheme_setImageFromAttachment(attachment) {
+function simple_local_avatar_set_image_from_attachment(attachment) {
 
-	// We set multiple to false so only get one image from the uploader
 	avatar_lock('lock');
 	jQuery.post( ajaxurl, { action: 'assign_simple_local_avatar_media', media_id: attachment.id, user_id: i10n_SimpleLocalAvatars.user_id, _wpnonce: i10n_SimpleLocalAvatars.mediaNonce }, function(data) {
 		if ( data != '' ) {

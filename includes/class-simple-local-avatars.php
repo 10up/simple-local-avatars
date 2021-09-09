@@ -280,6 +280,7 @@ class Simple_Local_Avatars {
 				'user_id'          => $user_id,
 				'insertMediaTitle' => __( 'Choose an Avatar', 'simple-local-avatars' ),
 				'insertIntoPost'   => __( 'Set as avatar', 'simple-local-avatars' ),
+				'selectCrop'       => __( 'Select avatar and Crop', 'simple-local-avatars' ),
 				'deleteNonce'      => $this->remove_nonce,
 				'mediaNonce'       => wp_create_nonce( 'assign_simple_local_avatar_nonce' ),
 			)
@@ -330,7 +331,7 @@ class Simple_Local_Avatars {
 	 * @param object $profileuser User object
 	 */
 	public function edit_user_profile( $profileuser ) {
-	?>
+		?>
 	<div id="simple-local-avatar-section">
 		<h3><?php esc_html_e( 'Avatar', 'simple-local-avatars' ); ?></h3>
 
@@ -415,7 +416,7 @@ class Simple_Local_Avatars {
 			</tr>
 		</table>
 	</div>
-	<?php
+		<?php
 	}
 
 	/**
