@@ -42,6 +42,10 @@ class Simple_Local_Avatars {
 		add_action( 'user_edit_form_tag', array( $this, 'user_edit_form_tag' ) );
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_fields' ) );
+
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			WP_CLI::add_command( 'simple-local-avatars migrate wp-user-avatar', array( $this, 'migrate_wp_user_avatar' ) );
+		}
 	}
 
 	/**
@@ -677,5 +681,69 @@ class Simple_Local_Avatars {
 	 */
 	public function set_avatar_rest( $input, $user ) {
 		$this->assign_new_user_avatar( $input['media_id'], $user->ID );
+	}
+
+	/**
+	 * Migrate the user's avatar data away from WP User Avatar/ProfilePress via the command line.
+	 *
+	 * This function creates a new option in the wp_options table to store the processed user IDs
+	 * so that we can run this command multiple times without processing the same user over and over again.
+	 *
+	 * Credit to Philip John for the Gist
+	 *
+	 * @see https://gist.github.com/philipjohn/822d3521a95481f6ad7e118a7106fbc7
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     $ wp simple-local-avatars migrate wp-user-avatar
+	 *     Success: Migrated the avatar for user: 1234
+	 */
+	public function migrate_wp_user_avatar() {
+
+		// Get the name of the meta key for WP User Avatar.
+		global $blog_id, $wpdb;
+		write_log( 'blog id: ' . $blog_id );
+		$meta_key = $wpdb->get_blog_prefix( $blog_id ) . 'user_avatar';
+		write_log( 'meta key: ' . $meta_key );
+
+		// Get processed users from database.
+		$migrations      = get_option( 'simple_local_avatars_migrations', array() );
+		$processed_users = isset( $migrations['wp_user_avatar'] ) ? $migrations['wp_user_avatar'] : array();
+
+		// Grab all users that have a local avatar.
+		$users = get_users(
+			array(
+				'exclude'      => $processed_users,
+				'meta_key'     => $meta_key,
+				'meta_compare' => 'EXISTS',
+			)
+		);
+
+		// Bail early if we don't find users.
+		if ( empty( $users ) ) {
+			WP_CLI::error( 'Did not find users with an avatar associated with WP User Avatar.' );
+			return;
+		}
+
+		foreach ( $users as $user ) {
+			// Get the existing avatar media ID.
+			$avatar_id = get_user_meta( $user->ID, $meta_key, true );
+
+			// Attach the user and media to Simple Local Avatars.
+			$sla = new Simple_Local_Avatars();
+			$sla->assign_new_user_avatar( (int) $avatar_id, $user->ID );
+
+			// Check that it worked.
+			$is_migrated = get_user_meta( $user->ID, 'simple_local_avatar', true );
+
+			// Record the user ID so we don't process a second time.
+			if ( ! empty( $is_migrated ) ) {
+				$migrations['wp_user_avatar'][] = $user->ID;
+				$is_saved                       = update_option( 'simple_local_avatars_migrations', $migrations );
+				if ( ! empty( $is_saved ) ) {
+					WP_CLI::success( "Migrated the avatar for user: {$user->ID}" );
+				}
+			}
+		}
 	}
 }
