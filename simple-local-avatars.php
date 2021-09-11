@@ -57,4 +57,5 @@ function simple_local_avatars_uninstall() {
 	endforeach;
 
 	delete_option( 'simple_local_avatars' );
+	delete_option( 'simple_local_avatars_migrations' );
 }
