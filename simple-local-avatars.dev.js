@@ -48,47 +48,21 @@ jQuery( document ).ready( function ( $ ) {
             imgW,
             imgH
          ) {
-            // If the width and height are both flexible
-            // then the user does not need to crop the image.
 
-            if ( true === flexW && true === flexH ) {
-               return false;
-            }
-
-            // If the width is flexible and the cropped image height matches the current image height,
-            // then the user does not need to crop the image.
-            if ( true === flexW && dstH === imgH ) {
-               return false;
-            }
-
-            // If the height is flexible and the cropped image width matches the current image width,
-            // then the user does not need to crop the image.
-            if ( true === flexH && dstW === imgW ) {
-               return false;
-            }
-
-            // If the cropped image width matches the current image width,
-            // and the cropped image height matches the current image height
-            // then the user does not need to crop the image.
-            if ( dstW === imgW && dstH === imgH ) {
-               return false;
-            }
-
-            // If the destination width is equal to or greater than the cropped image width
-            // then the user does not need to crop the image...
-            if ( imgW <= dstW ) {
-               return false;
+            // if the image matches the crop dims then no need to crop
+            if ( imgW === dstW && imgH === distH ) {
+                return false;
             }
 
             return true;
          };
 
          /* NOTE: Need to set this up every time instead of reusing if already there
-      as the toolbar button does not get reset when doing the following:
+          as the toolbar button does not get reset when doing the following:
 
-      simple_local_avatar_frame.setState('library');
-      simple_local_avatar_frame.open();
-      */
+          simple_local_avatar_frame.setState('library');
+          simple_local_avatar_frame.open();
+          */
 
          simple_local_avatar_frame = wp.media( {
             button: {
@@ -106,7 +80,7 @@ jQuery( document ).ready( function ( $ ) {
                   suggestedHeight: 200,
                } ),
                new wp.media.controller.CustomizeImageCropper( {
-                  imgSelectOptions: myTheme_calculateImageSelectOptions,
+                  imgSelectOptions: simple_local_avatar_calculate_image_select_options,
                   control: cropControl,
                } ),
             ],
@@ -234,7 +208,7 @@ function avatar_lock( lock_or_unlock ) {
    }
 }
 
-function myTheme_calculateImageSelectOptions( attachment, controller ) {
+function simple_local_avatar_calculate_image_select_options( attachment, controller ) {
    const control = controller.get( 'control' );
 
    const flexWidth = !! parseInt( control.params.flex_width, 10 );
@@ -251,8 +225,8 @@ function myTheme_calculateImageSelectOptions( attachment, controller ) {
    controller.set(
       'canSkipCrop',
       ! control.mustBeCropped(
-         flexWidth,
-         flexHeight,
+         false,
+         false,
          xInit,
          yInit,
          realWidth,
@@ -287,6 +261,7 @@ function myTheme_calculateImageSelectOptions( attachment, controller ) {
       y1,
       x2: xInit + x1,
       y2: yInit + y1,
+      aspectRatio: xInit + ':' + yInit,
    };
 
    return imgSelectOptions;
