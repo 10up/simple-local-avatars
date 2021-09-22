@@ -272,7 +272,7 @@ class Simple_Local_Avatars {
 		$this->remove_nonce = wp_create_nonce( 'remove_simple_local_avatar_nonce' );
 
 		$script_name_append = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.dev' : '';
-		wp_enqueue_script( 'simple-local-avatars', plugins_url( '', dirname( __FILE__ ) ) . '/simple-local-avatars.dev' . $script_name_append . '.js', array( 'jquery' ), false, true );
+		wp_enqueue_script( 'simple-local-avatars', plugins_url( '', dirname( __FILE__ ) ) . '/simple-local-avatars' . $script_name_append . '.js', array( 'jquery' ), false, true );
 		wp_localize_script(
 			'simple-local-avatars',
 			'i10n_SimpleLocalAvatars',
@@ -331,7 +331,7 @@ class Simple_Local_Avatars {
 	 * @param object $profileuser User object
 	 */
 	public function edit_user_profile( $profileuser ) {
-		?>
+	?>
 	<div id="simple-local-avatar-section">
 		<h3><?php esc_html_e( 'Avatar', 'simple-local-avatars' ); ?></h3>
 
