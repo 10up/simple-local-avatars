@@ -15,7 +15,7 @@ jQuery( document ).ready( function ( $ ) {
    current_avatar = avatar_preview.attr( 'src' );
    avatar_ratings = $( '#simple-local-avatar-ratings' );
    avatar_container = $( '#simple-local-avatar-photo' );
-   $( document.getElementById( 'simple-local-avatar-media' ) ).on(
+   $( '#simple-local-avatar-media' ).on(
       'click',
       function ( event ) {
          event.preventDefault();
@@ -25,10 +25,11 @@ jQuery( document ).ready( function ( $ ) {
          }
 
          /* We need to setup a Crop control that contains a few parameters
-      and a method to indicate if the CropController can skip cropping the image.
-      In this example I am just creating a control on the fly with the expected properties.
-      However, the controls used by WordPress Admin are api.CroppedImageControl and api.SiteIconControl
-      */
+         and a method to indicate if the CropController can skip cropping the image.
+         In this example I am just creating a control on the fly with the expected properties.
+         However, the controls used by WordPress Admin are api.CroppedImageControl and api.SiteIconControl.
+         Please refer this file for more details - wp-admin/js/customize-controls.js,  Line no: 4503 and 4703
+         */
 
          const cropControl = {
             id: 'control-id',
@@ -51,18 +52,18 @@ jQuery( document ).ready( function ( $ ) {
 
             // if the image matches the crop dims then no need to crop
             if ( imgW === dstW && imgH === distH ) {
-                return false;
+               return false;
             }
 
             return true;
          };
 
          /* NOTE: Need to set this up every time instead of reusing if already there
-          as the toolbar button does not get reset when doing the following:
+         as the toolbar button does not get reset when doing the following:
 
-          simple_local_avatar_frame.setState('library');
-          simple_local_avatar_frame.open();
-          */
+         simple_local_avatar_frame.setState('library');
+         simple_local_avatar_frame.open();
+         */
 
          simple_local_avatar_frame = wp.media( {
             button: {
@@ -143,7 +144,7 @@ jQuery( document ).ready( function ( $ ) {
       }
    );
 
-   $( document.getElementById( 'simple-local-avatar-remove' ) ).on(
+   $( '#simple-local-avatar-remove' ).on(
       'click',
       function ( event ) {
          event.preventDefault();
@@ -158,15 +159,14 @@ jQuery( document ).ready( function ( $ ) {
          } ).done( function ( data ) {
             if ( data != '' ) {
                avatar_container.innerHTML = data;
-               $(
-                  document.getElementById( 'simple-local-avatar-remove' )
-               ).hide();
+               $( '#simple-local-avatar-remove' ).hide();
                avatar_ratings.disabled = true;
-               avatar_lock( 'unlock' );
             }
+         } ).always( function () {
+            avatar_lock( 'unlock' );
          } );
       }
-   );
+      );
 
    avatar_input.on( 'change', function ( event ) {
       avatar_preview.attr( 'srcset', '' );
@@ -299,19 +299,16 @@ function simple_local_avatar_set_image_from_url(
          media_id: attachmentId,
          user_id: i10n_SimpleLocalAvatars.user_id,
          _wpnonce: i10n_SimpleLocalAvatars.mediaNonce,
-      },
-      function ( data ) {
+      }).done( function ( data ) {
          if ( data != '' ) {
             avatar_container.innerHTML = data;
-            jQuery(
-               document.getElementById( 'simple-local-avatar-remove' )
-            ).show();
+            jQuery( '#simple-local-avatar-remove' ).show();
             avatar_ratings.disabled = false;
-            avatar_lock( 'unlock' );
          }
-      }
-   );
-}
+      }).always( function () {
+         avatar_lock( 'unlock' );
+      } );
+   }
 
 function simple_local_avatar_set_image_from_attachment( attachment ) {
    avatar_lock( 'lock' );
@@ -322,16 +319,14 @@ function simple_local_avatar_set_image_from_attachment( attachment ) {
          media_id: attachment.id,
          user_id: i10n_SimpleLocalAvatars.user_id,
          _wpnonce: i10n_SimpleLocalAvatars.mediaNonce,
-      },
-      function ( data ) {
+      }).done ( function ( data ) {
          if ( data != '' ) {
             avatar_container.innerHTML = data;
-            jQuery(
-               document.getElementById( 'simple-local-avatar-remove' )
-            ).show();
+            jQuery( '#simple-local-avatar-remove' ).show();
             avatar_ratings.disabled = false;
             avatar_lock( 'unlock' );
          }
-      }
-   );
-}
+      }).always( function () {
+         avatar_lock( 'unlock' );
+      } );
+   }
