@@ -330,7 +330,8 @@ class Simple_Local_Avatars {
 	 *
 	 * @param object $profileuser User object
 	 */
-	public function edit_user_profile( $profileuser ) { ?>
+	public function edit_user_profile( $profileuser ) {
+		?>
 	<div id="simple-local-avatar-section">
 		<h3><?php esc_html_e( 'Avatar', 'simple-local-avatars' ); ?></h3>
 
