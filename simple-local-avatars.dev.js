@@ -77,6 +77,16 @@ jQuery(document).ready(function($){
 			avatar_preview.attr( 'src', current_avatar );
 		}
 	} );
+
+	$( document.getElementById('simple-local-avatar-migrate-from-wp-user-avatars') ).on( 'click', function(event) {
+		event.preventDefault();
+        $('.spinner').addClass('is-active');
+		jQuery.post( ajaxurl, { action: 'migrate_from_wp_user_avatar', _wpnonce: i10n_SimpleLocalAvatars.wpUserAvatarNonce }, function(data) {
+			if ( data != '' ) {
+				$('.spinner').removeClass('is-active');
+			}
+		});
+    });
 });
 
 function avatar_lock( lock_or_unlock ) {

@@ -43,6 +43,8 @@ class Simple_Local_Avatars {
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_fields' ) );
 
+		add_action( 'wp_ajax_migrate_from_wp_user_avatar', array( $this, 'ajax_migrate_from_wp_user_avatar' ) );
+
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			WP_CLI::add_command( 'simple-local-avatars migrate wp-user-avatar', array( $this, 'migrate_from_wp_user_avatar' ) );
 		}
@@ -270,7 +272,7 @@ class Simple_Local_Avatars {
 	 * @param string $hook_suffix Page hook
 	 */
 	public function admin_enqueue_scripts( $hook_suffix ) {
-		if ( 'profile.php' !== $hook_suffix && 'user-edit.php' !== $hook_suffix ) {
+		if ( 'profile.php' !== $hook_suffix && 'user-edit.php' !== $hook_suffix && 'options-discussion.php' !== $hook_suffix ) {
 			return;
 		}
 
@@ -278,7 +280,8 @@ class Simple_Local_Avatars {
 			wp_enqueue_media();
 		}
 
-		$user_id = ( 'profile.php' === $hook_suffix ) ? get_current_user_id() : (int) $_GET['user_id'];
+		$param_user_id = isset( $_GET['user_id'] ) ? $_GET['user_id'] : 0;
+		$user_id       = ( 'profile.php' === $hook_suffix ) ? get_current_user_id() : (int) $param_user_id;
 
 		$this->remove_nonce = wp_create_nonce( 'remove_simple_local_avatar_nonce' );
 
@@ -288,11 +291,12 @@ class Simple_Local_Avatars {
 			'simple-local-avatars',
 			'i10n_SimpleLocalAvatars',
 			array(
-				'user_id'          => $user_id,
-				'insertMediaTitle' => __( 'Choose an Avatar', 'simple-local-avatars' ),
-				'insertIntoPost'   => __( 'Set as avatar', 'simple-local-avatars' ),
-				'deleteNonce'      => $this->remove_nonce,
-				'mediaNonce'       => wp_create_nonce( 'assign_simple_local_avatar_nonce' ),
+				'user_id'           => $user_id,
+				'insertMediaTitle'  => __( 'Choose an Avatar', 'simple-local-avatars' ),
+				'insertIntoPost'    => __( 'Set as avatar', 'simple-local-avatars' ),
+				'deleteNonce'       => $this->remove_nonce,
+				'mediaNonce'        => wp_create_nonce( 'assign_simple_local_avatar_nonce' ),
+				'wpUserAvatarNonce' => wp_create_nonce( 'migrate_from_wp_user_avatar_nonce' ),
 			)
 		);
 	}
@@ -698,6 +702,77 @@ class Simple_Local_Avatars {
 	 */
 	public function set_avatar_rest( $input, $user ) {
 		$this->assign_new_user_avatar( $input['media_id'], $user->ID );
+	}
+
+	/**
+	 * Migrate the user's avatar data away from WP User Avatar/ProfilePress via the dashboard.
+	 *
+	 * This function creates a new option in the wp_options table to store the processed user IDs
+	 * so that we can run this command multiple times without processing the same user over and over again.
+	 *
+	 * Credit to Philip John for the Gist
+	 *
+	 * @see https://gist.github.com/philipjohn/822d3521a95481f6ad7e118a7106fbc7
+	 */
+	public function ajax_migrate_from_wp_user_avatar() {
+		// Check required information.
+		if ( empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'migrate_from_wp_user_avatar_nonce' ) ) {
+			die;
+		}
+
+		global $wpdb;
+
+		$sites = get_sites();
+
+		// Bail early if we don't find sites.
+		if ( empty( $sites ) ) {
+			return;
+		}
+
+		foreach ( $sites as $site ) {
+			// Get the blog ID to use in the meta key and user query.
+			$blog_id = isset( $site->blog_id ) ? $site->blog_id : 1;
+
+			// Get the name of the meta key for WP User Avatar.
+			$meta_key = $wpdb->get_blog_prefix( $blog_id ) . 'user_avatar';
+
+			// Get processed users from database.
+			$migrations      = get_option( 'simple_local_avatars_migrations', array() );
+			$processed_users = isset( $migrations['wp_user_avatar'] ) ? $migrations['wp_user_avatar'] : array();
+
+			// Get all users that have a local avatar.
+			$users = get_users(
+				array(
+					'blog_id'      => $blog_id,
+					'exclude'      => $processed_users,
+					'meta_key'     => $meta_key,
+					'meta_compare' => 'EXISTS',
+				)
+			);
+
+			// Bail early if we don't find users.
+			if ( empty( $users ) ) {
+				continue;
+			}
+
+			foreach ( $users as $user ) {
+				// Get the existing avatar media ID.
+				$avatar_id = get_user_meta( $user->ID, $meta_key, true );
+
+				// Attach the user and media to Simple Local Avatars.
+				$sla = new Simple_Local_Avatars();
+				$sla->assign_new_user_avatar( (int) $avatar_id, $user->ID );
+
+				// Check that it worked.
+				$is_migrated = get_user_meta( $user->ID, 'simple_local_avatar', true );
+
+				// Record the user ID so we don't process a second time.
+				if ( ! empty( $is_migrated ) ) {
+					$migrations['wp_user_avatar'][] = $user->ID;
+					update_option( 'simple_local_avatars_migrations', $migrations );
+				}
+			}
+		}
 	}
 
 	/**
