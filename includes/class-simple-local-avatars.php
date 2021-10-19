@@ -44,7 +44,7 @@ class Simple_Local_Avatars {
 		add_action( 'rest_api_init', array( $this, 'register_rest_fields' ) );
 
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			WP_CLI::add_command( 'simple-local-avatars migrate wp-user-avatar', array( $this, 'migrate_wp_user_avatar' ) );
+			WP_CLI::add_command( 'simple-local-avatars migrate wp-user-avatar', array( $this, 'migrate_from_wp_user_avatar' ) );
 		}
 	}
 
@@ -698,7 +698,7 @@ class Simple_Local_Avatars {
 	 *     $ wp simple-local-avatars migrate wp-user-avatar
 	 *     Success: Migrated the avatar for user: 1234
 	 */
-	public function migrate_wp_user_avatar() {
+	public function migrate_from_wp_user_avatar() {
 
 		global $wpdb;
 
