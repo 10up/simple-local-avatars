@@ -255,6 +255,13 @@ class Simple_Local_Avatars {
 				'desc' => __( 'Only allow users with file upload capabilities to upload local avatars (Authors and above)', 'simple-local-avatars' ),
 			)
 		);
+		add_settings_field(
+			'simple-local-avatars-migration',
+			__( 'Migrations', 'simple-local-avatars' ),
+			array( $this, 'migrate_from_wp_user_avatar_settings_field' ),
+			'discussion',
+			'avatars'
+		);
 	}
 
 	/**
@@ -326,6 +333,16 @@ class Simple_Local_Avatars {
 				' . esc_html( $args['desc'] ) . '
 			</label>
 		';
+	}
+
+	/**
+	 * Settings field for migrating avatars away from WP User Avatars
+	 */
+	public function migrate_from_wp_user_avatar_settings_field() {
+		printf(
+			'<button type="button" name="simple-local-avatar-migrate-from-wp-user-avatars" id="simple-local-avatar-migrate-from-wp-user-avatars" class="button button-secondary">%s</button><span class="spinner"></span>',
+			esc_html__( 'Migrate avatars from WP User Avatar to Simple Local Avatars', 'simple-local-avatars' )
+		);
 	}
 
 	/**
