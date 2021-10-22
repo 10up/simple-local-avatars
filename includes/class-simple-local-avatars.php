@@ -290,8 +290,7 @@ class Simple_Local_Avatars {
 			wp_enqueue_media();
 		}
 
-		$param_user_id = isset( $_GET['user_id'] ) ? $_GET['user_id'] : 0;
-		$user_id       = ( 'profile.php' === $hook_suffix ) ? get_current_user_id() : (int) $param_user_id;
+		$user_id = ( 'profile.php' === $hook_suffix ) ? get_current_user_id() : (int) get_query_var( 'user_id' );
 
 		$this->remove_nonce = wp_create_nonce( 'remove_simple_local_avatar_nonce' );
 
