@@ -272,7 +272,17 @@ class Simple_Local_Avatars {
 	 * @param string $hook_suffix Page hook
 	 */
 	public function admin_enqueue_scripts( $hook_suffix ) {
-		if ( 'profile.php' !== $hook_suffix && 'user-edit.php' !== $hook_suffix && 'options-discussion.php' !== $hook_suffix ) {
+
+		/**
+		 * Filter the admin screens where we enqueue our scripts.
+		 *
+		 * @param array $screens Array of admin screens.
+		 * @param string $hook_suffix Page hook.
+		 * @return array
+		 */
+		$screens = apply_filters( 'simple_local_avatars_admin_enqueue_scripts', array( 'profile.php', 'user-edit.php', 'options-discussion.php' ), $hook_suffix );
+
+		if ( ! in_array( $hook_suffix, $screens, true ) ) {
 			return;
 		}
 
