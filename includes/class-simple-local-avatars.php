@@ -300,12 +300,12 @@ class Simple_Local_Avatars {
 			'simple-local-avatars',
 			'i10n_SimpleLocalAvatars',
 			array(
-				'user_id'           => $user_id,
-				'insertMediaTitle'  => __( 'Choose an Avatar', 'simple-local-avatars' ),
-				'insertIntoPost'    => __( 'Set as avatar', 'simple-local-avatars' ),
-				'deleteNonce'       => $this->remove_nonce,
-				'mediaNonce'        => wp_create_nonce( 'assign_simple_local_avatar_nonce' ),
-				'wpUserAvatarNonce' => wp_create_nonce( 'migrate_from_wp_user_avatar_nonce' ),
+				'user_id'                      => $user_id,
+				'insertMediaTitle'             => __( 'Choose an Avatar', 'simple-local-avatars' ),
+				'insertIntoPost'               => __( 'Set as avatar', 'simple-local-avatars' ),
+				'deleteNonce'                  => $this->remove_nonce,
+				'mediaNonce'                   => wp_create_nonce( 'assign_simple_local_avatar_nonce' ),
+				'migrateFromWpUserAvatarNonce' => wp_create_nonce( 'migrate_from_wp_user_avatar_nonce' ),
 			)
 		);
 	}
@@ -353,7 +353,7 @@ class Simple_Local_Avatars {
 	 */
 	public function migrate_from_wp_user_avatar_settings_field() {
 		printf(
-			'<button type="button" name="simple-local-avatars-migrate-from-wp-user-avatar" id="simple-local-avatars-migrate-from-wp-user-avatar" class="button button-secondary">%s</button><span class="spinner"></span>',
+			'<button type="button" name="simple-local-avatars-migrate-from-wp-user-avatar" id="simple-local-avatars-migrate-from-wp-user-avatar" class="button button-secondary">%s</button><span class="simple-local-avatars-migrate-from-wp-user-avatar-progress"></span>',
 			esc_html__( 'Migrate avatars from WP User Avatar to Simple Local Avatars', 'simple-local-avatars' )
 		);
 	}

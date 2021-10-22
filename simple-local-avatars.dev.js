@@ -78,12 +78,12 @@ jQuery(document).ready(function($){
 		}
 	} );
 
-	$( document.getElementById('simple-local-avatar-migrate-from-wp-user-avatars') ).on( 'click', function(event) {
+	$( document.getElementById('simple-local-avatars-migrate-from-wp-user-avatar') ).on( 'click', function(event) {
 		event.preventDefault();
-        $('.spinner').addClass('is-active');
-		jQuery.post( ajaxurl, { action: 'migrate_from_wp_user_avatar', _wpnonce: i10n_SimpleLocalAvatars.wpUserAvatarNonce }, function(data) {
+        $('.simple-local-avatars-migrate-from-wp-user-avatar-progress').addClass('is-active');
+		jQuery.post( ajaxurl, { action: 'migrate_from_wp_user_avatar', migrateFromWpUserAvatarNonce: i10n_SimpleLocalAvatars.migrateFromWpUserAvatarNonce }, function(data) {
 			if ( data != '' ) {
-				$('.spinner').removeClass('is-active');
+				$('.simple-local-avatars-migrate-from-wp-user-avatar-progress').removeClass('is-active');
 			}
 		});
     });
