@@ -821,28 +821,43 @@ class Simple_Local_Avatars {
 	/**
 	 * Migrate the user's avatar data from WP User Avatar/ProfilePress via the command line.
 	 *
+	 * ## OPTIONS
+	 *
+	 * [--yes]
+	 * : Skips the confirmations (for automated systems).
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp simple-local-avatars migrate wp-user-avatar
 	 *     Success: Successfully migrated 5 avatars.
+	 *
+	 * @param array|null $args       The arguments.
+	 * @param array|null $assoc_args The associative arguments.
+	 *
+	 * @return void
 	 */
-	public function wp_cli_migrate_from_wp_user_avatar() {
+	public function wp_cli_migrate_from_wp_user_avatar( $args = null, $assoc_args = null ) {
 
-		WP_CLI::confirm( esc_html__( 'Do you want to migrate avatars from WP User Avatar?', 'simple-local-avatars' ) );
+		// Argument --yes to prevent confirmation (for automated systems).
+		if ( ! isset( $assoc_args['yes'] ) ) {
+			WP_CLI::confirm( esc_html__( 'Do you want to migrate avatars from WP User Avatar?', 'simple-local-avatars' ) );
+		}
 
+		// Run the migration script and store the number of avatars processed.
 		$count = $this->migrate_from_wp_user_avatar();
 
-		if ( is_integer( $count ) && $count > 0 ) {
-			WP_CLI::success(
-				sprintf(
-					'%s %s %s',
-					esc_html__( 'Successfully migrated', 'simple-local-avatars' ),
-					esc_html( $count ),
-					esc_html__( 'avatars.', 'simple-local-avatars' )
-				)
-			);
-		} else {
+		// Error out if we don't process any avatars.
+		if ( 0 === absint( $count ) ) {
 			WP_CLI::warning( esc_html__( 'No avatars were migrated from WP User Avatar.', 'simple-local-avatars' ) );
 		}
+
+		WP_CLI::success(
+			sprintf(
+				'%s %s %s',
+				esc_html__( 'Successfully migrated', 'simple-local-avatars' ),
+				esc_html( $count ),
+				esc_html__( 'avatars.', 'simple-local-avatars' )
+			)
+		);
 	}
 }
