@@ -59,6 +59,10 @@ class BasicTest extends \WPAcceptance\PHPUnit\TestCase {
 
 		$I->seeText( 'Local Avatars Only' );
 
+		$I->seeText( 'Local Upload Permissions' );
+
+		$I->seeText( 'Migrations' );
+
 		$I->moveTo( 'wp-admin/profile.php' );
 
 		$I->seeText( 'Upload Avatar' );
