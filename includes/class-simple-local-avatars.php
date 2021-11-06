@@ -353,7 +353,8 @@ class Simple_Local_Avatars {
 	 */
 	public function migrate_from_wp_user_avatar_settings_field() {
 		printf(
-			'<button type="button" name="simple-local-avatars-migrate-from-wp-user-avatar" id="simple-local-avatars-migrate-from-wp-user-avatar" class="button button-secondary">%s</button><span class="simple-local-avatars-migrate-from-wp-user-avatar-progress"></span>',
+			'<p><button type="button" name="%1$s" id="%1$s" class="button button-secondary">%2$s</button></p><p class="%1$s-progress"></p>',
+			esc_attr( 'simple-local-avatars-migrate-from-wp-user-avatar' ),
 			esc_html__( 'Migrate avatars from WP User Avatar to Simple Local Avatars', 'simple-local-avatars' )
 		);
 	}
