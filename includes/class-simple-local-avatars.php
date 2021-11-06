@@ -300,12 +300,16 @@ class Simple_Local_Avatars {
 			'simple-local-avatars',
 			'i10n_SimpleLocalAvatars',
 			array(
-				'user_id'                      => $user_id,
-				'insertMediaTitle'             => __( 'Choose an Avatar', 'simple-local-avatars' ),
-				'insertIntoPost'               => __( 'Set as avatar', 'simple-local-avatars' ),
-				'deleteNonce'                  => $this->remove_nonce,
-				'mediaNonce'                   => wp_create_nonce( 'assign_simple_local_avatar_nonce' ),
-				'migrateFromWpUserAvatarNonce' => wp_create_nonce( 'migrate_from_wp_user_avatar_nonce' ),
+				'user_id'                             => $user_id,
+				'insertMediaTitle'                    => __( 'Choose an Avatar', 'simple-local-avatars' ),
+				'insertIntoPost'                      => __( 'Set as avatar', 'simple-local-avatars' ),
+				'deleteNonce'                         => $this->remove_nonce,
+				'mediaNonce'                          => wp_create_nonce( 'assign_simple_local_avatar_nonce' ),
+				'migrateFromWpUserAvatarNonce'        => wp_create_nonce( 'migrate_from_wp_user_avatar_nonce' ),
+				'migrateFromWpUserAvatarSuccessStart' => __( 'Successfully migrated', 'simple-local-avatars' ),
+				'migrateFromWpUserAvatarSuccessEnd'   => __( 'avatars from WP User Avatar.', 'simple-local-avatars' ),
+				'migrateFromWpUserAvatarFailure'      => __( 'No avatars were migrated from WP User Avatar.', 'simple-local-avatars' ),
+				'migrateFromWpUserAvatarProgress'     => __( 'Migration in progress...', 'simple-local-avatars' ),
 			)
 		);
 	}
@@ -796,27 +800,34 @@ class Simple_Local_Avatars {
 
 	/**
 	 * Migrate the user's avatar data away from WP User Avatar/ProfilePress via the dashboard.
+	 *
+	 * Sends the number of avatars processed back to the AJAX response before stopping execution.
+	 *
+	 * @return void
 	 */
 	public function ajax_migrate_from_wp_user_avatar() {
-		// Check required information.
-		if ( empty( $_POST['migrateFromWpUserAvatarNonce'] ) || ! wp_verify_nonce( $_POST['migrateFromWpUserAvatarNonce'], 'migrate_from_wp_user_avatar_nonce' ) ) {
+		// Bail early if nonce is not available.
+		if ( empty( $_POST['migrateFromWpUserAvatarNonce'] ) ) {
 			die;
 		}
 
+		// Bail early if nonce is invalid.
+		if ( ! wp_verify_nonce( $_POST['migrateFromWpUserAvatarNonce'], 'migrate_from_wp_user_avatar_nonce' ) ) {
+			die();
+		}
+
+		// Run the migration script and store the number of avatars processed.
 		$count = $this->migrate_from_wp_user_avatar();
 
-		if ( is_integer( $count ) && $count > 0 ) {
-			// WP_CLI::success(
-			// sprintf(
-			// '%s %s %s',
-			// esc_html__( 'Successfully migrated', 'simple-local-avatars' ),
-			// esc_html( $count ),
-			// esc_html__( 'avatars.', 'simple-local-avatars' )
-			// )
-			// );
-		} else {
-			// WP_CLI::warning( esc_html__( 'No avatars were migrated from WP User Avatar.', 'simple-local-avatars' ) );
-		}
+		// Create the array we send back to javascript here.
+		$array_we_send_back = array( 'count' => $count );
+
+		// Make sure to json encode the output because that's what it is expecting.
+		echo wp_json_encode( $array_we_send_back );
+
+		// Make sure you die when finished doing ajax output.
+		wp_die();
+
 	}
 
 	/**
