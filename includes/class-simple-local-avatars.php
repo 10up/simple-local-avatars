@@ -848,7 +848,7 @@ class Simple_Local_Avatars {
 
 		// Error out if we don't process any avatars.
 		if ( 0 === absint( $count ) ) {
-			WP_CLI::warning( esc_html__( 'No avatars were migrated from WP User Avatar.', 'simple-local-avatars' ) );
+			WP_CLI::error( esc_html__( 'No avatars were migrated from WP User Avatar.', 'simple-local-avatars' ) );
 		}
 
 		WP_CLI::success(
@@ -856,7 +856,7 @@ class Simple_Local_Avatars {
 				'%s %s %s',
 				esc_html__( 'Successfully migrated', 'simple-local-avatars' ),
 				esc_html( $count ),
-				esc_html__( 'avatars.', 'simple-local-avatars' )
+				esc_html__( 'avatars from WP User Avatar.', 'simple-local-avatars' )
 			)
 		);
 	}
