@@ -406,9 +406,12 @@ class Simple_Local_Avatars {
 						$profileuser->simple_local_avatar_rating = 'G';
 					}
 
-					foreach ( $this->avatar_ratings as $key => $rating ) :
-						echo "\n\t<label><input type='radio' name='simple_local_avatar_rating' value='" . esc_attr( $key ) . "' " . checked( $profileuser->simple_local_avatar_rating, $key, false ) . "/>" . __($rating) . "</label><br />";
-					endforeach;
+                    // These are the same as $this->avatar_ratings but in order for string translations to appear we have to output them like the following
+                    // We also use the default text domain here
+                                        echo "<label><input type='radio' name='simple_local_avatar_rating' value='" . esc_attr( 'G' ) . "' " . checked( $profileuser->simple_local_avatar_rating, 'G', false ) . "/>" . __( 'G &#8212; Suitable for all audiences' ) . "</label><br />";
+                                        echo "<label><input type='radio' name='simple_local_avatar_rating' value='" . esc_attr( 'PG' ) . "' " . checked( $profileuser->simple_local_avatar_rating, 'PG', false ) . "/>" . __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above' ) . "</label><br />";
+                                        echo "<label><input type='radio' name='simple_local_avatar_rating' value='" . esc_attr( 'R' ) . "' " . checked( $profileuser->simple_local_avatar_rating, 'R', false ) . "/>" . __( 'R &#8212; Intended for adult audiences above 17' ) . "</label><br />";
+                                        echo "<label><input type='radio' name='simple_local_avatar_rating' value='" . esc_attr( 'X' ) . "' " . checked( $profileuser->simple_local_avatar_rating, 'X', false ) . "/>" . __( 'X &#8212; Even more mature than above' ) . "</label><br />";
 					?>
 						<p class="description"><?php esc_html_e( 'If the local avatar is inappropriate for this site, Gravatar will be attempted.', 'simple-local-avatars' ); ?></p>
 					</fieldset></td>
