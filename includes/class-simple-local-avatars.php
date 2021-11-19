@@ -42,6 +42,8 @@ class Simple_Local_Avatars {
 		add_action( 'user_edit_form_tag', array( $this, 'user_edit_form_tag' ) );
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_fields' ) );
+
+		add_action( 'wp_redirect', array( $this, 'clear_avatar_cache' ), 10, 2 );
 	}
 
 	/**
@@ -251,6 +253,17 @@ class Simple_Local_Avatars {
 				'desc' => __( 'Only allow users with file upload capabilities to upload local avatars (Authors and above)', 'simple-local-avatars' ),
 			)
 		);
+		add_settings_field(
+			'simple-local-avatars-clear',
+			esc_html__( 'Clear local avatar cache', 'simple-local-avatars' ),
+			array( $this, 'avatar_settings_field' ),
+			'discussion',
+			'avatars',
+			array(
+				'key'  => 'clear_cache',
+				'desc' => esc_html__( 'Clear cache of stored avatars', 'simple-local-avatars' ),
+			)
+		);
 	}
 
 	/**
@@ -316,12 +329,58 @@ class Simple_Local_Avatars {
 			$this->options[ $args['key'] ] = 0;
 		}
 
-		echo '
+		if ( 'clear_cache' !== $args['key'] ) {
+			echo '
 			<label for="simple-local-avatars-' . esc_attr( $args['key'] ) . '">
 				<input type="checkbox" name="simple_local_avatars[' . esc_attr( $args['key'] ) . ']" id="simple-local-avatars-' . esc_attr( $args['key'] ) . '" value="1" ' . checked( $this->options[ $args['key'] ], 1, false ) . ' />
 				' . esc_html( $args['desc'] ) . '
 			</label>
 		';
+		} else {
+			submit_button( esc_html__( 'Clear cache', 'simple-local-avatars' ), 'delete', 'clear_cache_btn', false );
+		}
+	}
+
+	/**
+	 * On redirect, check the POST to see if Clear Cache was called.
+	 *
+	 * @param string $location The path or URL to redirect to.
+	 * @param int    $status   The HTTP response status code to use.
+	 *
+	 * @return mixed
+	 */
+	public function clear_avatar_cache( $location, $status ) {
+		if ( ! is_admin() || empty( $_POST['clear_cache_btn'] ) ) {
+			return $location;
+		}
+
+		$user_id       = get_current_user_id();
+		$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
+
+		if ( empty( $local_avatars ) ) {
+			return $location;
+		}
+
+		$media_id = $local_avatars['media_id'] ?? '';
+		if ( ! empty( $media_id ) ) {
+			$file_name_data = pathinfo( wp_get_original_image_path( $media_id ) );
+			$file_dir_name  = $file_name_data['dirname'];
+			$file_name      = $file_name_data['filename'];
+			$file_ext       = $file_name_data['extension'];
+			foreach ( $local_avatars as $local_avatars_key => $local_avatar_value ) {
+				if ( ! in_array( $local_avatars_key, [ 'media_id', 'full' ], true ) ) {
+					$file_size_path = sprintf( '%1$s/%2$s-%3$sx%3$s.%4$s', $file_dir_name, $file_name, $local_avatars_key, $file_ext );
+					if ( ! file_exists( $file_size_path ) ) {
+						unset( $local_avatars [ $local_avatars_key ] );
+					}
+				}
+			}
+
+			// Update meta, remove sizes that don't exist.
+			update_user_meta( $user_id, 'simple_local_avatar', $local_avatars );
+		}
+
+		return $location;
 	}
 
 	/**
