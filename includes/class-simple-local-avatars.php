@@ -401,15 +401,17 @@ class Simple_Local_Avatars {
 				<td colspan="2">
 					<fieldset id="simple-local-avatar-ratings" <?php disabled( empty( $profileuser->simple_local_avatar ) ); ?>>
 						<legend class="screen-reader-text"><span><?php esc_html_e( 'Rating' ); ?></span></legend>
-					<?php
-					if ( empty( $profileuser->simple_local_avatar_rating ) || ! array_key_exists( $profileuser->simple_local_avatar_rating, $this->avatar_ratings ) ) {
-						$profileuser->simple_local_avatar_rating = 'G';
-					}
+						<?php
+						$this->update_avatar_ratings();
 
-					foreach ( $this->avatar_ratings as $key => $rating ) :
-						echo "\n\t<label><input type='radio' name='simple_local_avatar_rating' value='" . esc_attr( $key ) . "' " . checked( $profileuser->simple_local_avatar_rating, $key, false ) . "/> $rating</label><br />";
-					endforeach;
-					?>
+						if ( empty( $profileuser->simple_local_avatar_rating ) || ! array_key_exists( $profileuser->simple_local_avatar_rating, $this->avatar_ratings ) ) {
+							$profileuser->simple_local_avatar_rating = 'G';
+						}
+
+						foreach ( $this->avatar_ratings as $key => $rating ) :
+							echo "\n\t<label><input type='radio' name='simple_local_avatar_rating' value='" . esc_attr( $key ) . "' " . checked( $profileuser->simple_local_avatar_rating, $key, false ) . "/>" . esc_html( $rating ) . "</label><br />";
+						endforeach;
+						?>
 						<p class="description"><?php esc_html_e( 'If the local avatar is inappropriate for this site, Gravatar will be attempted.', 'simple-local-avatars' ); ?></p>
 					</fieldset></td>
 			</tr>
@@ -677,5 +679,19 @@ class Simple_Local_Avatars {
 	 */
 	public function set_avatar_rest( $input, $user ) {
 		$this->assign_new_user_avatar( $input['media_id'], $user->ID );
+	}
+
+	/**
+	 * Overwriting existing avatar_ratings so this can be called just before the rating strings would be used so that
+	 * translations will work correctly.
+	 * Default text-domain because the strings have already been translated
+	 */
+	private function update_avatar_ratings() {
+		$this->avatar_ratings = array(
+			'G'  => __( 'G &#8212; Suitable for all audiences' ),
+			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above' ),
+			'R'  => __( 'R &#8212; Intended for adult audiences above 17' ),
+			'X'  => __( 'X &#8212; Even more mature than above' ),
+		);
 	}
 }
