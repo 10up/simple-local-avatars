@@ -404,14 +404,12 @@ class Simple_Local_Avatars {
 						<?php
 						$this->update_avatar_ratings();
 
-						if ( empty( $profileuser->simple_local_avatar_rating ) || ! array_key_exists( $profileuser->simple_local_avatar_rating,
-								$this->avatar_ratings ) ) {
+						if ( empty( $profileuser->simple_local_avatar_rating ) || ! array_key_exists( $profileuser->simple_local_avatar_rating, $this->avatar_ratings ) ) {
 							$profileuser->simple_local_avatar_rating = 'G';
 						}
 
 						foreach ( $this->avatar_ratings as $key => $rating ) :
-							echo "\n\t<label><input type='radio' name='simple_local_avatar_rating' value='" . esc_attr( $key ) . "' " . checked( $profileuser->simple_local_avatar_rating,
-									$key, false ) . "/>" . esc_html( $rating ) . "</label><br />";
+							echo "\n\t<label><input type='radio' name='simple_local_avatar_rating' value='" . esc_attr( $key ) . "' " . checked( $profileuser->simple_local_avatar_rating, $key, false ) . "/>" . esc_html( $rating ) . "</label><br />";
 						endforeach;
 						?>
 						<p class="description"><?php esc_html_e( 'If the local avatar is inappropriate for this site, Gravatar will be attempted.', 'simple-local-avatars' ); ?></p>
@@ -683,17 +681,17 @@ class Simple_Local_Avatars {
 		$this->assign_new_user_avatar( $input['media_id'], $user->ID );
 	}
 
-    /**
-     * Overwriting existing avatar_ratings so this can be called just before the rating strings would be used so that
-     * translations will work correctly.
-     * Default text-domain because the strings have already been translated
-     */
-    private function update_avatar_ratings() {
-        $this->avatar_ratings = array(
-            'G'  => __( 'G &#8212; Suitable for all audiences' ),
-            'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above' ),
-            'R'  => __( 'R &#8212; Intended for adult audiences above 17' ),
-            'X'  => __( 'X &#8212; Even more mature than above' ),
-        );
-    }
+	/**
+	 * Overwriting existing avatar_ratings so this can be called just before the rating strings would be used so that
+	 * translations will work correctly.
+	 * Default text-domain because the strings have already been translated
+	 */
+	private function update_avatar_ratings() {
+		$this->avatar_ratings = array(
+			'G'  => __( 'G &#8212; Suitable for all audiences' ),
+			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above' ),
+			'R'  => __( 'R &#8212; Intended for adult audiences above 17' ),
+			'X'  => __( 'X &#8212; Even more mature than above' ),
+		);
+	}
 }
