@@ -354,30 +354,16 @@ class Simple_Local_Avatars {
 			return $location;
 		}
 
-		$user_id       = get_current_user_id();
-		$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
+		// Get all users.
+		$all_users = $this->get_all_users();
 
-		if ( empty( $local_avatars ) ) {
-			return $location;
-		}
-
-		$media_id = $local_avatars['media_id'] ?? '';
-		if ( ! empty( $media_id ) ) {
-			$file_name_data = pathinfo( wp_get_original_image_path( $media_id ) );
-			$file_dir_name  = $file_name_data['dirname'];
-			$file_name      = $file_name_data['filename'];
-			$file_ext       = $file_name_data['extension'];
-			foreach ( $local_avatars as $local_avatars_key => $local_avatar_value ) {
-				if ( ! in_array( $local_avatars_key, [ 'media_id', 'full' ], true ) ) {
-					$file_size_path = sprintf( '%1$s/%2$s-%3$sx%3$s.%4$s', $file_dir_name, $file_name, $local_avatars_key, $file_ext );
-					if ( ! file_exists( $file_size_path ) ) {
-						unset( $local_avatars [ $local_avatars_key ] );
-					}
-				}
+		foreach ( $all_users as $user ) {
+			$user_id       = $user->ID;
+			$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
+			if ( empty( $local_avatars ) ) {
+				return $location;
 			}
-
-			// Update meta, remove sizes that don't exist.
-			update_user_meta( $user_id, 'simple_local_avatar', $local_avatars );
+			$this->clear_user_avatar_cache( $local_avatars, $user_id, $local_avatars['media_id'] ?? '' );
 		}
 
 		return $location;
@@ -736,5 +722,56 @@ class Simple_Local_Avatars {
 	 */
 	public function set_avatar_rest( $input, $user ) {
 		$this->assign_new_user_avatar( $input['media_id'], $user->ID );
+	}
+
+	/**
+	 * Loop through all user list in batch and create a list of all urls.
+	 *
+	 * @return array
+	 */
+	private function get_all_users() {
+		$total_users   = count_users();
+		$batch         = 100;
+		$batches_count = ceil( $total_users['total_users'] / $batch );
+		$all_users     = array();
+
+		for ( $current_count = 0; $current_count < $batches_count; $current_count ++ ) {
+			$args      = array(
+				'fields' => array( 'ID' ),
+				'number' => $batch, // total number of users to get in one go.
+				'offset' => $current_count * $batch, // offset to continue for next iteration
+			);
+			$new_users = get_users( $args );
+			$all_users = array_merge( $all_users, $new_users );
+		}
+
+		return $all_users;
+	}
+
+	/**
+	 * Clear avatar cache for given user.
+	 *
+	 * @param array $local_avatars Local avatars.
+	 * @param int   $user_id       User ID.
+	 * @param mixed $media_id      Media ID.
+	 */
+	private function clear_user_avatar_cache( $local_avatars, $user_id, $media_id ) {
+		if ( ! empty( $media_id ) ) {
+			$file_name_data = pathinfo( wp_get_original_image_path( $media_id ) );
+			$file_dir_name  = $file_name_data['dirname'];
+			$file_name      = $file_name_data['filename'];
+			$file_ext       = $file_name_data['extension'];
+			foreach ( $local_avatars as $local_avatars_key => $local_avatar_value ) {
+				if ( ! in_array( $local_avatars_key, [ 'media_id', 'full' ], true ) ) {
+					$file_size_path = sprintf( '%1$s/%2$s-%3$sx%3$s.%4$s', $file_dir_name, $file_name, $local_avatars_key, $file_ext );
+					if ( ! file_exists( $file_size_path ) ) {
+						unset( $local_avatars [ $local_avatars_key ] );
+					}
+				}
+			}
+
+			// Update meta, remove sizes that don't exist.
+			update_user_meta( $user_id, 'simple_local_avatar', $local_avatars );
+		}
 	}
 }
