@@ -96,7 +96,7 @@ jQuery(document).ready(function($){
 				}
 				if ( count > 0 ) {
 					$('.simple-local-avatars-migrate-from-wp-user-avatar-progress').text(
-						i10n_SimpleLocalAvatars.migrateFromWpUserAvatarSuccessStart + ' ' + count + ' ' + i10n_SimpleLocalAvatars.migrateFromWpUserAvatarSuccessEnd
+						i10n_SimpleLocalAvatars.migrateFromWpUserAvatarSuccess + ': ' + count
 					);
 				}
 				setTimeout(function() {

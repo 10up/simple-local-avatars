@@ -306,10 +306,9 @@ class Simple_Local_Avatars {
 				'deleteNonce'                         => $this->remove_nonce,
 				'mediaNonce'                          => wp_create_nonce( 'assign_simple_local_avatar_nonce' ),
 				'migrateFromWpUserAvatarNonce'        => wp_create_nonce( 'migrate_from_wp_user_avatar_nonce' ),
-				'migrateFromWpUserAvatarSuccessStart' => __( 'Successfully migrated', 'simple-local-avatars' ),
-				'migrateFromWpUserAvatarSuccessEnd'   => __( 'avatars from WP User Avatar.', 'simple-local-avatars' ),
+				'migrateFromWpUserAvatarSuccess'      => __( 'Number of avatars successfully migrated from WP User Avatar', 'simple-local-avatars' ),
 				'migrateFromWpUserAvatarFailure'      => __( 'No avatars were migrated from WP User Avatar.', 'simple-local-avatars' ),
-				'migrateFromWpUserAvatarProgress'     => __( 'Migration in progress...', 'simple-local-avatars' ),
+				'migrateFromWpUserAvatarProgress'     => __( 'Migration in progress.', 'simple-local-avatars' ),
 			)
 		);
 	}
@@ -841,7 +840,7 @@ class Simple_Local_Avatars {
 	 * ## EXAMPLES
 	 *
 	 *     $ wp simple-local-avatars migrate wp-user-avatar
-	 *     Success: Successfully migrated 5 avatars.
+	 *     Success: Number of avatars successfully migrated from WP User Avatar: 5
 	 *
 	 * @param array|null $args       The arguments.
 	 * @param array|null $assoc_args The associative arguments.
@@ -865,10 +864,9 @@ class Simple_Local_Avatars {
 
 		WP_CLI::success(
 			sprintf(
-				'%s %s %s',
-				esc_html__( 'Successfully migrated', 'simple-local-avatars' ),
-				esc_html( $count ),
-				esc_html__( 'avatars from WP User Avatar.', 'simple-local-avatars' )
+				'%s: %s',
+				esc_html__( 'Number of avatars successfully migrated from WP User Avatar', 'simple-local-avatars' ),
+				esc_html( $count )
 			)
 		);
 	}
