@@ -61,7 +61,7 @@ class BasicTest extends \WPAcceptance\PHPUnit\TestCase {
 
 		$I->seeText( 'Local Upload Permissions' );
 
-		$I->seeText( 'Migrations' );
+		$I->seeText( 'Migrate Other Local Avatars' );
 
 		$I->moveTo( 'wp-admin/profile.php' );
 

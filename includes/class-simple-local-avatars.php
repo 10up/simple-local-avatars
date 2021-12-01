@@ -259,7 +259,7 @@ class Simple_Local_Avatars {
 		);
 		add_settings_field(
 			'simple-local-avatars-migration',
-			__( 'Migrations', 'simple-local-avatars' ),
+			__( 'Migrate Other Local Avatars', 'simple-local-avatars' ),
 			array( $this, 'migrate_from_wp_user_avatar_settings_field' ),
 			'discussion',
 			'avatars'
