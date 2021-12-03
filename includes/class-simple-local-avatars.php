@@ -43,7 +43,8 @@ class Simple_Local_Avatars {
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_fields' ) );
 
-		add_action( 'wp_redirect', array( $this, 'clear_avatar_cache' ), 10, 2 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
+		add_action( 'wp_ajax_sla_clear_user_cache', array( $this, 'sla_clear_user_cache' ) );
 	}
 
 	/**
@@ -337,36 +338,8 @@ class Simple_Local_Avatars {
 			</label>
 		';
 		} else {
-			submit_button( esc_html__( 'Clear cache', 'simple-local-avatars' ), 'delete', 'clear_cache_btn', false );
+            echo '<button id="clear_cache_btn" class="button delete" name="clear_cache_btn" >' . esc_html__( 'Clear cache', 'simple-local-avatars' ) . '</button>';
 		}
-	}
-
-	/**
-	 * On redirect, check the POST to see if Clear Cache was called.
-	 *
-	 * @param string $location The path or URL to redirect to.
-	 * @param int    $status   The HTTP response status code to use.
-	 *
-	 * @return mixed
-	 */
-	public function clear_avatar_cache( $location, $status ) {
-		if ( ! is_admin() || empty( $_POST['clear_cache_btn'] ) ) {
-			return $location;
-		}
-
-		// Get all users.
-		$all_users = $this->get_all_users();
-
-		foreach ( $all_users as $user ) {
-			$user_id       = $user->ID;
-			$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
-			if ( empty( $local_avatars ) ) {
-				return $location;
-			}
-			$this->clear_user_avatar_cache( $local_avatars, $user_id, $local_avatars['media_id'] ?? '' );
-		}
-
-		return $location;
 	}
 
 	/**
@@ -741,27 +714,72 @@ class Simple_Local_Avatars {
 	}
 
 	/**
-	 * Loop through all user list in batch and create a list of all urls.
-	 *
-	 * @return array
+	 * Load script required for handling any actions.
 	 */
-	private function get_all_users() {
-		$total_users   = count_users();
-		$batch         = 100;
-		$batches_count = ceil( $total_users['total_users'] / $batch );
-		$all_users     = array();
+	public function admin_scripts() {
+		wp_enqueue_script(
+			'sla_admin',
+			SLA_PLUGIN_URL . 'assets/js/admin.js',
+			[ 'jquery' ],
+			SLA_VERSION,
+			true
+		);
 
-		for ( $current_count = 0; $current_count < $batches_count; $current_count ++ ) {
-			$args      = array(
+		wp_localize_script(
+			'sla_admin',
+			'slaAdmin',
+			[
+				'nonce' => wp_create_nonce( 'sla_clear_cache_nonce' ),
+				'error' => esc_html__( 'Something went wrong while clearing cache, please try again.', 'simple-local-avatars' ),
+			]
+		);
+	}
+
+	/**
+	 * Clear user cache.
+	 */
+	public function sla_clear_user_cache() {
+		check_ajax_referer( 'sla_clear_cache_nonce', 'nonce' );
+		$step = isset( $_REQUEST['step'] ) ? intval( $_REQUEST['step'] ) : 1;
+
+		// Setup defaults.
+		$users_per_page = 50;
+		$offset         = ( $step - 1 ) * $users_per_page;
+
+		$rows        = array();
+		$users_query = new \WP_User_Query(
+			array(
 				'fields' => array( 'ID' ),
-				'number' => $batch, // total number of users to get in one go.
-				'offset' => $current_count * $batch, // offset to continue for next iteration
-			);
-			$new_users = get_users( $args );
-			$all_users = array_merge( $all_users, $new_users );
+				'number' => $users_per_page,
+				'offset' => $offset,
+			)
+		);
+
+		// Get the users.
+		$users = $users_query->get_results();
+
+		if ( ! empty( $users ) ) {
+			foreach ( $users as $user ) {
+				$user_id       = $user->ID;
+				$rows[]        = $user_id;
+				$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
+				$this->clear_user_avatar_cache( $local_avatars, $user_id, $local_avatars['media_id'] ?? '' );
+			}
 		}
 
-		return $all_users;
+		if ( ! empty( $rows ) ) {
+			wp_send_json_success(
+				array(
+					'step' => $step + 1,
+				)
+			);
+		}
+
+		wp_send_json_success(
+			array(
+				'step' => 'done',
+			)
+		);
 	}
 
 	/**
