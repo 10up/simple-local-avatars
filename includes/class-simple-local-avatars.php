@@ -26,6 +26,9 @@ class Simple_Local_Avatars {
 	 * Register actions and filters.
 	 */
 	public function add_hooks() {
+
+		add_filter( 'plugin_action_links_' . SLA_PLUGIN_BASENAME, array( $this, 'plugin_filter_action_links' ) );
+
 		add_filter( 'pre_get_avatar_data', array( $this, 'get_avatar_data' ), 10, 2 );
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
@@ -42,6 +45,28 @@ class Simple_Local_Avatars {
 		add_action( 'user_edit_form_tag', array( $this, 'user_edit_form_tag' ) );
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_fields' ) );
+	}
+
+	/**
+	 * Add the settings action link to the plugin page.
+	 *
+	 * @param array $links The Action links for the plugin.
+	 *
+	 * @return array
+	 */
+	public function plugin_filter_action_links( $links ) {
+
+		if ( ! is_array( $links ) ) {
+			return $links;
+		}
+
+		$links['settings'] = sprintf(
+			'<a href="%s"> %s </a>',
+			esc_url( admin_url( 'options-discussion.php' ) ),
+			__( 'Settings', 'simple-local-avatars' )
+		);
+
+		return $links;
 	}
 
 	/**
