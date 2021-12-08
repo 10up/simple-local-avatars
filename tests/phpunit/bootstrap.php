@@ -7,6 +7,8 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 WP_Mock::setUsePatchwork( true );
 WP_Mock::bootstrap();
 
+define( 'SLA_PLUGIN_BASENAME', basename( __DIR__ . '/../../simple-local-avatars.php' ) );
+
 /**
  * Now we include any plugin files that we need to be able to run the tests. This
  * should be files that define the functions and classes you're going to test.
