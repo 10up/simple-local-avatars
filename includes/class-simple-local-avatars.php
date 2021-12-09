@@ -338,7 +338,8 @@ class Simple_Local_Avatars {
 			</label>
 		';
 		} else {
-            echo '<button id="clear_cache_btn" class="button delete" name="clear_cache_btn" >' . esc_html__( 'Clear cache', 'simple-local-avatars' ) . '</button>';
+			echo '<button id="clear_cache_btn" class="button delete" name="clear_cache_btn" >' . esc_html__( 'Clear cache', 'simple-local-avatars' ) . '</button><br/>';
+			echo '<span id="clear_cache_message" style="font-style:italic;font-size:15px;line-height:2;"></span>';
 		}
 	}
 
@@ -746,7 +747,6 @@ class Simple_Local_Avatars {
 		$users_per_page = 50;
 		$offset         = ( $step - 1 ) * $users_per_page;
 
-		$rows        = array();
 		$users_query = new \WP_User_Query(
 			array(
 				'fields' => array( 'ID' ),
@@ -755,29 +755,40 @@ class Simple_Local_Avatars {
 			)
 		);
 
+		// Total users in the site.
+		$total_users = $users_query->get_total();
+
 		// Get the users.
 		$users = $users_query->get_results();
 
 		if ( ! empty( $users ) ) {
 			foreach ( $users as $user ) {
 				$user_id       = $user->ID;
-				$rows[]        = $user_id;
 				$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
 				$this->clear_user_avatar_cache( $local_avatars, $user_id, $local_avatars['media_id'] ?? '' );
 			}
-		}
 
-		if ( ! empty( $rows ) ) {
 			wp_send_json_success(
 				array(
-					'step' => $step + 1,
+					'step'    => $step + 1,
+					'message' => sprintf(
+					/* translators: 1: Offset, 2: Total users  */
+						esc_html__( 'Processing %1$s/%2$s users...', 'simple-local-avatars' ),
+						$offset,
+						$total_users
+					),
 				)
 			);
 		}
 
 		wp_send_json_success(
 			array(
-				'step' => 'done',
+				'step'    => 'done',
+				'message' => sprintf(
+				/* translators: %s Total users */
+					esc_html__( 'Completed clearing cache for all %s user(s) avatars.', 'simple-local-avatars' ),
+					$total_users
+				),
 			)
 		);
 	}
