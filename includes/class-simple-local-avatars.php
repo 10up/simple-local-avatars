@@ -42,6 +42,9 @@ class Simple_Local_Avatars {
 		add_action( 'user_edit_form_tag', array( $this, 'user_edit_form_tag' ) );
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_fields' ) );
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
+		add_action( 'wp_ajax_sla_clear_user_cache', array( $this, 'sla_clear_user_cache' ) );
 	}
 
 	/**
@@ -251,6 +254,17 @@ class Simple_Local_Avatars {
 				'desc' => __( 'Only allow users with file upload capabilities to upload local avatars (Authors and above)', 'simple-local-avatars' ),
 			)
 		);
+		add_settings_field(
+			'simple-local-avatars-clear',
+			esc_html__( 'Clear local avatar cache', 'simple-local-avatars' ),
+			array( $this, 'avatar_settings_field' ),
+			'discussion',
+			'avatars',
+			array(
+				'key'  => 'clear_cache',
+				'desc' => esc_html__( 'Clear cache of stored avatars', 'simple-local-avatars' ),
+			)
+		);
 	}
 
 	/**
@@ -316,12 +330,17 @@ class Simple_Local_Avatars {
 			$this->options[ $args['key'] ] = 0;
 		}
 
-		echo '
+		if ( 'clear_cache' !== $args['key'] ) {
+			echo '
 			<label for="simple-local-avatars-' . esc_attr( $args['key'] ) . '">
 				<input type="checkbox" name="simple_local_avatars[' . esc_attr( $args['key'] ) . ']" id="simple-local-avatars-' . esc_attr( $args['key'] ) . '" value="1" ' . checked( $this->options[ $args['key'] ], 1, false ) . ' />
 				' . esc_html( $args['desc'] ) . '
 			</label>
 		';
+		} else {
+			echo '<button id="clear_cache_btn" class="button delete" name="clear_cache_btn" >' . esc_html__( 'Clear cache', 'simple-local-avatars' ) . '</button><br/>';
+			echo '<span id="clear_cache_message" style="font-style:italic;font-size:14px;line-height:2;"></span>';
+		}
 	}
 
 	/**
@@ -693,5 +712,111 @@ class Simple_Local_Avatars {
 			'R'  => __( 'R &#8212; Intended for adult audiences above 17' ),
 			'X'  => __( 'X &#8212; Even more mature than above' ),
 		);
+	}
+
+	/**
+	 * Load script required for handling any actions.
+	 */
+	public function admin_scripts() {
+		wp_enqueue_script(
+			'sla_admin',
+			SLA_PLUGIN_URL . 'assets/js/admin.js',
+			[ 'jquery' ],
+			SLA_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			'sla_admin',
+			'slaAdmin',
+			[
+				'nonce' => wp_create_nonce( 'sla_clear_cache_nonce' ),
+				'error' => esc_html__( 'Something went wrong while clearing cache, please try again.', 'simple-local-avatars' ),
+			]
+		);
+	}
+
+	/**
+	 * Clear user cache.
+	 */
+	public function sla_clear_user_cache() {
+		check_ajax_referer( 'sla_clear_cache_nonce', 'nonce' );
+		$step = isset( $_REQUEST['step'] ) ? intval( $_REQUEST['step'] ) : 1;
+
+		// Setup defaults.
+		$users_per_page = 50;
+		$offset         = ( $step - 1 ) * $users_per_page;
+
+		$users_query = new \WP_User_Query(
+			array(
+				'fields' => array( 'ID' ),
+				'number' => $users_per_page,
+				'offset' => $offset,
+			)
+		);
+
+		// Total users in the site.
+		$total_users = $users_query->get_total();
+
+		// Get the users.
+		$users = $users_query->get_results();
+
+		if ( ! empty( $users ) ) {
+			foreach ( $users as $user ) {
+				$user_id       = $user->ID;
+				$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
+				$this->clear_user_avatar_cache( $local_avatars, $user_id, $local_avatars['media_id'] ?? '' );
+			}
+
+			wp_send_json_success(
+				array(
+					'step'    => $step + 1,
+					'message' => sprintf(
+					/* translators: 1: Offset, 2: Total users  */
+						esc_html__( 'Processing %1$s/%2$s users...', 'simple-local-avatars' ),
+						$offset,
+						$total_users
+					),
+				)
+			);
+		}
+
+		wp_send_json_success(
+			array(
+				'step'    => 'done',
+				'message' => sprintf(
+				/* translators: %s Total users */
+					esc_html__( 'Completed clearing cache for all %s user(s) avatars.', 'simple-local-avatars' ),
+					$total_users
+				),
+			)
+		);
+	}
+
+	/**
+	 * Clear avatar cache for given user.
+	 *
+	 * @param array $local_avatars Local avatars.
+	 * @param int   $user_id       User ID.
+	 * @param mixed $media_id      Media ID.
+	 */
+	private function clear_user_avatar_cache( $local_avatars, $user_id, $media_id ) {
+		if ( ! empty( $media_id ) ) {
+			$file_name_data = pathinfo( wp_get_original_image_path( $media_id ) );
+			$file_dir_name  = $file_name_data['dirname'];
+			$file_name      = $file_name_data['filename'];
+			$file_ext       = $file_name_data['extension'];
+			foreach ( $local_avatars as $local_avatars_key => $local_avatar_value ) {
+				if ( ! in_array( $local_avatars_key, [ 'media_id', 'full' ], true ) ) {
+					$file_size_path = sprintf( '%1$s/%2$s-%3$sx%3$s.%4$s', $file_dir_name, $file_name, $local_avatars_key, $file_ext );
+					if ( ! file_exists( $file_size_path ) ) {
+						unset( $local_avatars [ $local_avatars_key ] );
+					}
+				}
+			}
+
+			// Update meta, remove sizes that don't exist.
+			update_user_meta( $user_id, 'simple_local_avatar', $local_avatars );
+		}
 	}
 }
