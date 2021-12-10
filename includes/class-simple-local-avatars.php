@@ -300,15 +300,15 @@ class Simple_Local_Avatars {
 			'simple-local-avatars',
 			'i10n_SimpleLocalAvatars',
 			array(
-				'user_id'                             => $user_id,
-				'insertMediaTitle'                    => __( 'Choose an Avatar', 'simple-local-avatars' ),
-				'insertIntoPost'                      => __( 'Set as avatar', 'simple-local-avatars' ),
-				'deleteNonce'                         => $this->remove_nonce,
-				'mediaNonce'                          => wp_create_nonce( 'assign_simple_local_avatar_nonce' ),
-				'migrateFromWpUserAvatarNonce'        => wp_create_nonce( 'migrate_from_wp_user_avatar_nonce' ),
-				'migrateFromWpUserAvatarSuccess'      => __( 'Number of avatars successfully migrated from WP User Avatar', 'simple-local-avatars' ),
-				'migrateFromWpUserAvatarFailure'      => __( 'No avatars were migrated from WP User Avatar.', 'simple-local-avatars' ),
-				'migrateFromWpUserAvatarProgress'     => __( 'Migration in progress.', 'simple-local-avatars' ),
+				'user_id'                         => $user_id,
+				'insertMediaTitle'                => __( 'Choose an Avatar', 'simple-local-avatars' ),
+				'insertIntoPost'                  => __( 'Set as avatar', 'simple-local-avatars' ),
+				'deleteNonce'                     => $this->remove_nonce,
+				'mediaNonce'                      => wp_create_nonce( 'assign_simple_local_avatar_nonce' ),
+				'migrateFromWpUserAvatarNonce'    => wp_create_nonce( 'migrate_from_wp_user_avatar_nonce' ),
+				'migrateFromWpUserAvatarSuccess'  => __( 'Number of avatars successfully migrated from WP User Avatar', 'simple-local-avatars' ),
+				'migrateFromWpUserAvatarFailure'  => __( 'No avatars were migrated from WP User Avatar.', 'simple-local-avatars' ),
+				'migrateFromWpUserAvatarProgress' => __( 'Migration in progress.', 'simple-local-avatars' ),
 			)
 		);
 	}
