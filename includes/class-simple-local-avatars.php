@@ -806,12 +806,12 @@ class Simple_Local_Avatars {
 	 */
 	public function ajax_migrate_from_wp_user_avatar() {
 		// Bail early if nonce is not available.
-		if ( empty( $_POST['migrateFromWpUserAvatarNonce'] ) ) {
+		if ( empty( sanitize_text_field( $_POST['migrateFromWpUserAvatarNonce'] ) ) ) {
 			die;
 		}
 
 		// Bail early if nonce is invalid.
-		if ( ! wp_verify_nonce( $_POST['migrateFromWpUserAvatarNonce'], 'migrate_from_wp_user_avatar_nonce' ) ) {
+		if ( ! wp_verify_nonce( sanitize_text_field( $_POST['migrateFromWpUserAvatarNonce'] ), 'migrate_from_wp_user_avatar_nonce' ) ) {
 			die();
 		}
 
