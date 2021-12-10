@@ -339,7 +339,7 @@ class Simple_Local_Avatars {
 		';
 		} else {
 			echo '<button id="clear_cache_btn" class="button delete" name="clear_cache_btn" >' . esc_html__( 'Clear cache', 'simple-local-avatars' ) . '</button><br/>';
-			echo '<span id="clear_cache_message" style="font-style:italic;font-size:15px;line-height:2;"></span>';
+			echo '<span id="clear_cache_message" style="font-style:italic;font-size:14px;line-height:2;"></span>';
 		}
 	}
 
