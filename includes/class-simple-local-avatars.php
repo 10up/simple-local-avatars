@@ -842,12 +842,12 @@ class Simple_Local_Avatars {
 	 *     $ wp simple-local-avatars migrate wp-user-avatar
 	 *     Success: Number of avatars successfully migrated from WP User Avatar: 5
 	 *
-	 * @param array|null $args       The arguments.
-	 * @param array|null $assoc_args The associative arguments.
+	 * @param array $args       The arguments.
+	 * @param array $assoc_args The associative arguments.
 	 *
 	 * @return void
 	 */
-	public function wp_cli_migrate_from_wp_user_avatar( $args = null, $assoc_args = null ) {
+	public function wp_cli_migrate_from_wp_user_avatar( $args, $assoc_args ) {
 
 		// Argument --yes to prevent confirmation (for automated systems).
 		if ( ! isset( $assoc_args['yes'] ) ) {
