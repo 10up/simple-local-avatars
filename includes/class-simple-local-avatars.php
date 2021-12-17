@@ -734,7 +734,17 @@ class Simple_Local_Avatars {
 		global $wpdb;
 
 		$count = 0;
-		$sites = get_sites();
+
+		// Support single site and multisite installs.
+		// Use WordPress function if running multisite.
+		// Create generic class if running single site.
+		if ( is_multisite() ) {
+			$sites = get_sites();
+		} else {
+			$site          = new stdClass();
+			$site->blog_id = 1;
+			$sites         = array( $site );
+		}
 
 		// Bail early if we don't find sites.
 		if ( empty( $sites ) ) {
