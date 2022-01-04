@@ -1,0 +1,22 @@
+{
+  "name": "simple-local-avatars",
+  "version": "1.0.0",
+  "description": "Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar! Simple and lightweight.",
+  "main": "simple-local-avatars.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "uglify-js": "^3.14.5"
+  },
+  "scripts": {
+    "uglifyjs": "uglifyjs simple-local-avatars.dev.js -o simple-local-avatars.js -c -m"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/10up/simple-local-avatars.git"
+  },
+  "author": "10up <sales@10up.com>",
+  "license": "GPLv2 (or later)"
+}
