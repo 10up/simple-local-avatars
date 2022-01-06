@@ -45,6 +45,8 @@ class Simple_Local_Avatars {
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 		add_action( 'wp_ajax_sla_clear_user_cache', array( $this, 'sla_clear_user_cache' ) );
+
+		add_filter( 'avatar_defaults', array( $this, 'add_avatar_default_field' ) );
 	}
 
 	/**
@@ -211,6 +213,12 @@ class Simple_Local_Avatars {
 			$default = includes_url( 'images/blank.gif' );
 		} elseif ( 'gravatar_default' === $default ) {
 			$default = "$host/avatar/?s={$size}";
+		} elseif ( 'simple_local_avatar' === $default ) {
+			$default           = "$host/avatar/?d=$default&amp;s={$size}";
+			$default_avatar_id = get_option( 'simple_local_avatar_default', '' );
+			if ( ! empty( $default_avatar_id ) ) {
+				$default = wp_get_attachment_image_url( $default_avatar_id );
+			}
 		} else {
 			$default = "$host/avatar/?d=$default&amp;s={$size}";
 		}
@@ -265,6 +273,9 @@ class Simple_Local_Avatars {
 				'desc' => esc_html__( 'Clear cache of stored avatars', 'simple-local-avatars' ),
 			)
 		);
+
+		// Save default avatar file.
+		$this->save_default_avatar_file_id();
 	}
 
 	/**
@@ -730,8 +741,9 @@ class Simple_Local_Avatars {
 			'sla_admin',
 			'slaAdmin',
 			[
-				'nonce' => wp_create_nonce( 'sla_clear_cache_nonce' ),
-				'error' => esc_html__( 'Something went wrong while clearing cache, please try again.', 'simple-local-avatars' ),
+				'nonce'            => wp_create_nonce( 'sla_clear_cache_nonce' ),
+				'error'            => esc_html__( 'Something went wrong while clearing cache, please try again.', 'simple-local-avatars' ),
+				'insertMediaTitle' => __( 'Choose default avatar', 'simple-local-avatars' ),
 			]
 		);
 	}
@@ -817,6 +829,44 @@ class Simple_Local_Avatars {
 
 			// Update meta, remove sizes that don't exist.
 			update_user_meta( $user_id, 'simple_local_avatar', $local_avatars );
+		}
+	}
+
+	/**
+	 * Add default avatar upload file field.
+	 *
+	 * @param array $defaults Default options for avatar.
+	 *
+	 * @return array Default options of avatar.
+	 */
+	public function add_avatar_default_field( $defaults ) {
+		if ( ! did_action( 'wp_enqueue_media' ) ) {
+			wp_enqueue_media();
+		}
+		$default_avatar_file_id  = get_option( 'simple_local_avatar_default', '' );
+		$default_avatar_file_url = wp_get_attachment_image_url( $default_avatar_file_id );
+		ob_start();
+		?>
+		<input type="hidden" name="simple-local-avatar-file-id" id="simple-local-avatar-file-id" value="<?php echo esc_attr( $default_avatar_file_id ); ?>"/>
+		<input type="hidden" name="simple-local-avatar-file-url" id="simple-local-avatar-file-url" value="<?php echo esc_url( $default_avatar_file_url ); ?>"/>
+		<input type="button" name="simple-local-avatar" id="simple-local-avatar-upload" class="button-secondary" value="<?php esc_html_e( 'Choose Default Avatar', 'simple-local-avatar' ); ?>"/>
+		<?php
+		$defaults['simple_local_avatar'] = ob_get_clean();
+
+		return $defaults;
+	}
+
+	/**
+	 * Save default avatar attachment id in option.
+	 */
+	private function save_default_avatar_file_id() {
+		global $pagenow;
+
+		$file_id = filter_input( INPUT_POST, 'simple-local-avatar-file-id', FILTER_SANITIZE_NUMBER_INT );
+
+		// check for uploaded files
+		if ( 'options.php' === $pagenow && ! empty( $file_id ) ) {
+			update_option( 'simple_local_avatar_default', $_POST['simple-local-avatar-file-id'] );
 		}
 	}
 }
