@@ -23,11 +23,11 @@ jQuery(document).ready(function ($) {
 		if (avatar_working) {
 			return;
 		}
+
 		/**
 		 * Setup Crop control
 		 * The controls used by WordPress Admin are api.CroppedImageControl and api.SiteIconControl.
 		 */
-
 		const cropControl = {
 			id: 'control-id',
 			params: {
@@ -43,15 +43,15 @@ jQuery(document).ready(function ($) {
 		 *
 		 * @param {boolean} flexW
 		 * @param {boolean} flexH
-		 * @param {number}  dstW
-		 * @param {number}  dstH
+		 * @param {number}  distW
+		 * @param {number}  distH
 		 * @param {number}  imgW
 		 * @param {number}  imgH
 		 * @returns {boolean}
 		 */
-		cropControl.mustBeCropped = function (flexW, flexH, dstW, dstH, imgW, imgH) {
+		cropControl.mustBeCropped = function (flexW, flexH, distW, distH, imgW, imgH) {
 			// Skip cropping if the image matches the crop dimension.
-			if (imgW === dstW && imgH === distH) {
+			if (imgW === distW && imgH === distH) {
 				return false;
 			}
 
@@ -64,7 +64,6 @@ jQuery(document).ready(function ($) {
 		 * simple_local_avatar_frame.setState('library');
 		 * simple_local_avatar_frame.open();
 		 */
-
 		simple_local_avatar_frame = wp.media({
 			button: {
 				text: i10n_SimpleLocalAvatars.selectCrop, // l10n.selectAndCrop,
@@ -92,7 +91,6 @@ jQuery(document).ready(function ($) {
 		 *
 		 * @param {object} croppedImage Cropped attachment data.
 		 */
-
 		simple_local_avatar_frame.on('cropped', function (croppedImage) {
 			const { url } = croppedImage;
 			const attachmentId = croppedImage.id;
@@ -157,7 +155,7 @@ jQuery(document).ready(function ($) {
 			_wpnonce: i10n_SimpleLocalAvatars.deleteNonce,
 		})
 			.done(function (data) {
-				if (data != '') {
+				if (data !== '') {
 					avatar_container.innerHTML = data;
 					$('#simple-local-avatar-remove').hide();
 					avatar_ratings.disabled = true;
@@ -171,7 +169,6 @@ jQuery(document).ready(function ($) {
 	/**
 	 * Update the Local Avatar image
 	 */
-
 	avatar_input.on('change', function (event) {
 		avatar_preview.attr('srcset', '');
 		avatar_preview.attr('height', 'auto');
@@ -185,15 +182,19 @@ jQuery(document).ready(function ($) {
 	});
 });
 
+/**
+ * Lock or unlock the avatar editing
+ * @param {string} lock_or_unlock
+ */
 function avatar_lock(lock_or_unlock) {
-	if (undefined == avatar_spinner) {
+	if (undefined === avatar_spinner) {
 		avatar_ratings = document.getElementById('simple-local-avatar-ratings');
 		avatar_spinner = jQuery(document.getElementById('simple-local-avatar-spinner'));
 		avatar_container = document.getElementById('simple-local-avatar-photo');
 		avatar_form_button = jQuery(avatar_ratings).closest('form').find('input[type=submit]');
 	}
 
-	if (lock_or_unlock == 'unlock') {
+	if (lock_or_unlock === 'unlock') {
 		avatar_working = false;
 		avatar_form_button.removeAttr('disabled');
 		avatar_spinner.hide();
@@ -243,7 +244,7 @@ function simple_local_avatar_calculate_image_select_options(attachment, controll
 	const x1 = (realWidth - xInit) / 2;
 	const y1 = (realHeight - yInit) / 2;
 
-	const imgSelectOptions = {
+	return {
 		handles: true,
 		keys: true,
 		instance: true,
@@ -258,8 +259,6 @@ function simple_local_avatar_calculate_image_select_options(attachment, controll
 		y2: yInit + y1,
 		aspectRatio: `${xInit}:${yInit}`,
 	};
-
-	return imgSelectOptions;
 }
 
 /**
@@ -300,7 +299,7 @@ function simple_local_avatar_set_image_from_url(url, attachmentId, width, height
 			_wpnonce: i10n_SimpleLocalAvatars.mediaNonce,
 		})
 		.done(function (data) {
-			if (data != '') {
+			if (data !== '') {
 				avatar_container.innerHTML = data;
 				jQuery('#simple-local-avatar-remove').show();
 				avatar_ratings.disabled = false;
@@ -311,6 +310,11 @@ function simple_local_avatar_set_image_from_url(url, attachmentId, width, height
 		});
 }
 
+/**
+ * Set the avatar image, once it is selected from the media library. 
+ *
+ * @param {object} attachment
+ */
 function simple_local_avatar_set_image_from_attachment(attachment) {
 	avatar_lock('lock');
 	jQuery
@@ -321,7 +325,7 @@ function simple_local_avatar_set_image_from_attachment(attachment) {
 			_wpnonce: i10n_SimpleLocalAvatars.mediaNonce,
 		})
 		.done(function (data) {
-			if (data != '') {
+			if (data !== '') {
 				avatar_container.innerHTML = data;
 				jQuery('#simple-local-avatar-remove').show();
 				avatar_ratings.disabled = false;
