@@ -17,6 +17,9 @@
         "test:e2e": "wp-scripts test-e2e",
         "test:unit": "wp-scripts test-unit-js"
     },
+    "directories": {
+        "test": "tests"
+    },
     "repository": {
         "type": "git",
         "url": "git@github.com:10up/simple-local-avatars.git"
