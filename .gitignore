@@ -1,6 +1,35 @@
 .DS_Store
-node_modules/
-vendor/
-*.log
-*.swp
+node_modules
+bower_components
+languages
+release
+vendor
+composer.lock
+phpunit.xml
 .idea
+
+# Project Files
+dist
+ruleset.xml
+
+# Editors
+*.esproj
+*.tmproj
+*.tmproject
+tmtags
+.*.sw[a-z]
+*.un~
+Session.vim
+*.swp
+*.csv
+*.log
+
+# Mac OSX
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Desktop.ini
