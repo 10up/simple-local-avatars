@@ -12,7 +12,7 @@ class Simple_Local_Avatars {
 	 * Set up the hooks and default values
 	 */
 	public function __construct() {
-		 $this->options       = (array) get_option( 'simple_local_avatars' );
+		$this->options        = (array) get_option( 'simple_local_avatars' );
 		$this->avatar_ratings = array(
 			'G'  => __( 'G &#8212; Suitable for all audiences', 'simple-local-avatars' ),
 			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above', 'simple-local-avatars' ),
@@ -349,7 +349,8 @@ class Simple_Local_Avatars {
 	 *
 	 * @param object $profileuser User object
 	 */
-	public function edit_user_profile( $profileuser ) { ?>
+	public function edit_user_profile( $profileuser ) {
+		?>
 		<div id="simple-local-avatar-section">
 			<h3><?php esc_html_e( 'Avatar', 'simple-local-avatars' ); ?></h3>
 
