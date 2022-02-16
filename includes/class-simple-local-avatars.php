@@ -4,6 +4,7 @@
  * Adds an avatar upload field to user profiles.
  */
 class Simple_Local_Avatars {
+
 	private $user_id_being_edited, $avatar_upload_error, $remove_nonce, $avatar_ratings;
 	public $options;
 
@@ -48,6 +49,9 @@ class Simple_Local_Avatars {
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			WP_CLI::add_command( 'simple-local-avatars migrate wp-user-avatar', array( $this, 'wp_cli_migrate_from_wp_user_avatar' ) );
 		}
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
+		add_action( 'wp_ajax_sla_clear_user_cache', array( $this, 'sla_clear_user_cache' ) );
 	}
 
 	/**
@@ -264,6 +268,17 @@ class Simple_Local_Avatars {
 			'discussion',
 			'avatars'
 		);
+		add_settings_field(
+			'simple-local-avatars-clear',
+			esc_html__( 'Clear local avatar cache', 'simple-local-avatars' ),
+			array( $this, 'avatar_settings_field' ),
+			'discussion',
+			'avatars',
+			array(
+				'key'  => 'clear_cache',
+				'desc' => esc_html__( 'Clear cache of stored avatars', 'simple-local-avatars' ),
+			)
+		);
 	}
 
 	/**
@@ -290,12 +305,12 @@ class Simple_Local_Avatars {
 			wp_enqueue_media();
 		}
 
-		$user_id = ( 'profile.php' === $hook_suffix ) ? get_current_user_id() : (int) $_GET['user_id'];
+		$user_id = filter_input( INPUT_GET, 'user_id', FILTER_SANITIZE_NUMBER_INT );
+		$user_id = ( 'profile.php' === $hook_suffix ) ? get_current_user_id() : (int) $user_id;
 
 		$this->remove_nonce = wp_create_nonce( 'remove_simple_local_avatar_nonce' );
 
-		$script_name_append = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.dev' : '';
-		wp_enqueue_script( 'simple-local-avatars', plugins_url( '', dirname( __FILE__ ) ) . '/simple-local-avatars' . $script_name_append . '.js', array( 'jquery' ), false, true );
+		wp_enqueue_script( 'simple-local-avatars', plugins_url( '', dirname( __FILE__ ) ) . '/dist/simple-local-avatars.js', array( 'jquery' ), false, true );
 		wp_localize_script(
 			'simple-local-avatars',
 			'i10n_SimpleLocalAvatars',
@@ -303,6 +318,7 @@ class Simple_Local_Avatars {
 				'user_id'                         => $user_id,
 				'insertMediaTitle'                => __( 'Choose an Avatar', 'simple-local-avatars' ),
 				'insertIntoPost'                  => __( 'Set as avatar', 'simple-local-avatars' ),
+				'selectCrop'                      => __( 'Select avatar and Crop', 'simple-local-avatars' ),
 				'deleteNonce'                     => $this->remove_nonce,
 				'mediaNonce'                      => wp_create_nonce( 'assign_simple_local_avatar_nonce' ),
 				'migrateFromWpUserAvatarNonce'    => wp_create_nonce( 'migrate_from_wp_user_avatar_nonce' ),
@@ -343,12 +359,17 @@ class Simple_Local_Avatars {
 			$this->options[ $args['key'] ] = 0;
 		}
 
-		echo '
+		if ( 'clear_cache' !== $args['key'] ) {
+			echo '
 			<label for="simple-local-avatars-' . esc_attr( $args['key'] ) . '">
 				<input type="checkbox" name="simple_local_avatars[' . esc_attr( $args['key'] ) . ']" id="simple-local-avatars-' . esc_attr( $args['key'] ) . '" value="1" ' . checked( $this->options[ $args['key'] ], 1, false ) . ' />
 				' . esc_html( $args['desc'] ) . '
 			</label>
 		';
+		} else {
+			echo '<button id="clear_cache_btn" class="button delete" name="clear_cache_btn" >' . esc_html__( 'Clear cache', 'simple-local-avatars' ) . '</button><br/>';
+			echo '<span id="clear_cache_message" style="font-style:italic;font-size:14px;line-height:2;"></span>';
+		}
 	}
 
 	/**
@@ -368,92 +389,90 @@ class Simple_Local_Avatars {
 	 * @param object $profileuser User object
 	 */
 	public function edit_user_profile( $profileuser ) {
-	?>
-	<div id="simple-local-avatar-section">
-		<h3><?php esc_html_e( 'Avatar', 'simple-local-avatars' ); ?></h3>
+		?>
+		<div id="simple-local-avatar-section">
+			<h3><?php esc_html_e( 'Avatar', 'simple-local-avatars' ); ?></h3>
 
-		<table class="form-table">
-			<tr class="upload-avatar-row">
-				<th scope="row"><label for="simple-local-avatar"><?php esc_html_e( 'Upload Avatar', 'simple-local-avatars' ); ?></label></th>
-				<td style="width: 50px;" id="simple-local-avatar-photo">
-			<?php
-			add_filter( 'pre_option_avatar_rating', '__return_null' );     // ignore ratings here
-			echo get_simple_local_avatar( $profileuser->ID );
-			remove_filter( 'pre_option_avatar_rating', '__return_null' );
-			?>
-				</td>
-				<td>
-			<?php
-			if ( ! $upload_rights = current_user_can( 'upload_files' ) ) {
-				$upload_rights = empty( $this->options['caps'] );
-			}
+			<table class="form-table">
+				<tr class="upload-avatar-row">
+					<th scope="row"><label for="simple-local-avatar"><?php esc_html_e( 'Upload Avatar', 'simple-local-avatars' ); ?></label></th>
+					<td style="width: 50px;" id="simple-local-avatar-photo">
+						<?php
+						add_filter( 'pre_option_avatar_rating', '__return_null' );     // ignore ratings here
+						echo get_simple_local_avatar( $profileuser->ID );
+						remove_filter( 'pre_option_avatar_rating', '__return_null' );
+						?>
+					</td>
+					<td>
+						<?php
+						if ( ! $upload_rights = current_user_can( 'upload_files' ) ) {
+							$upload_rights = empty( $this->options['caps'] );
+						}
 
-			if ( $upload_rights ) {
-				do_action( 'simple_local_avatar_notices' );
-				wp_nonce_field( 'simple_local_avatar_nonce', '_simple_local_avatar_nonce', false );
-				$remove_url = add_query_arg(
-					array(
-						'action'   => 'remove-simple-local-avatar',
-						'user_id'  => $profileuser->ID,
-						'_wpnonce' => $this->remove_nonce,
-					)
-				);
-				?>
-				<?php
-				// if user is author and above hide the choose file option
-				// force them to use the WP Media Selector
-				if ( ! current_user_can( 'upload_files' ) ) {
-					?>
-						<p style="display: inline-block; width: 26em;">
-							<span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br />
-							<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
-							<span class="spinner" id="simple-local-avatar-spinner"></span>
-						</p>
-				<?php } ?>
-						<p>
-						<?php if ( current_user_can( 'upload_files' ) && did_action( 'wp_enqueue_media' ) ) : ?>
-							<a href="#" class="button hide-if-no-js" id="simple-local-avatar-media"><?php esc_html_e( 'Choose from Media Library', 'simple-local-avatars' ); ?></a> &nbsp;
-						<?php endif; ?>
-							<a
-								href="<?php echo esc_url( $remove_url ); ?>"
-								class="button item-delete submitdelete deletion"
-								id="simple-local-avatar-remove"
-								<?php echo empty( $profileuser->simple_local_avatar ) ? ' style="display:none;"' : ''; ?>
-							>
-								<?php esc_html_e( 'Delete local avatar', 'simple-local-avatars' ); ?>
-							</a>
-						</p>
-				<?php
-			} else {
-				if ( empty( $profileuser->simple_local_avatar ) ) {
-					echo '<span class="description">' . esc_html__( 'No local avatar is set. Set up your avatar at Gravatar.com.', 'simple-local-avatars' ) . '</span>';
-				} else {
-					echo '<span class="description">' . esc_html__( 'You do not have media management permissions. To change your local avatar, contact the blog administrator.', 'simple-local-avatars' ) . '</span>';
-				}
-			}
-			?>
-				</td>
-			</tr>
-			<tr class="ratings-row">
-				<th scope="row"><?php esc_html_e( 'Rating' ); ?></th>
-				<td colspan="2">
-					<fieldset id="simple-local-avatar-ratings" <?php disabled( empty( $profileuser->simple_local_avatar ) ); ?>>
-						<legend class="screen-reader-text"><span><?php esc_html_e( 'Rating' ); ?></span></legend>
-					<?php
-					if ( empty( $profileuser->simple_local_avatar_rating ) || ! array_key_exists( $profileuser->simple_local_avatar_rating, $this->avatar_ratings ) ) {
-						$profileuser->simple_local_avatar_rating = 'G';
-					}
+						if ( $upload_rights ) {
+							do_action( 'simple_local_avatar_notices' );
+							wp_nonce_field( 'simple_local_avatar_nonce', '_simple_local_avatar_nonce', false );
+							$remove_url = add_query_arg(
+								array(
+									'action'   => 'remove-simple-local-avatar',
+									'user_id'  => $profileuser->ID,
+									'_wpnonce' => $this->remove_nonce,
+								)
+							);
+							?>
+							<?php
+							// if user is author and above hide the choose file option
+							// force them to use the WP Media Selector
+							if ( ! current_user_can( 'upload_files' ) ) {
+								?>
+								<p style="display: inline-block; width: 26em;">
+									<span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br />
+									<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
+									<span class="spinner" id="simple-local-avatar-spinner"></span>
+								</p>
+							<?php } ?>
+							<p>
+								<?php if ( current_user_can( 'upload_files' ) && did_action( 'wp_enqueue_media' ) ) : ?>
+									<a href="#" class="button hide-if-no-js" id="simple-local-avatar-media"><?php esc_html_e( 'Choose from Media Library', 'simple-local-avatars' ); ?></a> &nbsp;
+								<?php endif; ?>
+								<a href="<?php echo esc_url( $remove_url ); ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-remove" <?php echo empty( $profileuser->simple_local_avatar ) ? ' style="display:none;"' : ''; ?>>
+									<?php esc_html_e( 'Delete local avatar', 'simple-local-avatars' ); ?>
+								</a>
+							</p>
+							<?php
+						} else {
+							if ( empty( $profileuser->simple_local_avatar ) ) {
+								echo '<span class="description">' . esc_html__( 'No local avatar is set. Set up your avatar at Gravatar.com.', 'simple-local-avatars' ) . '</span>';
+							} else {
+								echo '<span class="description">' . esc_html__( 'You do not have media management permissions. To change your local avatar, contact the blog administrator.', 'simple-local-avatars' ) . '</span>';
+							}
+						}
+						?>
+					</td>
+				</tr>
+				<tr class="ratings-row">
+					<th scope="row"><?php esc_html_e( 'Rating' ); ?></th>
+					<td colspan="2">
+						<fieldset id="simple-local-avatar-ratings" <?php disabled( empty( $profileuser->simple_local_avatar ) ); ?>>
+							<legend class="screen-reader-text"><span><?php esc_html_e( 'Rating' ); ?></span></legend>
+							<?php
+							$this->update_avatar_ratings();
 
-					foreach ( $this->avatar_ratings as $key => $rating ) :
-						echo "\n\t<label><input type='radio' name='simple_local_avatar_rating' value='" . esc_attr( $key ) . "' " . checked( $profileuser->simple_local_avatar_rating, $key, false ) . "/> $rating</label><br />";
-					endforeach;
-					?>
-						<p class="description"><?php esc_html_e( 'If the local avatar is inappropriate for this site, Gravatar will be attempted.', 'simple-local-avatars' ); ?></p>
-					</fieldset></td>
-			</tr>
-		</table>
-	</div>
-	<?php
+							if ( empty( $profileuser->simple_local_avatar_rating ) || ! array_key_exists( $profileuser->simple_local_avatar_rating, $this->avatar_ratings ) ) {
+								$profileuser->simple_local_avatar_rating = 'G';
+							}
+
+							foreach ( $this->avatar_ratings as $key => $rating ) :
+								echo "\n\t<label><input type='radio' name='simple_local_avatar_rating' value='" . esc_attr( $key ) . "' " . checked( $profileuser->simple_local_avatar_rating, $key, false ) . '/>' . esc_html( $rating ) . '</label><br />';
+							endforeach;
+							?>
+							<p class="description"><?php esc_html_e( 'If the local avatar is inappropriate for this site, Gravatar will be attempted.', 'simple-local-avatars' ); ?></p>
+						</fieldset>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<?php
 	}
 
 	/**
@@ -715,6 +734,126 @@ class Simple_Local_Avatars {
 	 */
 	public function set_avatar_rest( $input, $user ) {
 		$this->assign_new_user_avatar( $input['media_id'], $user->ID );
+	}
+
+	/**
+	 * Overwriting existing avatar_ratings so this can be called just before the rating strings would be used so that
+	 * translations will work correctly.
+	 * Default text-domain because the strings have already been translated
+	 */
+	private function update_avatar_ratings() {
+		$this->avatar_ratings = array(
+			'G'  => __( 'G &#8212; Suitable for all audiences' ),
+			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above' ),
+			'R'  => __( 'R &#8212; Intended for adult audiences above 17' ),
+			'X'  => __( 'X &#8212; Even more mature than above' ),
+		);
+	}
+
+	/**
+	 * Load script required for handling any actions.
+	 */
+	public function admin_scripts() {
+		wp_enqueue_script(
+			'sla_admin',
+			SLA_PLUGIN_URL . 'assets/js/admin.js',
+			[ 'jquery' ],
+			SLA_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			'sla_admin',
+			'slaAdmin',
+			[
+				'nonce' => wp_create_nonce( 'sla_clear_cache_nonce' ),
+				'error' => esc_html__( 'Something went wrong while clearing cache, please try again.', 'simple-local-avatars' ),
+			]
+		);
+	}
+
+	/**
+	 * Clear user cache.
+	 */
+	public function sla_clear_user_cache() {
+		check_ajax_referer( 'sla_clear_cache_nonce', 'nonce' );
+		$step = isset( $_REQUEST['step'] ) ? intval( $_REQUEST['step'] ) : 1;
+
+		// Setup defaults.
+		$users_per_page = 50;
+		$offset         = ( $step - 1 ) * $users_per_page;
+
+		$users_query = new \WP_User_Query(
+			array(
+				'fields' => array( 'ID' ),
+				'number' => $users_per_page,
+				'offset' => $offset,
+			)
+		);
+
+		// Total users in the site.
+		$total_users = $users_query->get_total();
+
+		// Get the users.
+		$users = $users_query->get_results();
+
+		if ( ! empty( $users ) ) {
+			foreach ( $users as $user ) {
+				$user_id       = $user->ID;
+				$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
+				$this->clear_user_avatar_cache( $local_avatars, $user_id, $local_avatars['media_id'] ?? '' );
+			}
+
+			wp_send_json_success(
+				array(
+					'step'    => $step + 1,
+					'message' => sprintf(
+						/* translators: 1: Offset, 2: Total users  */
+						esc_html__( 'Processing %1$s/%2$s users...', 'simple-local-avatars' ),
+						$offset,
+						$total_users
+					),
+				)
+			);
+		}
+
+		wp_send_json_success(
+			array(
+				'step'    => 'done',
+				'message' => sprintf(
+					/* translators: %s Total users */
+					esc_html__( 'Completed clearing cache for all %s user(s) avatars.', 'simple-local-avatars' ),
+					$total_users
+				),
+			)
+		);
+	}
+
+	/**
+	 * Clear avatar cache for given user.
+	 *
+	 * @param array $local_avatars Local avatars.
+	 * @param int   $user_id       User ID.
+	 * @param mixed $media_id      Media ID.
+	 */
+	private function clear_user_avatar_cache( $local_avatars, $user_id, $media_id ) {
+		if ( ! empty( $media_id ) ) {
+			$file_name_data = pathinfo( wp_get_original_image_path( $media_id ) );
+			$file_dir_name  = $file_name_data['dirname'];
+			$file_name      = $file_name_data['filename'];
+			$file_ext       = $file_name_data['extension'];
+			foreach ( $local_avatars as $local_avatars_key => $local_avatar_value ) {
+				if ( ! in_array( $local_avatars_key, [ 'media_id', 'full' ], true ) ) {
+					$file_size_path = sprintf( '%1$s/%2$s-%3$sx%3$s.%4$s', $file_dir_name, $file_name, $local_avatars_key, $file_ext );
+					if ( ! file_exists( $file_size_path ) ) {
+						unset( $local_avatars[ $local_avatars_key ] );
+					}
+				}
+			}
+
+			// Update meta, remove sizes that don't exist.
+			update_user_meta( $user_id, 'simple_local_avatar', $local_avatars );
+		}
 	}
 
 	/**
