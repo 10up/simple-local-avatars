@@ -47,6 +47,12 @@ class Simple_Local_Avatars {
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_fields' ) );
 
+		add_action( 'wp_ajax_migrate_from_wp_user_avatar', array( $this, 'ajax_migrate_from_wp_user_avatar' ) );
+
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			WP_CLI::add_command( 'simple-local-avatars migrate wp-user-avatar', array( $this, 'wp_cli_migrate_from_wp_user_avatar' ) );
+		}
+
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 		add_action( 'wp_ajax_sla_clear_user_cache', array( $this, 'sla_clear_user_cache' ) );
 	}
@@ -281,6 +287,13 @@ class Simple_Local_Avatars {
 			)
 		);
 		add_settings_field(
+			'simple-local-avatars-migration',
+			__( 'Migrate Other Local Avatars', 'simple-local-avatars' ),
+			array( $this, 'migrate_from_wp_user_avatar_settings_field' ),
+			'discussion',
+			'avatars'
+		);
+		add_settings_field(
 			'simple-local-avatars-clear',
 			esc_html__( 'Clear local avatar cache', 'simple-local-avatars' ),
 			array( $this, 'avatar_settings_field' ),
@@ -299,7 +312,17 @@ class Simple_Local_Avatars {
 	 * @param string $hook_suffix Page hook
 	 */
 	public function admin_enqueue_scripts( $hook_suffix ) {
-		if ( 'profile.php' !== $hook_suffix && 'user-edit.php' !== $hook_suffix ) {
+
+		/**
+		 * Filter the admin screens where we enqueue our scripts.
+		 *
+		 * @param array $screens Array of admin screens.
+		 * @param string $hook_suffix Page hook.
+		 * @return array
+		 */
+		$screens = apply_filters( 'simple_local_avatars_admin_enqueue_scripts', array( 'profile.php', 'user-edit.php', 'options-discussion.php' ), $hook_suffix );
+
+		if ( ! in_array( $hook_suffix, $screens, true ) ) {
 			return;
 		}
 
@@ -307,7 +330,8 @@ class Simple_Local_Avatars {
 			wp_enqueue_media();
 		}
 
-		$user_id = ( 'profile.php' === $hook_suffix ) ? get_current_user_id() : (int) $_GET['user_id'];
+		$user_id = filter_input( INPUT_GET, 'user_id', FILTER_SANITIZE_NUMBER_INT );
+		$user_id = ( 'profile.php' === $hook_suffix ) ? get_current_user_id() : (int) $user_id;
 
 		$this->remove_nonce = wp_create_nonce( 'remove_simple_local_avatar_nonce' );
 
@@ -316,12 +340,16 @@ class Simple_Local_Avatars {
 			'simple-local-avatars',
 			'i10n_SimpleLocalAvatars',
 			array(
-				'user_id'          => $user_id,
-				'insertMediaTitle' => __( 'Choose an Avatar', 'simple-local-avatars' ),
-				'insertIntoPost'   => __( 'Set as avatar', 'simple-local-avatars' ),
-				'selectCrop'       => __( 'Select avatar and Crop', 'simple-local-avatars' ),
-				'deleteNonce'      => $this->remove_nonce,
-				'mediaNonce'       => wp_create_nonce( 'assign_simple_local_avatar_nonce' ),
+				'user_id'                         => $user_id,
+				'insertMediaTitle'                => __( 'Choose an Avatar', 'simple-local-avatars' ),
+				'insertIntoPost'                  => __( 'Set as avatar', 'simple-local-avatars' ),
+				'selectCrop'                      => __( 'Select avatar and Crop', 'simple-local-avatars' ),
+				'deleteNonce'                     => $this->remove_nonce,
+				'mediaNonce'                      => wp_create_nonce( 'assign_simple_local_avatar_nonce' ),
+				'migrateFromWpUserAvatarNonce'    => wp_create_nonce( 'migrate_from_wp_user_avatar_nonce' ),
+				'migrateFromWpUserAvatarSuccess'  => __( 'Number of avatars successfully migrated from WP User Avatar', 'simple-local-avatars' ),
+				'migrateFromWpUserAvatarFailure'  => __( 'No avatars were migrated from WP User Avatar.', 'simple-local-avatars' ),
+				'migrateFromWpUserAvatarProgress' => __( 'Migration in progress.', 'simple-local-avatars' ),
 			)
 		);
 	}
@@ -367,6 +395,17 @@ class Simple_Local_Avatars {
 			echo '<button id="clear_cache_btn" class="button delete" name="clear_cache_btn" >' . esc_html__( 'Clear cache', 'simple-local-avatars' ) . '</button><br/>';
 			echo '<span id="clear_cache_message" style="font-style:italic;font-size:14px;line-height:2;"></span>';
 		}
+	}
+
+	/**
+	 * Settings field for migrating avatars away from WP User Avatar
+	 */
+	public function migrate_from_wp_user_avatar_settings_field() {
+		printf(
+			'<p><button type="button" name="%1$s" id="%1$s" class="button button-secondary">%2$s</button></p><p class="%1$s-progress"></p>',
+			esc_attr( 'simple-local-avatars-migrate-from-wp-user-avatar' ),
+			esc_html__( 'Migrate avatars from WP User Avatar to Simple Local Avatars', 'simple-local-avatars' )
+		);
 	}
 
 	/**
@@ -840,5 +879,169 @@ class Simple_Local_Avatars {
 			// Update meta, remove sizes that don't exist.
 			update_user_meta( $user_id, 'simple_local_avatar', $local_avatars );
 		}
+	}
+
+	/**
+	 * Migrate the user's avatar data from WP User Avatar/ProfilePress
+	 *
+	 * This function creates a new option in the wp_options table to store the processed user IDs
+	 * so that we can run this command multiple times without processing the same user over and over again.
+	 *
+	 * Credit to Philip John for the Gist
+	 *
+	 * @see https://gist.github.com/philipjohn/822d3521a95481f6ad7e118a7106fbc7
+	 *
+	 * @return int
+	 */
+	public function migrate_from_wp_user_avatar() {
+
+		global $wpdb;
+
+		$count = 0;
+
+		// Support single site and multisite installs.
+		// Use WordPress function if running multisite.
+		// Create generic class if running single site.
+		if ( is_multisite() ) {
+			$sites = get_sites();
+		} else {
+			$site          = new stdClass();
+			$site->blog_id = 1;
+			$sites         = array( $site );
+		}
+
+		// Bail early if we don't find sites.
+		if ( empty( $sites ) ) {
+			return $count;
+		}
+
+		foreach ( $sites as $site ) {
+			// Get the blog ID to use in the meta key and user query.
+			$blog_id = isset( $site->blog_id ) ? $site->blog_id : 1;
+
+			// Get the name of the meta key for WP User Avatar.
+			$meta_key = $wpdb->get_blog_prefix( $blog_id ) . 'user_avatar';
+
+			// Get processed users from database.
+			$migrations      = get_option( 'simple_local_avatars_migrations', array() );
+			$processed_users = isset( $migrations['wp_user_avatar'] ) ? $migrations['wp_user_avatar'] : array();
+
+			// Get all users that have a local avatar.
+			$users = get_users(
+				array(
+					'blog_id'      => $blog_id,
+					'exclude'      => $processed_users,
+					'meta_key'     => $meta_key,
+					'meta_compare' => 'EXISTS',
+				)
+			);
+
+			// Bail early if we don't find users.
+			if ( empty( $users ) ) {
+				continue;
+			}
+
+			foreach ( $users as $user ) {
+				// Get the existing avatar media ID.
+				$avatar_id = get_user_meta( $user->ID, $meta_key, true );
+
+				// Attach the user and media to Simple Local Avatars.
+				$sla = new Simple_Local_Avatars();
+				$sla->assign_new_user_avatar( (int) $avatar_id, $user->ID );
+
+				// Check that it worked.
+				$is_migrated = get_user_meta( $user->ID, 'simple_local_avatar', true );
+
+				if ( ! empty( $is_migrated ) ) {
+					// Build array of user IDs.
+					$migrations['wp_user_avatar'][] = $user->ID;
+
+					// Record the user IDs so we don't process a second time.
+					$is_saved = update_option( 'simple_local_avatars_migrations', $migrations );
+
+					// Record how many avatars we migrate to be used in our messaging.
+					if ( $is_saved ) {
+						$count++;
+					}
+				}
+			}
+		}
+
+		return $count;
+
+	}
+
+	/**
+	 * Migrate the user's avatar data away from WP User Avatar/ProfilePress via the dashboard.
+	 *
+	 * Sends the number of avatars processed back to the AJAX response before stopping execution.
+	 *
+	 * @return void
+	 */
+	public function ajax_migrate_from_wp_user_avatar() {
+		// Bail early if nonce is not available.
+		if ( empty( sanitize_text_field( $_POST['migrateFromWpUserAvatarNonce'] ) ) ) {
+			die;
+		}
+
+		// Bail early if nonce is invalid.
+		if ( ! wp_verify_nonce( sanitize_text_field( $_POST['migrateFromWpUserAvatarNonce'] ), 'migrate_from_wp_user_avatar_nonce' ) ) {
+			die();
+		}
+
+		// Run the migration script and store the number of avatars processed.
+		$count = $this->migrate_from_wp_user_avatar();
+
+		// Create the array we send back to javascript here.
+		$array_we_send_back = array( 'count' => $count );
+
+		// Make sure to json encode the output because that's what it is expecting.
+		echo wp_json_encode( $array_we_send_back );
+
+		// Make sure you die when finished doing ajax output.
+		wp_die();
+
+	}
+
+	/**
+	 * Migrate the user's avatar data from WP User Avatar/ProfilePress via the command line.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--yes]
+	 * : Skips the confirmations (for automated systems).
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     $ wp simple-local-avatars migrate wp-user-avatar
+	 *     Success: Number of avatars successfully migrated from WP User Avatar: 5
+	 *
+	 * @param array $args       The arguments.
+	 * @param array $assoc_args The associative arguments.
+	 *
+	 * @return void
+	 */
+	public function wp_cli_migrate_from_wp_user_avatar( $args, $assoc_args ) {
+
+		// Argument --yes to prevent confirmation (for automated systems).
+		if ( ! isset( $assoc_args['yes'] ) ) {
+			WP_CLI::confirm( esc_html__( 'Do you want to migrate avatars from WP User Avatar?', 'simple-local-avatars' ) );
+		}
+
+		// Run the migration script and store the number of avatars processed.
+		$count = $this->migrate_from_wp_user_avatar();
+
+		// Error out if we don't process any avatars.
+		if ( 0 === absint( $count ) ) {
+			WP_CLI::error( esc_html__( 'No avatars were migrated from WP User Avatar.', 'simple-local-avatars' ) );
+		}
+
+		WP_CLI::success(
+			sprintf(
+				'%s: %s',
+				esc_html__( 'Number of avatars successfully migrated from WP User Avatar', 'simple-local-avatars' ),
+				esc_html( $count )
+			)
+		);
 	}
 }

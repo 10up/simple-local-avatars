@@ -180,6 +180,33 @@ jQuery(document).ready(function ($) {
 			avatar_preview.attr('src', current_avatar);
 		}
 	});
+
+	$( document.getElementById('simple-local-avatars-migrate-from-wp-user-avatar') ).on( 'click', function(event) {
+		event.preventDefault();
+		jQuery.post( ajaxurl, { action: 'migrate_from_wp_user_avatar', migrateFromWpUserAvatarNonce: i10n_SimpleLocalAvatars.migrateFromWpUserAvatarNonce } )
+			.always( function() {
+				$('.simple-local-avatars-migrate-from-wp-user-avatar-progress').empty();
+				$('.simple-local-avatars-migrate-from-wp-user-avatar-progress').text(i10n_SimpleLocalAvatars.migrateFromWpUserAvatarProgress);
+			})
+			.done( function( response ) {
+				$('.simple-local-avatars-migrate-from-wp-user-avatar-progress').empty();
+				const data = $.parseJSON(response);
+				const count = data.count;
+				if ( 0 === count ) {
+					$('.simple-local-avatars-migrate-from-wp-user-avatar-progress').text(
+						i10n_SimpleLocalAvatars.migrateFromWpUserAvatarFailure
+					);
+				}
+				if ( count > 0 ) {
+					$('.simple-local-avatars-migrate-from-wp-user-avatar-progress').text(
+						i10n_SimpleLocalAvatars.migrateFromWpUserAvatarSuccess + ': ' + count
+					);
+				}
+				setTimeout(function() {
+					$('.simple-local-avatars-migrate-from-wp-user-avatar-progress').empty();
+				}, 5000);
+			});
+	});
 });
 
 /**
