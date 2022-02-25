@@ -263,7 +263,7 @@ class Simple_Local_Avatars {
 		if ( ! empty( $local_avatars['media_id'] ) ) {
 			// If using shared avatars, make sure we validate the URL on the main site
 			if ( $this->is_avatar_shared() ) {
-				$origin_blog_id = $local_avatars['blog_id'] ? $local_avatars['blog_id'] : get_main_site_id();
+				$origin_blog_id = isset( $local_avatars['blog_id'] ) && ! empty( $local_avatars['blog_id'] ) ? $local_avatars['blog_id'] : get_main_site_id();
 				switch_to_blog( $origin_blog_id );
 			}
 
