@@ -226,7 +226,8 @@ class Simple_Local_Avatars {
 		if ( ! empty( $local_avatars['media_id'] ) ) {
 			// If using shared avatars, make sure we validate the URL on the main site
 			if ( $this->is_avatar_shared() ) {
-				switch_to_blog( get_main_site_id() );
+				$origin_blog_id = $local_avatars['blog_id'] ? $local_avatars['blog_id'] : get_main_site_id();
+				switch_to_blog( $origin_blog_id );
 			}
 
 			$avatar_full_path = get_attached_file( $local_avatars['media_id'] );
@@ -706,7 +707,8 @@ class Simple_Local_Avatars {
 			$url_or_media_id        = wp_get_attachment_url( $url_or_media_id );
 		}
 
-		$meta_value['full'] = $url_or_media_id;
+		$meta_value['full']    = $url_or_media_id;
+		$meta_value['blog_id'] = get_current_blog_id();
 
 		update_user_meta( $user_id, $this->user_key, $meta_value ); // save user information (overwriting old)
 	}
