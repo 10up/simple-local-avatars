@@ -36,6 +36,7 @@ class Simple_Local_Avatars {
 					&& ! is_network_admin()
 				)
 			)
+			&& is_multisite()
 		) {
 			$this->user_key   = sprintf( $this->user_key . '_%d', get_current_blog_id() );
 			$this->rating_key = sprintf( $this->rating_key . '_%d', get_current_blog_id() );
