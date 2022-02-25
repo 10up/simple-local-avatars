@@ -4,6 +4,7 @@
  * Adds an avatar upload field to user profiles.
  */
 class Simple_Local_Avatars {
+
 	private $user_id_being_edited, $avatar_upload_error, $remove_nonce, $avatar_ratings;
 	public $options;
 
@@ -26,6 +27,9 @@ class Simple_Local_Avatars {
 	 * Register actions and filters.
 	 */
 	public function add_hooks() {
+
+		add_filter( 'plugin_action_links_' . SLA_PLUGIN_BASENAME, array( $this, 'plugin_filter_action_links' ) );
+
 		add_filter( 'pre_get_avatar_data', array( $this, 'get_avatar_data' ), 10, 2 );
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
@@ -43,10 +47,38 @@ class Simple_Local_Avatars {
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_fields' ) );
 
+		add_action( 'wp_ajax_migrate_from_wp_user_avatar', array( $this, 'ajax_migrate_from_wp_user_avatar' ) );
+
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			WP_CLI::add_command( 'simple-local-avatars migrate wp-user-avatar', array( $this, 'wp_cli_migrate_from_wp_user_avatar' ) );
+		}
+
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 		add_action( 'wp_ajax_sla_clear_user_cache', array( $this, 'sla_clear_user_cache' ) );
 
 		add_filter( 'avatar_defaults', array( $this, 'add_avatar_default_field' ) );
+	}
+
+	/**
+	 * Add the settings action link to the plugin page.
+	 *
+	 * @param array $links The Action links for the plugin.
+	 *
+	 * @return array
+	 */
+	public function plugin_filter_action_links( $links ) {
+
+		if ( ! is_array( $links ) ) {
+			return $links;
+		}
+
+		$links['settings'] = sprintf(
+			'<a href="%s"> %s </a>',
+			esc_url( admin_url( 'options-discussion.php' ) ),
+			__( 'Settings', 'simple-local-avatars' )
+		);
+
+		return $links;
 	}
 
 	/**
@@ -263,6 +295,13 @@ class Simple_Local_Avatars {
 			)
 		);
 		add_settings_field(
+			'simple-local-avatars-migration',
+			__( 'Migrate Other Local Avatars', 'simple-local-avatars' ),
+			array( $this, 'migrate_from_wp_user_avatar_settings_field' ),
+			'discussion',
+			'avatars'
+		);
+		add_settings_field(
 			'simple-local-avatars-clear',
 			esc_html__( 'Clear local avatar cache', 'simple-local-avatars' ),
 			array( $this, 'avatar_settings_field' ),
@@ -284,7 +323,17 @@ class Simple_Local_Avatars {
 	 * @param string $hook_suffix Page hook
 	 */
 	public function admin_enqueue_scripts( $hook_suffix ) {
-		if ( 'profile.php' !== $hook_suffix && 'user-edit.php' !== $hook_suffix ) {
+
+		/**
+		 * Filter the admin screens where we enqueue our scripts.
+		 *
+		 * @param array $screens Array of admin screens.
+		 * @param string $hook_suffix Page hook.
+		 * @return array
+		 */
+		$screens = apply_filters( 'simple_local_avatars_admin_enqueue_scripts', array( 'profile.php', 'user-edit.php', 'options-discussion.php' ), $hook_suffix );
+
+		if ( ! in_array( $hook_suffix, $screens, true ) ) {
 			return;
 		}
 
@@ -292,21 +341,26 @@ class Simple_Local_Avatars {
 			wp_enqueue_media();
 		}
 
-		$user_id = ( 'profile.php' === $hook_suffix ) ? get_current_user_id() : (int) $_GET['user_id'];
+		$user_id = filter_input( INPUT_GET, 'user_id', FILTER_SANITIZE_NUMBER_INT );
+		$user_id = ( 'profile.php' === $hook_suffix ) ? get_current_user_id() : (int) $user_id;
 
 		$this->remove_nonce = wp_create_nonce( 'remove_simple_local_avatar_nonce' );
 
-		$script_name_append = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.dev' : '';
-		wp_enqueue_script( 'simple-local-avatars', plugins_url( '', dirname( __FILE__ ) ) . '/simple-local-avatars' . $script_name_append . '.js', array( 'jquery' ), false, true );
+		wp_enqueue_script( 'simple-local-avatars', plugins_url( '', dirname( __FILE__ ) ) . '/dist/simple-local-avatars.js', array( 'jquery' ), false, true );
 		wp_localize_script(
 			'simple-local-avatars',
 			'i10n_SimpleLocalAvatars',
 			array(
-				'user_id'          => $user_id,
-				'insertMediaTitle' => __( 'Choose an Avatar', 'simple-local-avatars' ),
-				'insertIntoPost'   => __( 'Set as avatar', 'simple-local-avatars' ),
-				'deleteNonce'      => $this->remove_nonce,
-				'mediaNonce'       => wp_create_nonce( 'assign_simple_local_avatar_nonce' ),
+				'user_id'                         => $user_id,
+				'insertMediaTitle'                => __( 'Choose an Avatar', 'simple-local-avatars' ),
+				'insertIntoPost'                  => __( 'Set as avatar', 'simple-local-avatars' ),
+				'selectCrop'                      => __( 'Select avatar and Crop', 'simple-local-avatars' ),
+				'deleteNonce'                     => $this->remove_nonce,
+				'mediaNonce'                      => wp_create_nonce( 'assign_simple_local_avatar_nonce' ),
+				'migrateFromWpUserAvatarNonce'    => wp_create_nonce( 'migrate_from_wp_user_avatar_nonce' ),
+				'migrateFromWpUserAvatarSuccess'  => __( 'Number of avatars successfully migrated from WP User Avatar', 'simple-local-avatars' ),
+				'migrateFromWpUserAvatarFailure'  => __( 'No avatars were migrated from WP User Avatar.', 'simple-local-avatars' ),
+				'migrateFromWpUserAvatarProgress' => __( 'Migration in progress.', 'simple-local-avatars' ),
 			)
 		);
 	}
@@ -355,99 +409,106 @@ class Simple_Local_Avatars {
 	}
 
 	/**
+	 * Settings field for migrating avatars away from WP User Avatar
+	 */
+	public function migrate_from_wp_user_avatar_settings_field() {
+		printf(
+			'<p><button type="button" name="%1$s" id="%1$s" class="button button-secondary">%2$s</button></p><p class="%1$s-progress"></p>',
+			esc_attr( 'simple-local-avatars-migrate-from-wp-user-avatar' ),
+			esc_html__( 'Migrate avatars from WP User Avatar to Simple Local Avatars', 'simple-local-avatars' )
+		);
+	}
+
+	/**
 	 * Output new Avatar fields to user editing / profile screen
 	 *
 	 * @param object $profileuser User object
 	 */
 	public function edit_user_profile( $profileuser ) {
-	?>
-	<div id="simple-local-avatar-section">
-		<h3><?php esc_html_e( 'Avatar', 'simple-local-avatars' ); ?></h3>
+		?>
+		<div id="simple-local-avatar-section">
+			<h3><?php esc_html_e( 'Avatar', 'simple-local-avatars' ); ?></h3>
 
-		<table class="form-table">
-			<tr class="upload-avatar-row">
-				<th scope="row"><label for="simple-local-avatar"><?php esc_html_e( 'Upload Avatar', 'simple-local-avatars' ); ?></label></th>
-				<td style="width: 50px;" id="simple-local-avatar-photo">
-			<?php
-			add_filter( 'pre_option_avatar_rating', '__return_null' );     // ignore ratings here
-			echo get_simple_local_avatar( $profileuser->ID );
-			remove_filter( 'pre_option_avatar_rating', '__return_null' );
-			?>
-				</td>
-				<td>
-			<?php
-			if ( ! $upload_rights = current_user_can( 'upload_files' ) ) {
-				$upload_rights = empty( $this->options['caps'] );
-			}
-
-			if ( $upload_rights ) {
-				do_action( 'simple_local_avatar_notices' );
-				wp_nonce_field( 'simple_local_avatar_nonce', '_simple_local_avatar_nonce', false );
-				$remove_url = add_query_arg(
-					array(
-						'action'   => 'remove-simple-local-avatar',
-						'user_id'  => $profileuser->ID,
-						'_wpnonce' => $this->remove_nonce,
-					)
-				);
-				?>
-				<?php
-				// if user is author and above hide the choose file option
-				// force them to use the WP Media Selector
-				if ( ! current_user_can( 'upload_files' ) ) {
-					?>
-						<p style="display: inline-block; width: 26em;">
-							<span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br />
-							<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
-							<span class="spinner" id="simple-local-avatar-spinner"></span>
-						</p>
-				<?php } ?>
-						<p>
-						<?php if ( current_user_can( 'upload_files' ) && did_action( 'wp_enqueue_media' ) ) : ?>
-							<a href="#" class="button hide-if-no-js" id="simple-local-avatar-media"><?php esc_html_e( 'Choose from Media Library', 'simple-local-avatars' ); ?></a> &nbsp;
-						<?php endif; ?>
-							<a
-								href="<?php echo esc_url( $remove_url ); ?>"
-								class="button item-delete submitdelete deletion"
-								id="simple-local-avatar-remove"
-								<?php echo empty( $profileuser->simple_local_avatar ) ? ' style="display:none;"' : ''; ?>
-							>
-								<?php esc_html_e( 'Delete local avatar', 'simple-local-avatars' ); ?>
-							</a>
-						</p>
-				<?php
-			} else {
-				if ( empty( $profileuser->simple_local_avatar ) ) {
-					echo '<span class="description">' . esc_html__( 'No local avatar is set. Set up your avatar at Gravatar.com.', 'simple-local-avatars' ) . '</span>';
-				} else {
-					echo '<span class="description">' . esc_html__( 'You do not have media management permissions. To change your local avatar, contact the blog administrator.', 'simple-local-avatars' ) . '</span>';
-				}
-			}
-			?>
-				</td>
-			</tr>
-			<tr class="ratings-row">
-				<th scope="row"><?php esc_html_e( 'Rating' ); ?></th>
-				<td colspan="2">
-					<fieldset id="simple-local-avatar-ratings" <?php disabled( empty( $profileuser->simple_local_avatar ) ); ?>>
-						<legend class="screen-reader-text"><span><?php esc_html_e( 'Rating' ); ?></span></legend>
+			<table class="form-table">
+				<tr class="upload-avatar-row">
+					<th scope="row"><label for="simple-local-avatar"><?php esc_html_e( 'Upload Avatar', 'simple-local-avatars' ); ?></label></th>
+					<td style="width: 50px;" id="simple-local-avatar-photo">
 						<?php
-						$this->update_avatar_ratings();
-
-						if ( empty( $profileuser->simple_local_avatar_rating ) || ! array_key_exists( $profileuser->simple_local_avatar_rating, $this->avatar_ratings ) ) {
-							$profileuser->simple_local_avatar_rating = 'G';
+						add_filter( 'pre_option_avatar_rating', '__return_null' );     // ignore ratings here
+						echo get_simple_local_avatar( $profileuser->ID );
+						remove_filter( 'pre_option_avatar_rating', '__return_null' );
+						?>
+					</td>
+					<td>
+						<?php
+						if ( ! $upload_rights = current_user_can( 'upload_files' ) ) {
+							$upload_rights = empty( $this->options['caps'] );
 						}
 
-						foreach ( $this->avatar_ratings as $key => $rating ) :
-							echo "\n\t<label><input type='radio' name='simple_local_avatar_rating' value='" . esc_attr( $key ) . "' " . checked( $profileuser->simple_local_avatar_rating, $key, false ) . "/>" . esc_html( $rating ) . "</label><br />";
-						endforeach;
+						if ( $upload_rights ) {
+							do_action( 'simple_local_avatar_notices' );
+							wp_nonce_field( 'simple_local_avatar_nonce', '_simple_local_avatar_nonce', false );
+							$remove_url = add_query_arg(
+								array(
+									'action'   => 'remove-simple-local-avatar',
+									'user_id'  => $profileuser->ID,
+									'_wpnonce' => $this->remove_nonce,
+								)
+							);
+							?>
+							<?php
+							// if user is author and above hide the choose file option
+							// force them to use the WP Media Selector
+							if ( ! current_user_can( 'upload_files' ) ) {
+								?>
+								<p style="display: inline-block; width: 26em;">
+									<span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br />
+									<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
+									<span class="spinner" id="simple-local-avatar-spinner"></span>
+								</p>
+							<?php } ?>
+							<p>
+								<?php if ( current_user_can( 'upload_files' ) && did_action( 'wp_enqueue_media' ) ) : ?>
+									<a href="#" class="button hide-if-no-js" id="simple-local-avatar-media"><?php esc_html_e( 'Choose from Media Library', 'simple-local-avatars' ); ?></a> &nbsp;
+								<?php endif; ?>
+								<a href="<?php echo esc_url( $remove_url ); ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-remove" <?php echo empty( $profileuser->simple_local_avatar ) ? ' style="display:none;"' : ''; ?>>
+									<?php esc_html_e( 'Delete local avatar', 'simple-local-avatars' ); ?>
+								</a>
+							</p>
+							<?php
+						} else {
+							if ( empty( $profileuser->simple_local_avatar ) ) {
+								echo '<span class="description">' . esc_html__( 'No local avatar is set. Set up your avatar at Gravatar.com.', 'simple-local-avatars' ) . '</span>';
+							} else {
+								echo '<span class="description">' . esc_html__( 'You do not have media management permissions. To change your local avatar, contact the blog administrator.', 'simple-local-avatars' ) . '</span>';
+							}
+						}
 						?>
-						<p class="description"><?php esc_html_e( 'If the local avatar is inappropriate for this site, Gravatar will be attempted.', 'simple-local-avatars' ); ?></p>
-					</fieldset></td>
-			</tr>
-		</table>
-	</div>
-	<?php
+					</td>
+				</tr>
+				<tr class="ratings-row">
+					<th scope="row"><?php esc_html_e( 'Rating' ); ?></th>
+					<td colspan="2">
+						<fieldset id="simple-local-avatar-ratings" <?php disabled( empty( $profileuser->simple_local_avatar ) ); ?>>
+							<legend class="screen-reader-text"><span><?php esc_html_e( 'Rating' ); ?></span></legend>
+							<?php
+							$this->update_avatar_ratings();
+
+							if ( empty( $profileuser->simple_local_avatar_rating ) || ! array_key_exists( $profileuser->simple_local_avatar_rating, $this->avatar_ratings ) ) {
+								$profileuser->simple_local_avatar_rating = 'G';
+							}
+
+							foreach ( $this->avatar_ratings as $key => $rating ) :
+								echo "\n\t<label><input type='radio' name='simple_local_avatar_rating' value='" . esc_attr( $key ) . "' " . checked( $profileuser->simple_local_avatar_rating, $key, false ) . '/>' . esc_html( $rating ) . '</label><br />';
+							endforeach;
+							?>
+							<p class="description"><?php esc_html_e( 'If the local avatar is inappropriate for this site, Gravatar will be attempted.', 'simple-local-avatars' ); ?></p>
+						</fieldset>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<?php
 	}
 
 	/**
@@ -784,7 +845,7 @@ class Simple_Local_Avatars {
 				array(
 					'step'    => $step + 1,
 					'message' => sprintf(
-					/* translators: 1: Offset, 2: Total users  */
+						/* translators: 1: Offset, 2: Total users  */
 						esc_html__( 'Processing %1$s/%2$s users...', 'simple-local-avatars' ),
 						$offset,
 						$total_users
@@ -797,7 +858,7 @@ class Simple_Local_Avatars {
 			array(
 				'step'    => 'done',
 				'message' => sprintf(
-				/* translators: %s Total users */
+					/* translators: %s Total users */
 					esc_html__( 'Completed clearing cache for all %s user(s) avatars.', 'simple-local-avatars' ),
 					$total_users
 				),
@@ -822,7 +883,7 @@ class Simple_Local_Avatars {
 				if ( ! in_array( $local_avatars_key, [ 'media_id', 'full' ], true ) ) {
 					$file_size_path = sprintf( '%1$s/%2$s-%3$sx%3$s.%4$s', $file_dir_name, $file_name, $local_avatars_key, $file_ext );
 					if ( ! file_exists( $file_size_path ) ) {
-						unset( $local_avatars [ $local_avatars_key ] );
+						unset( $local_avatars[ $local_avatars_key ] );
 					}
 				}
 			}
@@ -869,4 +930,166 @@ class Simple_Local_Avatars {
 			update_option( 'simple_local_avatar_default', $_POST['simple-local-avatar-file-id'] );
 		}
 	}
+  
+  /** Migrate the user's avatar data from WP User Avatar/ProfilePress
+	 *
+	 * This function creates a new option in the wp_options table to store the processed user IDs
+	 * so that we can run this command multiple times without processing the same user over and over again.
+	 *
+	 * Credit to Philip John for the Gist
+	 *
+	 * @see https://gist.github.com/philipjohn/822d3521a95481f6ad7e118a7106fbc7
+	 *
+	 * @return int
+	 */
+	public function migrate_from_wp_user_avatar() {
+
+		global $wpdb;
+
+		$count = 0;
+
+		// Support single site and multisite installs.
+		// Use WordPress function if running multisite.
+		// Create generic class if running single site.
+		if ( is_multisite() ) {
+			$sites = get_sites();
+		} else {
+			$site          = new stdClass();
+			$site->blog_id = 1;
+			$sites         = array( $site );
+		}
+
+		// Bail early if we don't find sites.
+		if ( empty( $sites ) ) {
+			return $count;
+		}
+
+		foreach ( $sites as $site ) {
+			// Get the blog ID to use in the meta key and user query.
+			$blog_id = isset( $site->blog_id ) ? $site->blog_id : 1;
+
+			// Get the name of the meta key for WP User Avatar.
+			$meta_key = $wpdb->get_blog_prefix( $blog_id ) . 'user_avatar';
+
+			// Get processed users from database.
+			$migrations      = get_option( 'simple_local_avatars_migrations', array() );
+			$processed_users = isset( $migrations['wp_user_avatar'] ) ? $migrations['wp_user_avatar'] : array();
+
+			// Get all users that have a local avatar.
+			$users = get_users(
+				array(
+					'blog_id'      => $blog_id,
+					'exclude'      => $processed_users,
+					'meta_key'     => $meta_key,
+					'meta_compare' => 'EXISTS',
+				)
+			);
+
+			// Bail early if we don't find users.
+			if ( empty( $users ) ) {
+				continue;
+			}
+
+			foreach ( $users as $user ) {
+				// Get the existing avatar media ID.
+				$avatar_id = get_user_meta( $user->ID, $meta_key, true );
+
+				// Attach the user and media to Simple Local Avatars.
+				$sla = new Simple_Local_Avatars();
+				$sla->assign_new_user_avatar( (int) $avatar_id, $user->ID );
+
+				// Check that it worked.
+				$is_migrated = get_user_meta( $user->ID, 'simple_local_avatar', true );
+
+				if ( ! empty( $is_migrated ) ) {
+					// Build array of user IDs.
+					$migrations['wp_user_avatar'][] = $user->ID;
+
+					// Record the user IDs so we don't process a second time.
+					$is_saved = update_option( 'simple_local_avatars_migrations', $migrations );
+
+					// Record how many avatars we migrate to be used in our messaging.
+					if ( $is_saved ) {
+						$count++;
+					}
+				}
+			}
+		}
+
+		return $count;
+	}
+
+	/**
+	 * Migrate the user's avatar data away from WP User Avatar/ProfilePress via the dashboard.
+	 *
+	 * Sends the number of avatars processed back to the AJAX response before stopping execution.
+	 *
+	 * @return void
+	 */
+	public function ajax_migrate_from_wp_user_avatar() {
+		// Bail early if nonce is not available.
+		if ( empty( sanitize_text_field( $_POST['migrateFromWpUserAvatarNonce'] ) ) ) {
+			die;
+		}
+
+		// Bail early if nonce is invalid.
+		if ( ! wp_verify_nonce( sanitize_text_field( $_POST['migrateFromWpUserAvatarNonce'] ), 'migrate_from_wp_user_avatar_nonce' ) ) {
+			die();
+		}
+
+		// Run the migration script and store the number of avatars processed.
+		$count = $this->migrate_from_wp_user_avatar();
+
+		// Create the array we send back to javascript here.
+		$array_we_send_back = array( 'count' => $count );
+
+		// Make sure to json encode the output because that's what it is expecting.
+		echo wp_json_encode( $array_we_send_back );
+
+		// Make sure you die when finished doing ajax output.
+		wp_die();
+
+	}
+
+	/**
+	 * Migrate the user's avatar data from WP User Avatar/ProfilePress via the command line.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--yes]
+	 * : Skips the confirmations (for automated systems).
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     $ wp simple-local-avatars migrate wp-user-avatar
+	 *     Success: Number of avatars successfully migrated from WP User Avatar: 5
+	 *
+	 * @param array $args       The arguments.
+	 * @param array $assoc_args The associative arguments.
+	 *
+	 * @return void
+	 */
+	public function wp_cli_migrate_from_wp_user_avatar( $args, $assoc_args ) {
+
+		// Argument --yes to prevent confirmation (for automated systems).
+		if ( ! isset( $assoc_args['yes'] ) ) {
+			WP_CLI::confirm( esc_html__( 'Do you want to migrate avatars from WP User Avatar?', 'simple-local-avatars' ) );
+		}
+
+		// Run the migration script and store the number of avatars processed.
+		$count = $this->migrate_from_wp_user_avatar();
+
+		// Error out if we don't process any avatars.
+		if ( 0 === absint( $count ) ) {
+			WP_CLI::error( esc_html__( 'No avatars were migrated from WP User Avatar.', 'simple-local-avatars' ) );
+		}
+
+		WP_CLI::success(
+			sprintf(
+				'%s: %s',
+				esc_html__( 'Number of avatars successfully migrated from WP User Avatar', 'simple-local-avatars' ),
+				esc_html( $count )
+			)
+		);
+  }
 }

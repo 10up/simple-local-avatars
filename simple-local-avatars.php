@@ -13,6 +13,8 @@
  * Text Domain:       simple-local-avatars
  */
 
+define( 'SLA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+
 require_once dirname( __FILE__ ) . '/includes/class-simple-local-avatars.php';
 
 // Global constants.
@@ -61,4 +63,5 @@ function simple_local_avatars_uninstall() {
 	endforeach;
 
 	delete_option( 'simple_local_avatars' );
+	delete_option( 'simple_local_avatars_migrations' );
 }
