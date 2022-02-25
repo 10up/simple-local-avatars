@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file, per [the Keep a Changelog standard](http://keepachangelog.com/).
 
 ## [Unreleased] - TBD
+### Changed
+- Bump WordPress "tested up to" version to 5.8 (props [@phpbits](https://github.com/phpbits) via [#81](https://github.com/10up/simple-local-avatars/pull/81)).
 
 ## [2.2.0] - TBD
 ### Added

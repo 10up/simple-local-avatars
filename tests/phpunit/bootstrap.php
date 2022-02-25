@@ -7,6 +7,8 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 WP_Mock::setUsePatchwork( true );
 WP_Mock::bootstrap();
 
+define( 'SLA_PLUGIN_BASENAME', basename( __DIR__ . '/../../simple-local-avatars.php' ) );
+
 if ( defined( 'WP_TESTS_MULTISITE' ) ) {
 	// Tells the plugin it is network active.
 	define( 'SLA_IS_NETWORK', true );

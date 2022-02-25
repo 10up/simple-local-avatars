@@ -46,6 +46,11 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		WP_Mock::userFunction( 'get_attached_file' )
 			->with( 101 )
 			->andReturn( '/avatar.png' );
+
+		WP_Mock::userFunction( 'admin_url' )
+			->with( 'options-discussion.php' )
+			->andReturn( 'wp-admin/options-discussion.php' );
+
 	}
 
 	public function tearDown(): void {
@@ -56,6 +61,8 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 	}
 
 	public function test_add_hooks() {
+		WP_Mock::expectFilterAdded( 'plugin_action_links_' . SLA_PLUGIN_BASENAME, [ $this->instance, 'plugin_filter_action_links'] );
+
 		WP_Mock::expectFilterAdded( 'pre_get_avatar_data', [ $this->instance, 'get_avatar_data'], 10, 2 );
 		WP_Mock::expectFilterAdded( 'pre_option_simple_local_avatars', [ $this->instance, 'pre_option_simple_local_avatars' ], 10, 1 );
 
@@ -126,6 +133,19 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 			->reply( $filtered_img );
 
 		$this->assertEquals( $filtered_img, $this->instance->get_avatar() );
+	}
+
+	public function test_plugin_filter_action_links() {
+		$action_links = $this->instance->plugin_filter_action_links( false );
+
+		$this->assertFalse( $action_links );
+
+		$action_links = $this->instance->plugin_filter_action_links( [] );
+
+		$this->assertNotEmpty( $action_links );
+
+		$this->assertArrayHasKey( 'settings', $action_links );
+		$this->assertContains( 'options-discussion.php', $action_links['settings'] );
 	}
 
 	public function test_get_avatar_data() {
