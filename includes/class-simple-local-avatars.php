@@ -171,12 +171,12 @@ class Simple_Local_Avatars {
 	/**
 	 * Retrieve the local avatar for a user who provided a user ID, email address or post/comment object.
 	 *
-	 * @param string $avatar Avatar return by original function
+	 * @param string            $avatar      Avatar return by original function
 	 * @param int|string|object $id_or_email A user ID, email address, or post/comment object
-	 * @param int $size Size of the avatar image
-	 * @param string $default URL to a default image to use if no avatar is available
-	 * @param string $alt Alternative text to use in image tag. Defaults to blank
-	 * @param array $args Optional. Extra arguments to retrieve the avatar.
+	 * @param int               $size        Size of the avatar image
+	 * @param string            $default     URL to a default image to use if no avatar is available
+	 * @param string            $alt         Alternative text to use in image tag. Defaults to blank
+	 * @param array             $args        Optional. Extra arguments to retrieve the avatar.
 	 *
 	 * @return string <img> tag for the user's avatar
 	 */
@@ -188,12 +188,11 @@ class Simple_Local_Avatars {
 	 * Filter avatar data early to add avatar url if needed. This filter hooks
 	 * before Gravatar setup to prevent wasted requests.
 	 *
-	 * @param array $args Arguments passed to get_avatar_data(), after processing.
-	 * @param mixed $id_or_email The Gravatar to retrieve. Accepts a user ID, Gravatar MD5 hash,
-	 *                           user email, WP_User object, WP_Post object, or WP_Comment object.
-	 *
 	 * @since 2.2.0
 	 *
+	 * @param array $args        Arguments passed to get_avatar_data(), after processing.
+	 * @param mixed $id_or_email The Gravatar to retrieve. Accepts a user ID, Gravatar MD5 hash,
+	 *                           user email, WP_User object, WP_Post object, or WP_Comment object.
 	 */
 	public function get_avatar_data( $args, $id_or_email ) {
 		if ( ! empty( $args['force_default'] ) ) {
@@ -220,12 +219,11 @@ class Simple_Local_Avatars {
 	/**
 	 * Get local avatar url.
 	 *
-	 * @param mixed $id_or_email The Gravatar to retrieve. Accepts a user ID, Gravatar MD5 hash,
-	 *                           user email, WP_User object, WP_Post object, or WP_Comment object.
-	 * @param int $size Requested avatar size.
-	 *
 	 * @since 2.2.0
 	 *
+	 * @param mixed $id_or_email The Gravatar to retrieve. Accepts a user ID, Gravatar MD5 hash,
+	 *                           user email, WP_User object, WP_Post object, or WP_Comment object.
+	 * @param int   $size        Requested avatar size.
 	 */
 	public function get_simple_local_avatar_url( $id_or_email, $size ) {
 		if ( is_numeric( $id_or_email ) ) {
@@ -324,10 +322,9 @@ class Simple_Local_Avatars {
 	/**
 	 * Get default avatar url
 	 *
-	 * @param int $size Requested avatar size.
-	 *
 	 * @since 2.2.0
 	 *
+	 * @param int $size Requested avatar size.
 	 */
 	public function get_default_avatar_url( $size ) {
 		if ( empty( $default ) ) {
@@ -567,7 +564,6 @@ class Simple_Local_Avatars {
 		 *
 		 * @param array $screens Array of admin screens.
 		 * @param string $hook_suffix Page hook.
-		 *
 		 * @return array
 		 */
 		$screens = apply_filters( 'simple_local_avatars_admin_enqueue_scripts', array( 'profile.php', 'user-edit.php', 'options-discussion.php' ), $hook_suffix );
@@ -607,8 +603,7 @@ class Simple_Local_Avatars {
 	/**
 	 * Sanitize new settings field before saving
 	 *
-	 * @param array|string $input Passed input values to sanitize
-	 *
+	 * @param  array|string $input Passed input values to sanitize
 	 * @return array|string Sanitized input fields
 	 */
 	public function sanitize_options( $input ) {
@@ -685,20 +680,20 @@ class Simple_Local_Avatars {
 	 */
 	public function edit_user_profile( $profileuser ) {
 		?>
-        <div id="simple-local-avatar-section">
-            <h3><?php esc_html_e( 'Avatar', 'simple-local-avatars' ); ?></h3>
+		<div id="simple-local-avatar-section">
+			<h3><?php esc_html_e( 'Avatar', 'simple-local-avatars' ); ?></h3>
 
-            <table class="form-table">
-                <tr class="upload-avatar-row">
-                    <th scope="row"><label for="simple-local-avatar"><?php esc_html_e( 'Upload Avatar', 'simple-local-avatars' ); ?></label></th>
-                    <td style="width: 50px;" id="simple-local-avatar-photo">
+			<table class="form-table">
+				<tr class="upload-avatar-row">
+					<th scope="row"><label for="simple-local-avatar"><?php esc_html_e( 'Upload Avatar', 'simple-local-avatars' ); ?></label></th>
+					<td style="width: 50px;" id="simple-local-avatar-photo">
 						<?php
 						add_filter( 'pre_option_avatar_rating', '__return_null' );     // ignore ratings here
 						echo get_simple_local_avatar( $profileuser->ID );
 						remove_filter( 'pre_option_avatar_rating', '__return_null' );
 						?>
-                    </td>
-                    <td>
+					</td>
+					<td>
 						<?php
 						if ( ! $upload_rights = current_user_can( 'upload_files' ) ) {
 							$upload_rights = empty( $this->options['caps'] );
@@ -720,25 +715,20 @@ class Simple_Local_Avatars {
 							// force them to use the WP Media Selector
 							if ( ! current_user_can( 'upload_files' ) ) {
 								?>
-                                <p style="display: inline-block; width: 26em;">
-                                    <span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br/>
-                                    <input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text"/>
-                                    <span class="spinner" id="simple-local-avatar-spinner"></span>
-                                </p>
+								<p style="display: inline-block; width: 26em;">
+									<span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br />
+									<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
+									<span class="spinner" id="simple-local-avatar-spinner"></span>
+								</p>
 							<?php } ?>
-                            <p>
+							<p>
 								<?php if ( current_user_can( 'upload_files' ) && did_action( 'wp_enqueue_media' ) ) : ?>
-                                    <a href="#" class="button hide-if-no-js" id="simple-local-avatar-media"><?php esc_html_e( 'Choose from Media Library', 'simple-local-avatars' ); ?></a> &nbsp;
+									<a href="#" class="button hide-if-no-js" id="simple-local-avatar-media"><?php esc_html_e( 'Choose from Media Library', 'simple-local-avatars' ); ?></a> &nbsp;
 								<?php endif; ?>
-                                <a
-                                        href="<?php echo esc_url( $remove_url ); ?>"
-                                        class="button item-delete submitdelete deletion"
-                                        id="simple-local-avatar-remove"
-									<?php echo empty( $profileuser->simple_local_avatar ) ? ' style="display:none;"' : ''; ?>
-                                >
+								<a href="<?php echo esc_url( $remove_url ); ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-remove" <?php echo empty( $profileuser->simple_local_avatar ) ? ' style="display:none;"' : ''; ?>>
 									<?php esc_html_e( 'Delete local avatar', 'simple-local-avatars' ); ?>
-                                </a>
-                            </p>
+								</a>
+							</p>
 							<?php
 						} else {
 							if ( empty( $profileuser->simple_local_avatar ) ) {
@@ -748,13 +738,13 @@ class Simple_Local_Avatars {
 							}
 						}
 						?>
-                    </td>
-                </tr>
-                <tr class="ratings-row">
-                    <th scope="row"><?php esc_html_e( 'Rating' ); ?></th>
-                    <td colspan="2">
-                        <fieldset id="simple-local-avatar-ratings" <?php disabled( empty( $profileuser->simple_local_avatar ) ); ?>>
-                            <legend class="screen-reader-text"><span><?php esc_html_e( 'Rating' ); ?></span></legend>
+					</td>
+				</tr>
+				<tr class="ratings-row">
+					<th scope="row"><?php esc_html_e( 'Rating' ); ?></th>
+					<td colspan="2">
+						<fieldset id="simple-local-avatar-ratings" <?php disabled( empty( $profileuser->simple_local_avatar ) ); ?>>
+							<legend class="screen-reader-text"><span><?php esc_html_e( 'Rating' ); ?></span></legend>
 							<?php
 							$this->update_avatar_ratings();
 
@@ -766,12 +756,12 @@ class Simple_Local_Avatars {
 								echo "\n\t<label><input type='radio' name='simple_local_avatar_rating' value='" . esc_attr( $key ) . "' " . checked( $profileuser->simple_local_avatar_rating, $key, false ) . '/>' . esc_html( $rating ) . '</label><br />';
 							endforeach;
 							?>
-                            <p class="description"><?php esc_html_e( 'If the local avatar is inappropriate for this site, Gravatar will be attempted.', 'simple-local-avatars' ); ?></p>
-                        </fieldset>
-                    </td>
-                </tr>
-            </table>
-        </div>
+							<p class="description"><?php esc_html_e( 'If the local avatar is inappropriate for this site, Gravatar will be attempted.', 'simple-local-avatars' ); ?></p>
+						</fieldset>
+					</td>
+				</tr>
+			</table>
+		</div>
 		<?php
 	}
 
@@ -786,7 +776,7 @@ class Simple_Local_Avatars {
 	 * Saves avatar image to a user
 	 *
 	 * @param int|string $url_or_media_id Local URL for avatar or ID of attachment
-	 * @param int $user_id ID of user to assign image to
+	 * @param int        $user_id         ID of user to assign image to
 	 */
 	public function assign_new_user_avatar( $url_or_media_id, $user_id ) {
 		// delete the old avatar
@@ -878,8 +868,7 @@ class Simple_Local_Avatars {
 	/**
 	 * Allow developers to override the maximum allowable file size for avatar uploads
 	 *
-	 * @param int $bytes WordPress default byte size check
-	 *
+	 * @param  int $bytes WordPress default byte size check
 	 * @return int Maximum byte size
 	 */
 	public function upload_size_limit( $bytes ) {
@@ -967,10 +956,9 @@ class Simple_Local_Avatars {
 	/**
 	 * Creates a unique, meaningful file name for uploaded avatars.
 	 *
-	 * @param string $dir Path for file
-	 * @param string $name Filename
-	 * @param string $ext File extension (e.g. ".jpg")
-	 *
+	 * @param  string $dir  Path for file
+	 * @param  string $name Filename
+	 * @param  string $ext  File extension (e.g. ".jpg")
 	 * @return string Final filename
 	 */
 	public function unique_filename_callback( $dir, $name, $ext ) {
@@ -1035,8 +1023,8 @@ class Simple_Local_Avatars {
 	 * we don't need to worry about ensuring the calling user has proper permissions.
 	 * Only the user or an administrator would be able to change the avatar.
 	 *
-	 * @param array $input Input submitted via REST request.
-	 * @param object $user The user making the request.
+	 * @param array  $input Input submitted via REST request.
+	 * @param object $user  The user making the request.
 	 */
 	public function set_avatar_rest( $input, $user ) {
 		$this->assign_new_user_avatar( $input['media_id'], $user->ID );
@@ -1210,8 +1198,8 @@ class Simple_Local_Avatars {
 	 * Clear avatar cache for given user.
 	 *
 	 * @param array $local_avatars Local avatars.
-	 * @param int $user_id User ID.
-	 * @param mixed $media_id Media ID.
+	 * @param int   $user_id       User ID.
+	 * @param mixed $media_id      Media ID.
 	 */
 	private function clear_user_avatar_cache( $local_avatars, $user_id, $media_id ) {
 		if ( ! empty( $media_id ) ) {
@@ -1368,7 +1356,7 @@ class Simple_Local_Avatars {
 	 *     $ wp simple-local-avatars migrate wp-user-avatar
 	 *     Success: Number of avatars successfully migrated from WP User Avatar: 5
 	 *
-	 * @param array $args The arguments.
+	 * @param array $args       The arguments.
 	 * @param array $assoc_args The associative arguments.
 	 *
 	 * @return void
@@ -1396,5 +1384,4 @@ class Simple_Local_Avatars {
 			)
 		);
 	}
-
 }
