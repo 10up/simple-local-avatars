@@ -25,8 +25,6 @@ jobs:
     - name: Install dependencies
       run: composer install
 
-    - name: WP Acceptance Test
-      run: ./vendor/bin/wpacceptance run
   test_phpunit:
     runs-on: ubuntu-latest
 
