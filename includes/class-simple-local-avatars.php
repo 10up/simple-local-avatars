@@ -27,12 +27,12 @@ class Simple_Local_Avatars {
 		if (
 			! $this->is_avatar_shared() // Are we sharing avatars?
 			&& (
-				( // And either an ajax request not in the network admin
+				( // And either an ajax request not in the network admin.
 					defined( 'DOING_AJAX' ) && DOING_AJAX
 					&& ! preg_match( '#^' . network_admin_url() . '#i', $_SERVER['HTTP_REFERER'] )
 				)
 				||
-				( // Or normal request not in the network admin
+				( // Or normal request not in the network admin.
 					( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX )
 					&& ! is_network_admin()
 				)
@@ -89,7 +89,7 @@ class Simple_Local_Avatars {
 	 * @return boolean
 	 */
 	public static function is_network( $plugin ) {
-		$plugins = get_site_option( 'active_sitewide_plugins', [] );
+		$plugins = get_site_option( 'active_sitewide_plugins', array() );
 
 		if ( is_multisite() && isset( $plugins[ $plugin ] ) ) {
 			return true;
@@ -133,10 +133,10 @@ class Simple_Local_Avatars {
 	 */
 	public function is_avatar_shared() {
 		if (
-			is_multisite() // Are we on multisite
-			&& ! isset( $this->options['shared'] ) // And our shared option doesn't exist
+			is_multisite() // Are we on multisite.
+			&& ! isset( $this->options['shared'] ) // And our shared option doesn't exist.
 			|| (
-				isset( $this->options['shared'] ) // Or our shared option is set
+				isset( $this->options['shared'] ) // Or our shared option is set.
 				&& 1 === $this->options['shared']
 			)
 		) {
@@ -259,7 +259,7 @@ class Simple_Local_Avatars {
 
 		// handle "real" media
 		if ( ! empty( $local_avatars['media_id'] ) ) {
-			// If using shared avatars, make sure we validate the URL on the main site
+			// If using shared avatars, make sure we validate the URL on the main site.
 			if ( $this->is_avatar_shared() ) {
 				$origin_blog_id = isset( $local_avatars['blog_id'] ) && ! empty( $local_avatars['blog_id'] ) ? $local_avatars['blog_id'] : get_main_site_id();
 				switch_to_blog( $origin_blog_id );
@@ -408,7 +408,7 @@ class Simple_Local_Avatars {
 
 		add_action( 'load-options-discussion.php', array( $this, 'load_discussion_page' ) );
 
-		// This is for network site settings
+		// This is for network site settings.
 		if ( SLA_IS_NETWORK && is_network_admin() ) {
 			add_action( 'load-settings.php', array( $this, 'load_network_settings' ) );
 		}
@@ -445,7 +445,7 @@ class Simple_Local_Avatars {
 	 * Load needed hooks to handle network settings
 	 */
 	public function load_network_settings() {
-		$this->options = (array) get_site_option( 'simple_local_avatars', [] );
+		$this->options = (array) get_site_option( 'simple_local_avatars', array() );
 
 		add_action( 'wpmu_options', array( $this, 'show_network_settings' ) );
 		add_action( 'update_wpmu_options', array( $this, 'save_network_settings' ) );
@@ -648,11 +648,11 @@ class Simple_Local_Avatars {
 			echo '<span id="clear_cache_message" style="font-style:italic;font-size:14px;line-height:2;"></span>';
 		}
 
-		// Output warning if needed
+		// Output warning if needed.
 		if (
-			SLA_IS_NETWORK // If network activated
-			&& $this->is_enforced() // And in enforce mode
-			&& 'shared' === $args['key'] // And we are displaying the last setting
+			SLA_IS_NETWORK // If network activated.
+			&& $this->is_enforced() // And in enforce mode.
+			&& 'shared' === $args['key'] // And we are displaying the last setting.
 		) {
 			echo '
 				<div class="notice notice-warning inline">
@@ -780,7 +780,7 @@ class Simple_Local_Avatars {
 	 */
 	public function assign_new_user_avatar( $url_or_media_id, $user_id ) {
 		// delete the old avatar
-		$this->avatar_delete( $user_id ); // delete old images if successful
+		$this->avatar_delete( $user_id ); // delete old images if successful.
 
 		$meta_value = array();
 
@@ -793,7 +793,7 @@ class Simple_Local_Avatars {
 		$meta_value['full']    = $url_or_media_id;
 		$meta_value['blog_id'] = get_current_blog_id();
 
-		update_user_meta( $user_id, $this->user_key, $meta_value ); // save user information (overwriting old)
+		update_user_meta( $user_id, $this->user_key, $meta_value ); // save user information (overwriting old).
 	}
 
 	/**
@@ -1039,7 +1039,7 @@ class Simple_Local_Avatars {
 	 */
 	public function pre_option_simple_local_avatars( $value ) {
 		if ( SLA_IS_NETWORK && 'enforce' === $this->get_network_mode() ) {
-			$value = get_site_option( 'simple_local_avatars', [] );
+			$value = get_site_option( 'simple_local_avatars', array() );
 		}
 
 		return $value;
