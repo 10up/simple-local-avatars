@@ -213,6 +213,20 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$this->assertSame( 0, $new_input['only'] );
 	}
 
+	public function test_get_default_avatar_url() {
+		WP_Mock::userFunction( 'get_option' )
+		       ->with( 'avatar_default' )
+		       ->andReturn( '' );
+
+		WP_Mock::userFunction( 'is_ssl' )
+		       ->andReturn( true );
+
+		$size         = 90;
+		$returned_url = $this->instance->get_default_avatar_url( $size );
+		$expected_url = 'https://secure.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=90';
+		$this->assertEquals( $expected_url, $returned_url );
+	}
+
 	public function test_user_edit_form_tag() {
 		ob_start();
 		$this->instance->user_edit_form_tag();
