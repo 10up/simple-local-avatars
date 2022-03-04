@@ -227,6 +227,32 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$this->assertEquals( $expected_url, $returned_url );
 	}
 
+	public function test_avatar_settings_field() {
+		$args = array(
+			'key'     => 'shared',
+			'desc'    => 'This is a description.',
+			'default' => 0,
+		);
+
+		WP_Mock::userFunction( 'wp_parse_args' )
+		       ->with( $args,
+			       array(
+				       'key'     => '',
+				       'desc'    => '',
+				       'default' => 0,
+			       ) )
+		       ->andReturn( $args );
+
+		WP_Mock::userFunction( 'checked' )
+		       ->andReturn( 'checked' );
+
+		$expected = '<label for="simple-local-avatars-shared"><input type="checkbox" name="simple_local_avatars[shared]" id="simple-local-avatars-shared" value="1" checked />This is a description.</label>';
+
+		$this->expectOutputString( $expected );
+
+		$this->instance->avatar_settings_field( $args );
+	}
+
 	public function test_user_edit_form_tag() {
 		ob_start();
 		$this->instance->user_edit_form_tag();
