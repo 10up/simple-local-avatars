@@ -7,7 +7,18 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		parent::setUp();
 
 		$this->instance = Mockery::mock( 'Simple_Local_Avatars' )->makePartial();
-		$user           = (object) [
+
+		// Set class properties
+		$reflection      = new ReflectionClass( 'Simple_Local_Avatars' );
+		$user_property   = $reflection->getProperty( 'user_key' );
+		$rating_property = $reflection->getProperty( 'rating_key' );
+
+		$user_property->setAccessible( true );
+		$user_property->setValue( $this->instance, 'simple_local_avatar' );
+		$rating_property->setAccessible( true );
+		$rating_property->setValue( $this->instance, 'simple_local_avatar_rating' );
+
+		$user = (object) [
 			'ID' => 1
 		];
 
@@ -53,6 +64,7 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		WP_Mock::expectFilterAdded( 'plugin_action_links_' . SLA_PLUGIN_BASENAME, [ $this->instance, 'plugin_filter_action_links'] );
 
 		WP_Mock::expectFilterAdded( 'pre_get_avatar_data', [ $this->instance, 'get_avatar_data'], 10, 2 );
+		WP_Mock::expectFilterAdded( 'pre_option_simple_local_avatars', [ $this->instance, 'pre_option_simple_local_avatars' ], 10, 1 );
 
 		WP_Mock::expectActionAdded( 'admin_init', [ $this->instance, 'admin_init' ] );
 
@@ -68,7 +80,44 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		WP_Mock::expectActionAdded( 'user_edit_form_tag', [ $this->instance, 'user_edit_form_tag' ] );
 
 		WP_Mock::expectActionAdded( 'rest_api_init', [ $this->instance, 'register_rest_fields' ] );
+		WP_Mock::expectActionAdded( 'wpmu_new_blog', [ $this->instance, 'set_defaults' ] );
+
 		$this->instance->add_hooks();
+	}
+
+	public function test_is_network() {
+		WP_Mock::userFunction( 'get_site_option', [
+			'args'   => [ 'active_sitewide_plugins', [] ],
+			'return' => [],
+			'times'  => 1,
+		] );
+		WP_Mock::userFunction( 'is_multisite', [
+			'return' => false,
+			'times'  => 1,
+		] );
+
+		$this->assertFalse( $this->instance->is_network( 'simple-local-avatars/simple-local-avatars.php' ) );
+	}
+
+	public function test_get_network_mode() {
+		$mode = $this->instance->get_network_mode();
+		$this->assertEquals( 'default', $mode );
+	}
+
+	public function test_is_enforced() {
+		WP_Mock::userFunction( 'is_network_admin', [
+			'return' => false,
+			'times'  => 1,
+		] );
+		$this->assertFalse( false, $this->instance->is_enforced() );
+	}
+
+	public function test_is_avatar_shared() {
+		WP_Mock::userFunction( 'is_multisite', [
+			'return' => false,
+			'times'  => 1,
+		] );
+		$this->assertFalse( false, $this->instance->is_avatar_shared() );
 	}
 
 	public function test_get_avatar() {
@@ -136,8 +185,16 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 
 		WP_Mock::userFunction( 'register_setting' );
 		WP_Mock::userFunction( 'add_settings_field' );
+		WP_Mock::expectActionAdded( 'load-options-discussion.php', [ $this->instance, 'load_discussion_page' ] );
 
 		$this->instance->admin_init();
+	}
+
+	public function test_load_discussion_page() {
+		WP_Mock::expectActionAdded( 'admin_print_styles', [ $this->instance, 'admin_print_styles' ] );
+		WP_Mock::expectFilterAdded( 'admin_body_class', [ $this->instance, 'admin_body_class' ] );
+
+		$this->instance->load_discussion_page();
 	}
 
 	public function test_admin_enqueue_scripts_wrong_screen() {
