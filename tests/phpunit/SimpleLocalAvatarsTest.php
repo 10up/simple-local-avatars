@@ -10,17 +10,30 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 
 		// Set class properties
 		$reflection      = new ReflectionClass( 'Simple_Local_Avatars' );
-		$user_property   = $reflection->getProperty( 'user_key' );
-		$rating_property = $reflection->getProperty( 'rating_key' );
 
+		$user_property   = $reflection->getProperty( 'user_key' );
 		$user_property->setAccessible( true );
 		$user_property->setValue( $this->instance, 'simple_local_avatar' );
+
+		$rating_property = $reflection->getProperty( 'rating_key' );
 		$rating_property->setAccessible( true );
 		$rating_property->setValue( $this->instance, 'simple_local_avatar_rating' );
+
+		$avatar_ratings = $reflection->getProperty( 'avatar_ratings' );
+		$avatar_ratings->setAccessible( true );
+		$avatar_ratings->setValue( $this->instance, array(
+			'G'  => __( 'G &#8212; Suitable for all audiences', 'simple-local-avatars' ),
+			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above', 'simple-local-avatars' ),
+			'R'  => __( 'R &#8212; Intended for adult audiences above 17', 'simple-local-avatars' ),
+			'X'  => __( 'X &#8212; Even more mature than above', 'simple-local-avatars' ),
+		) );
 
 		$user = (object) [
 			'ID' => 1
 		];
+
+		// Init $POST.
+		$_POST = array();
 
 		WP_Mock::userFunction( 'get_user_by' )
 			->with( 'email', '' )
@@ -305,6 +318,23 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		       ->andReturn( 101 );
 
 		$this->instance->assign_new_user_avatar( $url_or_media_id, $user_id );
+	}
+
+	public function test_edit_user_profile_update() {
+		$user_id = 1;
+
+		$_POST['simple_local_avatar_rating'] = '';
+		$_POST['_simple_local_avatar_nonce'] = 'not empty';
+
+		WP_Mock::userFunction( 'wp_verify_nonce' )
+		       ->with( $_POST['_simple_local_avatar_nonce'], 'simple_local_avatar_nonce' )
+		       ->andReturn( true );
+
+		WP_Mock::userFunction( 'update_user_meta' )
+		       ->with( $user_id, 'simple_local_avatar_rating', 'G' )
+		       ->andReturn( true );
+
+		$this->instance->edit_user_profile_update( $user_id );
 	}
 
 	public function test_user_edit_form_tag() {
