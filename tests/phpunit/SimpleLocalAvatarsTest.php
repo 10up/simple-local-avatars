@@ -274,6 +274,39 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$this->instance->edit_user_profile( $profileuser );
 	}
 
+	public function test_assign_new_user_avatar() {
+		$user_id         = 1;
+		$url_or_media_id = 0;
+
+		$meta_value = array(
+			'media_id' => 0,
+			'full'     => '/full_url',
+			'blog_id'  => 101,
+		);
+
+		WP_Mock::userFunction( 'wp_upload_dir' )
+		       ->andReturn( array(
+			       'baseurl' => '/example',
+			       'basedir' => '/example_dir',
+		       ) );
+
+		WP_Mock::userFunction( 'delete_user_meta' )
+		       ->andReturn( true );
+
+		WP_Mock::userFunction( 'wp_get_attachment_url' )
+		       ->with( $url_or_media_id )
+		       ->andReturn( $meta_value['full'] );
+
+		WP_Mock::userFunction( 'get_current_blog_id' )
+		       ->andReturn( $meta_value['blog_id'] );
+
+		WP_Mock::userFunction( 'update_user_meta' )
+		       ->with( $user_id, 'simple_local_avatar', $meta_value )
+		       ->andReturn( 101 );
+
+		$this->instance->assign_new_user_avatar( $url_or_media_id, $user_id );
+	}
+
 	public function test_user_edit_form_tag() {
 		ob_start();
 		$this->instance->user_edit_form_tag();
