@@ -253,6 +253,27 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$this->instance->avatar_settings_field( $args );
 	}
 
+	public function test_edit_user_profile() {
+
+		WP_Mock::userFunction( 'remove_filter' );
+		WP_Mock::userFunction( 'wp_nonce_field' );
+		WP_Mock::userFunction( 'add_query_arg' );
+		WP_Mock::userFunction( 'disabled' );
+
+		WP_Mock::userFunction( 'get_simple_local_avatar' )
+		       ->with( 1 )
+		       ->andReturn( '<img src="test-image-user-avatar"/>' );
+
+		$profileuser     = new stdClass();
+		$profileuser->ID = 1;
+
+		$expected = '<div id="simple-local-avatar-section"><h3>Avatar</h3><table class="form-table"><tr class="upload-avatar-row"><th scope="row"><label for="simple-local-avatar">Upload Avatar</label></th><td style="width: 50px;" id="simple-local-avatar-photo"><img src="test-image-user-avatar"/></td><td><p style="display: inline-block; width: 26em;"><span class="description">Choose an image from your computer:</span><br /><input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" /><span class="spinner" id="simple-local-avatar-spinner"></span></p><p><a href="" class="button item-delete submitdelete deletion" id="simple-local-avatar-remove"  style="display:none;">Delete local avatar</a></p></td></tr><tr class="ratings-row"><th scope="row">Rating</th><td colspan="2"><fieldset id="simple-local-avatar-ratings" ><legend class="screen-reader-text"><span>Rating</span></legend><label><input type=\'radio\' name=\'simple_local_avatar_rating\' value=\'G\' />G &#8212; Suitable for all audiences</label><br /><label><input type=\'radio\' name=\'simple_local_avatar_rating\' value=\'PG\' />PG &#8212; Possibly offensive, usually for audiences 13 and above</label><br /><label><input type=\'radio\' name=\'simple_local_avatar_rating\' value=\'R\' />R &#8212; Intended for adult audiences above 17</label><br /><label><input type=\'radio\' name=\'simple_local_avatar_rating\' value=\'X\' />X &#8212; Even more mature than above</label><br /><p class="description">If the local avatar is inappropriate for this site, Gravatar will be attempted.</p></fieldset></td></tr></table></div>';
+
+		$this->expectOutputString( $expected );
+
+		$this->instance->edit_user_profile( $profileuser );
+	}
+
 	public function test_user_edit_form_tag() {
 		ob_start();
 		$this->instance->user_edit_form_tag();
