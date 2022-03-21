@@ -371,6 +371,19 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$this->assertEquals( $expected_file_name . $ext, $name );
 	}
 
+	public function test_get_avatar_rest() {
+
+		$user = array( 'id' => 1 );
+
+		$expected_data = array(
+			'media_id' => 101,
+			'full'     => 'https://example.com/avatar.png',
+			'96'       => 'https://example.com/avatar-96x96.png',
+		);
+		$result        = $this->instance->get_avatar_rest( $user );
+		$this->assertEquals( $expected_data, $result );
+	}
+
 	public function test_user_edit_form_tag() {
 		ob_start();
 		$this->instance->user_edit_form_tag();
