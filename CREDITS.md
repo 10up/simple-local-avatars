@@ -4,7 +4,7 @@ The following acknowledges the Maintainers for this repository, those who have C
 
 The following individuals are responsible for curating the list of issues, responding to pull requests, and ensuring regular releases happen.
 
-[Helen Hou-Sandi (@helen)](https://github.com/helen), [Jeffrey Paul (@jeffpaul)](https://github.com/jeffpaul)
+[Jeffrey Paul (@jeffpaul)](https://github.com/jeffpaul), [Faisal Alvi (@faisal-alvi)](https://github.com/faisal-alvi)
 
 ## Contributors
 
