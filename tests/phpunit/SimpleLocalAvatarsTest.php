@@ -358,6 +358,19 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$this->instance->action_remove_simple_local_avatar();
 	}
 
+	public function test_unique_filename_callback() {
+		$dir                = '/test_dir';
+		$ext                = '.ext';
+		$expected_file_name = 'SLA_FILE';
+
+		WP_Mock::userFunction( 'sanitize_file_name' )
+		       ->with( 'TEST_USER_avatar_' . time() )
+		       ->andReturn( $expected_file_name );
+
+		$name = $this->instance->unique_filename_callback( $dir, '', $ext );
+		$this->assertEquals( $expected_file_name . $ext, $name );
+	}
+
 	public function test_user_edit_form_tag() {
 		ob_start();
 		$this->instance->user_edit_form_tag();
