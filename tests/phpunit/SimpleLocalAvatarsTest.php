@@ -29,11 +29,16 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		) );
 
 		$user = (object) [
-			'ID' => 1
+			'ID'           => 1,
+			'display_name' => 'TEST_USER',
 		];
 
 		// Init $POST.
 		$_POST = array();
+
+		WP_Mock::userFunction( 'get_user_by' )
+		       ->with( 'id', 0 )
+		       ->andReturn( $user );
 
 		WP_Mock::userFunction( 'get_user_by' )
 			->with( 'email', '' )
