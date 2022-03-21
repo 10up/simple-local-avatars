@@ -337,6 +337,27 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$this->instance->edit_user_profile_update( $user_id );
 	}
 
+	public function test_action_remove_simple_local_avatar() {
+		$_GET['user_id']  = 1;
+		$_GET['_wpnonce'] = 1;
+
+		WP_Mock::userFunction( 'wp_verify_nonce' )
+		       ->with( $_GET['_wpnonce'], 'remove_simple_local_avatar_nonce' )
+		       ->andReturn( true );
+
+		WP_Mock::userFunction( 'wp_upload_dir' )
+		       ->andReturn( array(
+			       'baseurl' => '/example',
+			       'basedir' => '/example_dir',
+		       ) );
+
+		WP_Mock::userFunction( 'current_user_can' )
+		       ->with( 'edit_user', $_GET['user_id'] )
+		       ->andReturn( true );
+
+		$this->instance->action_remove_simple_local_avatar();
+	}
+
 	public function test_user_edit_form_tag() {
 		ob_start();
 		$this->instance->user_edit_form_tag();
