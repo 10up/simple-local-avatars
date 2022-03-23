@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Class: Simple_Local_Avatars
  * Adds an avatar upload field to user profiles.
