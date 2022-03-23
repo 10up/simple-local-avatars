@@ -10,7 +10,39 @@
  * Main SLA Class.
  */
 class Simple_Local_Avatars {
-	private $user_id_being_edited, $avatar_upload_error, $remove_nonce, $avatar_ratings, $user_key, $rating_key;
+	/**
+	 * @var int user ID.
+	 */
+	private $user_id_being_edited;
+
+	/**
+	 * @var string the upload error comment.
+	 */
+	private $avatar_upload_error;
+
+    /**
+     * @var string The nonce token.
+     */
+    private $remove_nonce;
+
+    /**
+     * @var array the ratings.
+     */
+    private $avatar_ratings;
+
+    /**
+     * @var string the meta key a user.
+     */
+    private $user_key;
+
+    /**
+     * @var string the meta key for ratings.
+     */
+    private $rating_key;
+
+	/**
+	 * @var array configured setting values.
+	 */
 	public $options;
 
 	/**
