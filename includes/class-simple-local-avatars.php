@@ -20,25 +20,25 @@ class Simple_Local_Avatars {
 	 */
 	private $avatar_upload_error;
 
-    /**
-     * @var string The nonce token.
-     */
-    private $remove_nonce;
+	/**
+	 * @var string The nonce token.
+	 */
+	private $remove_nonce;
 
-    /**
-     * @var array the ratings.
-     */
-    private $avatar_ratings;
+	/**
+	 * @var array the ratings.
+	 */
+	private $avatar_ratings;
 
-    /**
-     * @var string the meta key a user.
-     */
-    private $user_key;
+	/**
+	 * @var string the meta key a user.
+	 */
+	private $user_key;
 
-    /**
-     * @var string the meta key for ratings.
-     */
-    private $rating_key;
+	/**
+	 * @var string the meta key for ratings.
+	 */
+	private $rating_key;
 
 	/**
 	 * @var array configured setting values.
@@ -495,25 +495,25 @@ class Simple_Local_Avatars {
 		$mode = $this->get_network_mode();
 		?>
 
-        <h2><?php esc_html_e( 'Simple Local Avatars Settings', 'simple-local-avatars' ); ?></h2>
-        <table id="simple-local-avatars" class="form-table">
-            <tr>
-                <th scope="row">
+		<h2><?php esc_html_e( 'Simple Local Avatars Settings', 'simple-local-avatars' ); ?></h2>
+		<table id="simple-local-avatars" class="form-table">
+			<tr>
+				<th scope="row">
 					<?php esc_html_e( 'Mode', 'simple-local-avatars' ); ?>
-                </th>
-                <td>
-                    <fieldset>
-                        <legend class="screen-reader-text"><?php esc_html_e( 'Mode', 'simple-local-avatars' ); ?></legend>
-                        <label><input name="simple_local_avatars[mode]" type="radio" id="sla-mode-default" value="default"<?php checked( $mode, 'default' ); ?> /> <?php esc_html_e( 'Default to the settings below when creating a new site', 'simple-local-avatars' ); ?></label><br/>
-                        <label><input name="simple_local_avatars[mode]" type="radio" id="sla-mode-enforce" value="enforce"<?php checked( $mode, 'enforce' ); ?> /> <?php esc_html_e( 'Enforce the settings below across all sites', 'simple-local-avatars' ); ?></label><br/>
-                    </fieldset>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
+				</th>
+				<td>
+					<fieldset>
+						<legend class="screen-reader-text"><?php esc_html_e( 'Mode', 'simple-local-avatars' ); ?></legend>
+						<label><input name="simple_local_avatars[mode]" type="radio" id="sla-mode-default" value="default"<?php checked( $mode, 'default' ); ?> /> <?php esc_html_e( 'Default to the settings below when creating a new site', 'simple-local-avatars' ); ?></label><br/>
+						<label><input name="simple_local_avatars[mode]" type="radio" id="sla-mode-enforce" value="enforce"<?php checked( $mode, 'enforce' ); ?> /> <?php esc_html_e( 'Enforce the settings below across all sites', 'simple-local-avatars' ); ?></label><br/>
+					</fieldset>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">
 					<?php esc_html_e( 'Local avatars only', 'simple-local-avatars' ); ?>
-                </th>
-                <td>
+				</th>
+				<td>
 					<?php
 					$this->avatar_settings_field(
 						array(
@@ -522,13 +522,13 @@ class Simple_Local_Avatars {
 						)
 					);
 					?>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">
 					<?php esc_html_e( 'Local upload permissions', 'simple-local-avatars' ); ?>
-                </th>
-                <td>
+				</th>
+				<td>
 					<?php
 					$this->avatar_settings_field(
 						array(
@@ -537,13 +537,13 @@ class Simple_Local_Avatars {
 						)
 					);
 					?>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">
 					<?php esc_html_e( 'Shared network avatars', 'simple-local-avatars' ); ?>
-                </th>
-                <td>
+				</th>
+				<td>
 					<?php
 					$this->avatar_settings_field(
 						array(
@@ -553,9 +553,9 @@ class Simple_Local_Avatars {
 						)
 					);
 					?>
-                </td>
-            </tr>
-        </table>
+				</td>
+			</tr>
+		</table>
 
 		<?php
 	}
@@ -1102,24 +1102,24 @@ class Simple_Local_Avatars {
 	 */
 	public function admin_print_styles() {
 		?>
-        <style>
-            .sla-enforced .simple-local-avatars th,
-            .sla-enforced .simple-local-avatars label {
-                opacity: 0.5;
-                pointer-events: none;
-            }
+		<style>
+			.sla-enforced .simple-local-avatars th,
+			.sla-enforced .simple-local-avatars label {
+				opacity: 0.5;
+				pointer-events: none;
+			}
 
-            .sla-enforced .simple-local-avatars .notice {
-                margin-top: 20px;
-            }
+			.sla-enforced .simple-local-avatars .notice {
+				margin-top: 20px;
+			}
 
-            @media screen and (min-width: 783px) {
-                .sla-enforced .simple-local-avatars .notice {
-                    left: -220px;
-                    position: relative;
-                }
-            }
-        </style>
+			@media screen and (min-width: 783px) {
+				.sla-enforced .simple-local-avatars .notice {
+					left: -220px;
+					position: relative;
+				}
+			}
+		</style>
 		<?php
 	}
 
