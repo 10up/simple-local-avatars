@@ -1,7 +1,13 @@
 <?php
 /**
- * Class: Simple_Local_Avatars
+ * Main Class file: Simple_Local_Avatars
  * Adds an avatar upload field to user profiles.
+ *
+ * @package SimpleLocalAvatars
+ */
+
+/**
+ * Main SLA Class.
  */
 class Simple_Local_Avatars {
 	private $user_id_being_edited, $avatar_upload_error, $remove_nonce, $avatar_ratings, $user_key, $rating_key;
