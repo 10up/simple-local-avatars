@@ -15,7 +15,7 @@ on:
 
 jobs:
   php_compatibility:
-    name: PHP ${{ matrix.php }}
+    name: ${{ matrix.php }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

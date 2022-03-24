@@ -15,7 +15,7 @@ on:
 
 jobs:
   phpcs:
-    name: phpcs
+    name: PHPCS
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
