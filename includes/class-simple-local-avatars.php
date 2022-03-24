@@ -970,7 +970,7 @@ class Simple_Local_Avatars {
 			$this->assign_new_user_avatar( $media_id, $user_id );
 		}
 
-		echo get_simple_local_avatar( $user_id );
+		echo wp_kses_post( get_simple_local_avatar( $user_id ) );
 
 		die;
 	}
