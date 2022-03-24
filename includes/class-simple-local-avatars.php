@@ -303,8 +303,8 @@ class Simple_Local_Avatars {
 		$site_rating   = get_option( 'avatar_rating' );
 		if ( ! empty( $avatar_rating ) && 'G' !== $avatar_rating && $site_rating ) {
 			$ratings              = array_keys( $this->avatar_ratings );
-			$site_rating_weight   = array_search( $site_rating, $ratings );
-			$avatar_rating_weight = array_search( $avatar_rating, $ratings );
+			$site_rating_weight   = array_search( $site_rating, $ratings, true );
+			$avatar_rating_weight = array_search( $avatar_rating, $ratings, true );
 			if ( false !== $avatar_rating_weight && $avatar_rating_weight > $site_rating_weight ) {
 				return '';
 			}
