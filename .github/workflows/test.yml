@@ -26,19 +26,26 @@ jobs:
       run: composer install
 
   test_phpunit:
-    runs-on: ubuntu-latest
+    name: ${{ matrix.php }} on ${{ matrix.os }}
+      runs-on: ${{ matrix.os }}
+      strategy:
+        fail-fast: false
+        matrix:
+          php: [ '5.6', '7.0', '7.2', '7.4', '8.0', '8.1' ]
+          os: [ ubuntu-latest ]
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v2.4.0
     - name: Set PHP version
-      uses: shivammathur/setup-php@v1
+      uses: shivammathur/setup-php@2.17.0
       with:
-        php-version: '7.2'
+        php-version: ${{ matrix.php }}
         coverage: none
+        tools: phpunit-polyfills
 
     - name: Install dependencies
-      run: composer install
+      run: composer update -W
 
     - name: PHPUnit Test
       run: ./vendor/bin/phpunit
