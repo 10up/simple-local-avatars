@@ -749,7 +749,8 @@ class Simple_Local_Avatars {
 					</td>
 					<td>
 						<?php
-						if ( ! $upload_rights = current_user_can( 'upload_files' ) ) {
+						$upload_rights = current_user_can( 'upload_files' );
+						if ( ! $upload_rights ) {
 							$upload_rights = empty( $this->options['caps'] );
 						}
 
