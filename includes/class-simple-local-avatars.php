@@ -1221,7 +1221,8 @@ class Simple_Local_Avatars {
 			foreach ( $users as $user ) {
 				$user_id       = $user->ID;
 				$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
-				$this->clear_user_avatar_cache( $local_avatars, $user_id, $local_avatars['media_id'] ?? '' );
+				$media_id      = isset( $local_avatars['media_id'] ) ? $local_avatars['media_id'] : '';
+				$this->clear_user_avatar_cache( $local_avatars, $user_id, $media_id );
 			}
 
 			wp_send_json_success(
