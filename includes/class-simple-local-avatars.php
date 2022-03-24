@@ -409,7 +409,7 @@ class Simple_Local_Avatars {
 	 */
 	public function admin_init() {
 		// upgrade pre 2.0 option
-		$old_ops = get_option( 'simple_local_avatars_caps' )
+		$old_ops = get_option( 'simple_local_avatars_caps' );
 		if ( $old_ops ) {
 			if ( ! empty( $old_ops['simple_local_avatars_caps'] ) ) {
 				update_option( 'simple_local_avatars', array( 'caps' => 1 ) );
