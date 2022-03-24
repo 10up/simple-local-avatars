@@ -10,29 +10,28 @@ on:
       - develop
 
 jobs:
-  test_wpa:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Set PHP version
-      uses: shivammathur/setup-php@v1
-      with:
-        php-version: '7.2'
-        coverage: none
-
-    - name: Install dependencies
-      run: composer install
+#  test_wpa:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#    - name: Checkout
+#      uses: actions/checkout@v2
+#    - name: Set PHP version
+#      uses: shivammathur/setup-php@v1
+#      with:
+#        php-version: '7.2'
+#        coverage: none
+#
+#    - name: Install dependencies
+#      run: composer install
 
   test_phpunit:
-    name: ${{ matrix.php }} on ${{ matrix.os }}
-      runs-on: ${{ matrix.os }}
+    name: PHP ${{ matrix.php }}
+      runs-on: ubuntu-latest
       strategy:
         fail-fast: false
         matrix:
           php: [ '5.6', '7.0', '7.2', '7.4', '8.0', '8.1' ]
-          os: [ ubuntu-latest ]
 
     steps:
     - name: Checkout
@@ -45,7 +44,7 @@ jobs:
         tools: phpunit-polyfills
 
     - name: Install dependencies
-      run: composer update -W
+      run: composer install
 
     - name: PHPUnit Test
       run: ./vendor/bin/phpunit
