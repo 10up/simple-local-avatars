@@ -911,7 +911,7 @@ class Simple_Local_Avatars {
 		endif;
 
 		// Handle ratings
-		if ( isset( $avatar_id ) || $avatar = get_user_meta( $user_id, $this->user_key, true ) ) {
+		if ( isset( $avatar_id ) || get_user_meta( $user_id, $this->user_key, true ) ) {
 			if ( empty( $_POST['simple_local_avatar_rating'] ) || ! array_key_exists( $_POST['simple_local_avatar_rating'], $this->avatar_ratings ) ) {
 				$_POST['simple_local_avatar_rating'] = key( $this->avatar_ratings );
 			}
