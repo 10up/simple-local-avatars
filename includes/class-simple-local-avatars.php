@@ -743,7 +743,7 @@ class Simple_Local_Avatars {
 					<td style="width: 50px;" id="simple-local-avatar-photo">
 						<?php
 						add_filter( 'pre_option_avatar_rating', '__return_null' );     // ignore ratings here
-						echo get_simple_local_avatar( $profileuser->ID );
+						echo wp_kses_post( get_simple_local_avatar( $profileuser->ID ) );
 						remove_filter( 'pre_option_avatar_rating', '__return_null' );
 						?>
 					</td>
