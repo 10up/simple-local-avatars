@@ -167,6 +167,10 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 	}
 
 	public function test_get_avatar_data() {
+		WP_Mock::userFunction( 'get_option' )
+		       ->with( 'avatar_rating' )
+		       ->andReturn( false );
+
 		$avatar_data = $this->instance->get_avatar_data( [ 'size' => 96 ], 1 );
 		$this->assertEquals( 'https://example.com/avatar-96x96.png', $avatar_data['url'] );
 	}
