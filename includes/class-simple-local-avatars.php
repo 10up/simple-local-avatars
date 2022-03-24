@@ -11,37 +11,51 @@
  */
 class Simple_Local_Avatars {
 	/**
-	 * @var int user ID.
+	 * The user ID.
+	 *
+	 * @var int.
 	 */
 	private $user_id_being_edited;
 
 	/**
-	 * @var string the upload error comment.
+	 * The upload error comment.
+	 *
+	 * @var string.
 	 */
 	private $avatar_upload_error;
 
 	/**
-	 * @var string The nonce token.
+	 * The nonce token.
+	 *
+	 * @var string
 	 */
 	private $remove_nonce;
 
 	/**
-	 * @var array the ratings.
+	 * The ratings.
+	 *
+	 * @var array
 	 */
 	private $avatar_ratings;
 
 	/**
-	 * @var string the meta key a user.
+	 * The meta key a user.
+	 *
+	 * @var string
 	 */
 	private $user_key;
 
 	/**
-	 * @var string the meta key for ratings.
+	 * The meta key a user.
+	 *
+	 * @var string he meta key for ratings.
 	 */
 	private $rating_key;
 
 	/**
-	 * @var array configured setting values.
+	 * Configured setting values.
+	 *
+	 * @var array
 	 */
 	public $options;
 
