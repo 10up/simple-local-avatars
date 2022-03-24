@@ -1018,7 +1018,7 @@ class Simple_Local_Avatars {
 	 */
 	public function unique_filename_callback( $dir, $name, $ext ) {
 		$user = get_user_by( 'id', (int) $this->user_id_being_edited );
-		$name = $base_name = sanitize_file_name( $user->display_name . '_avatar_' . time() );
+		$name = $base_name = sanitize_file_name( $user->display_name . '_avatar_' . time() ); //phpcs:ignore
 
 		// ensure no conflicts with existing file names
 		$number = 1;
