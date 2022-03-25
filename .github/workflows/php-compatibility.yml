@@ -45,8 +45,8 @@ jobs:
           coverage: none
           tools: prestissimo, composer:v2
 
-      - name: Remove non-production dependencies
-          run: rm composer.lock && composer remove --dev yoast/phpunit-polyfills
+#      - name: Remove non-production dependencies
+#          run: rm composer.lock && composer remove --dev yoast/phpunit-polyfills
 
       - name: Install dependencies
         run: composer update -W
