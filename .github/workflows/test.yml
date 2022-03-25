@@ -46,9 +46,6 @@ jobs:
         coverage: none
         tools: phpunit-polyfills
 
-    - name: Remove non-production dependencies
-        run: rm composer.lock && composer remove --dev phpunit/phpunit
-
     - name: Install dependencies
       run: composer update -W
 
