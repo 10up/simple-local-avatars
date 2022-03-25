@@ -32,7 +32,8 @@
     ],
     "lint-fix": [
       "phpcbf ."
-    ]
+    ],
+    "phpcs:compat": "vendor/bin/phpcs simple-local-avatars.php includes --standard=PHPCompatibilityWP --extensions=php --runtime-set testVersion 5.6-"
   },
   "minimum-stability": "dev"
 }
