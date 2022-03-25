@@ -45,8 +45,11 @@ jobs:
           coverage: none
           tools: prestissimo, composer:v2
 
+      - name: Remove non-production dependencies
+          run: rm composer.lock && composer remove --dev phpunit/phpunit
+
       - name: Install dependencies
-        run: composer update -W
+        run: composer install
 
       - name: Check PHP Compatibility
         run: ./vendor/bin/phpcs -p simple-local-avatars.php includes --standard=PHPCompatibilityWP --extensions=php --runtime-set testVersion ${{ matrix.php }}
