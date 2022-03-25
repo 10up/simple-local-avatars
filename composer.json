@@ -24,7 +24,7 @@
   "require-dev": {
     "10up/phpcs-composer": "dev-master",
     "10up/wp_mock": "0.4.2",
-    "phpunit/phpunit": "9.5.x-dev"
+    "yoast/phpunit-polyfills": "^1.0"
   },
   "scripts": {
     "lint": [
