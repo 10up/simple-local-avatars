@@ -46,7 +46,7 @@ jobs:
         coverage: none
         tools: phpunit-polyfills
 
-    - name: Install dependencies
+    - name: Update dependencies
       run: composer update -W
 
     - name: PHPUnit Test
