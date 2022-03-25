@@ -47,7 +47,7 @@ jobs:
         tools: phpunit-polyfills
 
     - name: Install dependencies
-      run: composer update -W
+      run: composer install
 
     - name: PHPUnit Test
       run: ./vendor/bin/phpunit
