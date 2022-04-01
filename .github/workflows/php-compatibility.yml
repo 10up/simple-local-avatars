@@ -15,12 +15,8 @@ on:
 
 jobs:
   php_compatibility:
-    name: ${{ matrix.php }}
+    name: PHP minimum 5.6
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        php: [ '5.6', '7.0', '7.4', '8.0', '8.1' ]
 
     steps:
       - name: Checkout
@@ -41,15 +37,12 @@ jobs:
       - name: Set PHP version
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.2'
+          php-version: '7.0'
+          tools: composer:v2
           coverage: none
-          tools: prestissimo, composer:v2
-
-#      - name: Remove non-production dependencies
-#          run: rm composer.lock && composer remove --dev yoast/phpunit-polyfills
 
       - name: Install dependencies
-        run: composer update -W
+        run: composer install
 
       - name: Check PHP Compatibility
-        run: ./vendor/bin/phpcs -p simple-local-avatars.php includes --standard=PHPCompatibilityWP --extensions=php --runtime-set testVersion ${{ matrix.php }}
+        run: ./vendor/bin/phpcs -p simple-local-avatars.php includes --standard=PHPCompatibilityWP --extensions=php --runtime-set testVersion 5.6-
