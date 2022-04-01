@@ -25,9 +25,6 @@ jobs:
           tools: composer:v2
           coverage: none
 
-#      - name: Remove non-production dependencies
-#        run: rm composer.lock && composer remove --dev phpunit/phpunit yoast/phpunit-polyfills
-
       - name: Install dependencies
         run: composer update -W
 
