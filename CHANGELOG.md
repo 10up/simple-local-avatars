@@ -15,7 +15,6 @@ All notable changes to this project will be documented in this file, per [the Ke
 - Add more robust multisite support and shared avatar setting (props [@adamsilverstein](https://github.com/adamsilverstein), [@helen](https://github.com/helen), [@jeffpaul](https://github.com/jeffpaul), [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi), [@holle75](https://github.com/holle75) via [#72](https://github.com/10up/simple-local-avatars/pull/72)).
 - Added more PHP Unit Tests (props [@faisal-alvi](https://github.com/faisal-alvi), [@iamdharmesh](https://github.com/iamdharmesh) via [#101](https://github.com/10up/simple-local-avatars/pull/101)).
 
-
 ### Changed
 - Bump WordPress "tested up to" version to 5.6 (props [@jeffpaul](https://github.com/jeffpaul) via [#67](https://github.com/10up/simple-local-avatars/pull/67)).
 - Bump WordPress "tested up to" version to 5.7 (props [@jeffpaul](https://github.com/jeffpaul), [@ankitguptaindia](https://github.com/ankitguptaindia), [@dinhtungdu](https://github.com/dinhtungdu) via [#75](https://github.com/10up/simple-local-avatars/pull/75)).
@@ -28,6 +27,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 - Avatar rating text is not translated properly if a user has a custom language Set (props [@ActuallyConnor](https://github.com/ActuallyConnor), [@faisal-alvi](https://github.com/faisal-alvi) via [#89](https://github.com/10up/simple-local-avatars/pull/89)).
 
 ### Security
+- PHP 8 compatibility (props [@faisal-alvi](https://github.com/faisal-alvi), [@dkotter](https://github.com/dkotter), [@Sidsector9](https://github.com/Sidsector9) via [#103](https://github.com/10up/simple-local-avatars/pull/103)).
 - build(deps): bump rmccue/requests from 1.7.0 to 1.8.0 (props [dependabot@](https://github.com/dependabot) via [#77](https://github.com/10up/simple-local-avatars/pull/77)).
 - build(deps): bump nanoid from 3.1.28 to 3.2.0 (props [dependabot@](https://github.com/dependabot) via [#98](https://github.com/10up/simple-local-avatars/pull/98)).
 - build(deps): bump minimist from 1.2.5 to 1.2.6 (props [dependabot@](https://github.com/dependabot) via [#105](https://github.com/10up/simple-local-avatars/pull/105)).
