@@ -21,6 +21,10 @@ require_once dirname( __FILE__ ) . '/includes/class-simple-local-avatars.php';
 define( 'SLA_VERSION', '2.2.0' );
 define( 'SLA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
+if ( ! defined( 'SLA_IS_NETWORK' ) ) {
+	define( 'SLA_IS_NETWORK', Simple_Local_Avatars::is_network( plugin_basename( __FILE__ ) ) );
+}
+
 /**
  * Init the plugin.
  */
