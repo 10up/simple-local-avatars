@@ -167,6 +167,10 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 	}
 
 	public function test_get_avatar_data() {
+		WP_Mock::userFunction( 'get_option' )
+		       ->with( 'avatar_rating' )
+		       ->andReturn( false );
+
 		$avatar_data = $this->instance->get_avatar_data( [ 'size' => 96 ], 1 );
 		$this->assertEquals( 'https://example.com/avatar-96x96.png', $avatar_data['url'] );
 	}
@@ -280,6 +284,10 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 
 		WP_Mock::userFunction( 'get_simple_local_avatar' )
 		       ->with( 1 )
+		       ->andReturn( '<img src="test-image-user-avatar"/>' );
+
+		WP_Mock::userFunction( 'wp_kses_post' )
+		       ->with( '<img src="test-image-user-avatar"/>' )
 		       ->andReturn( '<img src="test-image-user-avatar"/>' );
 
 		$profileuser     = new stdClass();
