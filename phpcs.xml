@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
 <ruleset name="Project Rules">
-	<rule ref="10up-Default">
-	</rule>
+	<rule ref="10up-Default" />
+	<file>.</file>
+	<exclude-pattern>dist/</exclude-pattern>
+	<exclude-pattern>vendor/</exclude-pattern>
+	<exclude-pattern>tests/</exclude-pattern>
 </ruleset>

@@ -131,6 +131,9 @@ class SimpleLocalAvatarsNetworkTest extends \WP_Mock\Tools\TestCase {
 			'return' => '/avatar.png',
 			'times'  => 1,
 		] );
+		WP_Mock::userFunction( 'get_option' )
+		       ->with( 'avatar_rating' )
+		       ->andReturn( false );
 
 		$reflection       = new ReflectionClass( 'Simple_Local_Avatars' );
 		$options_property = $reflection->getProperty( 'options' );

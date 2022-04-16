@@ -5,12 +5,14 @@
  * Description:       Adds an avatar upload field to user profiles. Generates requested sizes on demand, just like Gravatar! Simple and lightweight.
  * Version:           2.3.0
  * Requires at least: 4.6
- * Requires PHP:      5.3
+ * Requires PHP:      5.6
  * Author:            Jake Goldman, 10up
  * Author URI:        https://10up.com
  * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       simple-local-avatars
+ *
+ * @package           SimpleLocalAvatars
  */
 
 define( 'SLA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );

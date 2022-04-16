@@ -1,11 +1,62 @@
 <?php
+/**
+ * Main Class file: Simple_Local_Avatars
+ * Adds an avatar upload field to user profiles.
+ *
+ * @package SimpleLocalAvatars
+ */
 
 /**
- * Class: Simple_Local_Avatars
- * Adds an avatar upload field to user profiles.
+ * Main SLA Class.
  */
 class Simple_Local_Avatars {
-	private $user_id_being_edited, $avatar_upload_error, $remove_nonce, $avatar_ratings, $user_key, $rating_key;
+	/**
+	 * The user ID.
+	 *
+	 * @var int.
+	 */
+	private $user_id_being_edited;
+
+	/**
+	 * The upload error comment.
+	 *
+	 * @var string.
+	 */
+	private $avatar_upload_error;
+
+	/**
+	 * The nonce token.
+	 *
+	 * @var string
+	 */
+	private $remove_nonce;
+
+	/**
+	 * The ratings.
+	 *
+	 * @var array
+	 */
+	private $avatar_ratings;
+
+	/**
+	 * The meta key a user.
+	 *
+	 * @var string
+	 */
+	private $user_key;
+
+	/**
+	 * The meta key a user.
+	 *
+	 * @var string he meta key for ratings.
+	 */
+	private $rating_key;
+
+	/**
+	 * Configured setting values.
+	 *
+	 * @var array
+	 */
 	public $options;
 
 	/**
@@ -228,12 +279,13 @@ class Simple_Local_Avatars {
 	public function get_simple_local_avatar_url( $id_or_email, $size ) {
 		if ( is_numeric( $id_or_email ) ) {
 			$user_id = (int) $id_or_email;
-		} elseif ( is_string( $id_or_email ) && ( $user = get_user_by( 'email', $id_or_email ) ) ) {
-			$user_id = $user->ID;
 		} elseif ( is_object( $id_or_email ) && ! empty( $id_or_email->user_id ) ) {
 			$user_id = (int) $id_or_email->user_id;
 		} elseif ( $id_or_email instanceof WP_Post && ! empty( $id_or_email->post_author ) ) {
 			$user_id = (int) $id_or_email->post_author;
+		} elseif ( is_string( $id_or_email ) ) {
+			$user    = get_user_by( 'email', $id_or_email );
+			$user_id = $user ? $user->ID : '';
 		}
 
 		if ( empty( $user_id ) ) {
@@ -248,10 +300,11 @@ class Simple_Local_Avatars {
 
 		// check rating
 		$avatar_rating = get_user_meta( $user_id, $this->rating_key, true );
-		if ( ! empty( $avatar_rating ) && 'G' !== $avatar_rating && ( $site_rating = get_option( 'avatar_rating' ) ) ) {
+		$site_rating   = get_option( 'avatar_rating' );
+		if ( ! empty( $avatar_rating ) && 'G' !== $avatar_rating && $site_rating ) {
 			$ratings              = array_keys( $this->avatar_ratings );
-			$site_rating_weight   = array_search( $site_rating, $ratings );
-			$avatar_rating_weight = array_search( $avatar_rating, $ratings );
+			$site_rating_weight   = array_search( $site_rating, $ratings, true );
+			$avatar_rating_weight = array_search( $avatar_rating, $ratings, true );
 			if ( false !== $avatar_rating_weight && $avatar_rating_weight > $site_rating_weight ) {
 				return '';
 			}
@@ -356,7 +409,8 @@ class Simple_Local_Avatars {
 	 */
 	public function admin_init() {
 		// upgrade pre 2.0 option
-		if ( $old_ops = get_option( 'simple_local_avatars_caps' ) ) {
+		$old_ops = get_option( 'simple_local_avatars_caps' );
+		if ( $old_ops ) {
 			if ( ! empty( $old_ops['simple_local_avatars_caps'] ) ) {
 				update_option( 'simple_local_avatars', array( 'caps' => 1 ) );
 			}
@@ -458,25 +512,25 @@ class Simple_Local_Avatars {
 		$mode = $this->get_network_mode();
 		?>
 
-        <h2><?php esc_html_e( 'Simple Local Avatars Settings', 'simple-local-avatars' ); ?></h2>
-        <table id="simple-local-avatars" class="form-table">
-            <tr>
-                <th scope="row">
+		<h2><?php esc_html_e( 'Simple Local Avatars Settings', 'simple-local-avatars' ); ?></h2>
+		<table id="simple-local-avatars" class="form-table">
+			<tr>
+				<th scope="row">
 					<?php esc_html_e( 'Mode', 'simple-local-avatars' ); ?>
-                </th>
-                <td>
-                    <fieldset>
-                        <legend class="screen-reader-text"><?php esc_html_e( 'Mode', 'simple-local-avatars' ); ?></legend>
-                        <label><input name="simple_local_avatars[mode]" type="radio" id="sla-mode-default" value="default"<?php checked( $mode, 'default' ); ?> /> <?php esc_html_e( 'Default to the settings below when creating a new site', 'simple-local-avatars' ); ?></label><br/>
-                        <label><input name="simple_local_avatars[mode]" type="radio" id="sla-mode-enforce" value="enforce"<?php checked( $mode, 'enforce' ); ?> /> <?php esc_html_e( 'Enforce the settings below across all sites', 'simple-local-avatars' ); ?></label><br/>
-                    </fieldset>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
+				</th>
+				<td>
+					<fieldset>
+						<legend class="screen-reader-text"><?php esc_html_e( 'Mode', 'simple-local-avatars' ); ?></legend>
+						<label><input name="simple_local_avatars[mode]" type="radio" id="sla-mode-default" value="default"<?php checked( $mode, 'default' ); ?> /> <?php esc_html_e( 'Default to the settings below when creating a new site', 'simple-local-avatars' ); ?></label><br/>
+						<label><input name="simple_local_avatars[mode]" type="radio" id="sla-mode-enforce" value="enforce"<?php checked( $mode, 'enforce' ); ?> /> <?php esc_html_e( 'Enforce the settings below across all sites', 'simple-local-avatars' ); ?></label><br/>
+					</fieldset>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">
 					<?php esc_html_e( 'Local avatars only', 'simple-local-avatars' ); ?>
-                </th>
-                <td>
+				</th>
+				<td>
 					<?php
 					$this->avatar_settings_field(
 						array(
@@ -485,13 +539,13 @@ class Simple_Local_Avatars {
 						)
 					);
 					?>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">
 					<?php esc_html_e( 'Local upload permissions', 'simple-local-avatars' ); ?>
-                </th>
-                <td>
+				</th>
+				<td>
 					<?php
 					$this->avatar_settings_field(
 						array(
@@ -500,13 +554,13 @@ class Simple_Local_Avatars {
 						)
 					);
 					?>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">
 					<?php esc_html_e( 'Shared network avatars', 'simple-local-avatars' ); ?>
-                </th>
-                <td>
+				</th>
+				<td>
 					<?php
 					$this->avatar_settings_field(
 						array(
@@ -516,9 +570,9 @@ class Simple_Local_Avatars {
 						)
 					);
 					?>
-                </td>
-            </tr>
-        </table>
+				</td>
+			</tr>
+		</table>
 
 		<?php
 	}
@@ -581,7 +635,7 @@ class Simple_Local_Avatars {
 
 		$this->remove_nonce = wp_create_nonce( 'remove_simple_local_avatar_nonce' );
 
-		wp_enqueue_script( 'simple-local-avatars', plugins_url( '', dirname( __FILE__ ) ) . '/dist/simple-local-avatars.js', array( 'jquery' ), false, true );
+		wp_enqueue_script( 'simple-local-avatars', plugins_url( '', dirname( __FILE__ ) ) . '/dist/simple-local-avatars.js', array( 'jquery' ), SLA_VERSION, true );
 		wp_localize_script(
 			'simple-local-avatars',
 			'i10n_SimpleLocalAvatars',
@@ -689,13 +743,14 @@ class Simple_Local_Avatars {
 					<td style="width: 50px;" id="simple-local-avatar-photo">
 						<?php
 						add_filter( 'pre_option_avatar_rating', '__return_null' );     // ignore ratings here
-						echo get_simple_local_avatar( $profileuser->ID );
+						echo wp_kses_post( get_simple_local_avatar( $profileuser->ID ) );
 						remove_filter( 'pre_option_avatar_rating', '__return_null' );
 						?>
 					</td>
 					<td>
 						<?php
-						if ( ! $upload_rights = current_user_can( 'upload_files' ) ) {
+						$upload_rights = current_user_can( 'upload_files' );
+						if ( ! $upload_rights ) {
 							$upload_rights = empty( $this->options['caps'] );
 						}
 
@@ -856,7 +911,7 @@ class Simple_Local_Avatars {
 		endif;
 
 		// Handle ratings
-		if ( isset( $avatar_id ) || $avatar = get_user_meta( $user_id, $this->user_key, true ) ) {
+		if ( isset( $avatar_id ) || get_user_meta( $user_id, $this->user_key, true ) ) {
 			if ( empty( $_POST['simple_local_avatar_rating'] ) || ! array_key_exists( $_POST['simple_local_avatar_rating'], $this->avatar_ratings ) ) {
 				$_POST['simple_local_avatar_rating'] = key( $this->avatar_ratings );
 			}
@@ -889,7 +944,7 @@ class Simple_Local_Avatars {
 			$this->avatar_delete( $user_id );    // delete old images if successful
 
 			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-				echo get_simple_local_avatar( $user_id );
+				echo wp_kses_post( get_simple_local_avatar( $user_id ) );
 			}
 		}
 
@@ -915,7 +970,7 @@ class Simple_Local_Avatars {
 			$this->assign_new_user_avatar( $media_id, $user_id );
 		}
 
-		echo get_simple_local_avatar( $user_id );
+		echo wp_kses_post( get_simple_local_avatar( $user_id ) );
 
 		die;
 	}
@@ -963,7 +1018,7 @@ class Simple_Local_Avatars {
 	 */
 	public function unique_filename_callback( $dir, $name, $ext ) {
 		$user = get_user_by( 'id', (int) $this->user_id_being_edited );
-		$name = $base_name = sanitize_file_name( $user->display_name . '_avatar_' . time() );
+		$name = $base_name = sanitize_file_name( $user->display_name . '_avatar_' . time() ); //phpcs:ignore
 
 		// ensure no conflicts with existing file names
 		$number = 1;
@@ -1065,24 +1120,24 @@ class Simple_Local_Avatars {
 	 */
 	public function admin_print_styles() {
 		?>
-        <style>
-            .sla-enforced .simple-local-avatars th,
-            .sla-enforced .simple-local-avatars label {
-                opacity: 0.5;
-                pointer-events: none;
-            }
+		<style>
+			.sla-enforced .simple-local-avatars th,
+			.sla-enforced .simple-local-avatars label {
+				opacity: 0.5;
+				pointer-events: none;
+			}
 
-            .sla-enforced .simple-local-avatars .notice {
-                margin-top: 20px;
-            }
+			.sla-enforced .simple-local-avatars .notice {
+				margin-top: 20px;
+			}
 
-            @media screen and (min-width: 783px) {
-                .sla-enforced .simple-local-avatars .notice {
-                    left: -220px;
-                    position: relative;
-                }
-            }
-        </style>
+			@media screen and (min-width: 783px) {
+				.sla-enforced .simple-local-avatars .notice {
+					left: -220px;
+					position: relative;
+				}
+			}
+		</style>
 		<?php
 	}
 
@@ -1166,7 +1221,8 @@ class Simple_Local_Avatars {
 			foreach ( $users as $user ) {
 				$user_id       = $user->ID;
 				$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
-				$this->clear_user_avatar_cache( $local_avatars, $user_id, $local_avatars['media_id'] ?? '' );
+				$media_id      = isset( $local_avatars['media_id'] ) ? $local_avatars['media_id'] : '';
+				$this->clear_user_avatar_cache( $local_avatars, $user_id, $media_id );
 			}
 
 			wp_send_json_success(
