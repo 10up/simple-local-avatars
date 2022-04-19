@@ -3,34 +3,30 @@
 All notable changes to this project will be documented in this file, per [the Keep a Changelog standard](http://keepachangelog.com/).
 
 ## [2.3.0] - TBD
-
 ### Added
-- Add: avatar preview for subscriber (props [@ankitguptaindia](https://github.com/ankitguptaindia), [@dinhtungdu](https://github.com/dinhtungdu), [@dkotter](https://github.com/dkotter) via [#74](https://github.com/10up/simple-local-avatars/pull/74)).
-- Create no-response.yml GitHub Action (props [@jeffpaul](https://github.com/jeffpaul) via [#84](https://github.com/10up/simple-local-avatars/pull/84)).
-- Add option to clear cache of user meta to remove image sizes that do not exist (props [@jeffpaul](https://github.com/jeffpaul), [@ituk](https://github.com/ituk), [@dinhtungdu](https://github.com/dinhtungdu), [@sparkbold](https://github.com/sparkbold), [@thrijith](https://github.com/thrijith) via [#90](https://github.com/10up/simple-local-avatars/pull/90)).
-- Introduced Package file (props [@faisal-alvi](https://github.com/faisal-alvi), [@jeffpaul](https://github.com/jeffpaul), [@claytoncollie](https://github.com/claytoncollie), [@cadic](https://github.com/cadic) via [#94](https://github.com/10up/simple-local-avatars/pull/94)).
-- Feature/add crop screen (props [@jeffpaul](https://github.com/jeffpaul), [@helen](https://github.com/helen), [@ajmaurya99](https://github.com/ajmaurya99), [@Antonio-Lagun](https://github.com/Antonio-Lagun), [@faisal-alvi](https://github.com/faisal-alvi) via [#83](https://github.com/10up/simple-local-avatars/pull/83)).
-- Add settings link to plugin action links (props [@rahulsprajapati](https://github.com/rahulsprajapati), [@jeffpaul](https://github.com/jeffpaul), [@iamdharmesh](https://github.com/iamdharmesh) via [#92](https://github.com/10up/simple-local-avatars/pull/92)).
-- Add wp-cli command to migrate avatars from WP User Avatars, Add dashboard setting to migrate avatars from WP User Avatars (props [@jeffpaul](https://github.com/jeffpaul), [@claytoncollie](https://github.com/claytoncollie), [@helen](https://github.com/helen), [@faisal-alvi](https://github.com/faisal-alvi) via [#85](https://github.com/10up/simple-local-avatars/pull/85)).
-- Add more robust multisite support and shared avatar setting (props [@adamsilverstein](https://github.com/adamsilverstein), [@helen](https://github.com/helen), [@jeffpaul](https://github.com/jeffpaul), [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi), [@holle75](https://github.com/holle75) via [#72](https://github.com/10up/simple-local-avatars/pull/72)).
-- Added more PHP Unit Tests (props [@faisal-alvi](https://github.com/faisal-alvi), [@iamdharmesh](https://github.com/iamdharmesh) via [#101](https://github.com/10up/simple-local-avatars/pull/101)).
+- Crop screen (props [@jeffpaul](https://github.com/jeffpaul), [@helen](https://github.com/helen), [@ajmaurya99](https://github.com/ajmaurya99), [@Antonio-Lagun](https://github.com/Antonio-Lagun), [@faisal-alvi](https://github.com/faisal-alvi) via [#83](https://github.com/10up/simple-local-avatars/pull/83)).
+- Avatar preview for Subscribers (props [@ankitguptaindia](https://github.com/ankitguptaindia), [@dinhtungdu](https://github.com/dinhtungdu), [@dkotter](https://github.com/dkotter) via [#74](https://github.com/10up/simple-local-avatars/pull/74)).
+- More robust multisite support and shared avatar setting (props [@adamsilverstein](https://github.com/adamsilverstein), [@helen](https://github.com/helen), [@jeffpaul](https://github.com/jeffpaul), [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi), [@holle75](https://github.com/holle75) via [#72](https://github.com/10up/simple-local-avatars/pull/72)).
+- Settings link to plugin action links (props [@rahulsprajapati](https://github.com/rahulsprajapati), [@jeffpaul](https://github.com/jeffpaul), [@iamdharmesh](https://github.com/iamdharmesh) via [#92](https://github.com/10up/simple-local-avatars/pull/92)).
+- Dashboard setting and WP-CLI command to migrate avatars from WP User Avatars (props [@jeffpaul](https://github.com/jeffpaul), [@claytoncollie](https://github.com/claytoncollie), [@helen](https://github.com/helen), [@faisal-alvi](https://github.com/faisal-alvi) via [#85](https://github.com/10up/simple-local-avatars/pull/85)).
+- Option to clear cache of user meta to remove image sizes that do not exist (props [@jeffpaul](https://github.com/jeffpaul), [@ituk](https://github.com/ituk), [@dinhtungdu](https://github.com/dinhtungdu), [@sparkbold](https://github.com/sparkbold), [@thrijith](https://github.com/thrijith) via [#90](https://github.com/10up/simple-local-avatars/pull/90)).
+- Package file (props [@faisal-alvi](https://github.com/faisal-alvi), [@jeffpaul](https://github.com/jeffpaul), [@claytoncollie](https://github.com/claytoncollie), [@cadic](https://github.com/cadic) via [#94](https://github.com/10up/simple-local-avatars/pull/94)).
+- PHP Unit Tests (props [@faisal-alvi](https://github.com/faisal-alvi), [@iamdharmesh](https://github.com/iamdharmesh) via [#101](https://github.com/10up/simple-local-avatars/pull/101)).
+- "No Response" GitHub Action (props [@jeffpaul](https://github.com/jeffpaul) via [#84](https://github.com/10up/simple-local-avatars/pull/84)).
 
 ### Changed
-- Bump WordPress "tested up to" version to 5.6 (props [@jeffpaul](https://github.com/jeffpaul) via [#67](https://github.com/10up/simple-local-avatars/pull/67)).
-- Bump WordPress "tested up to" version to 5.7 (props [@jeffpaul](https://github.com/jeffpaul), [@ankitguptaindia](https://github.com/ankitguptaindia), [@dinhtungdu](https://github.com/dinhtungdu) via [#75](https://github.com/10up/simple-local-avatars/pull/75)).
-- Bump WordPress "tested up to" version to 5.8 (props [@phpbits](https://github.com/phpbits) via [#81](https://github.com/10up/simple-local-avatars/pull/81)).
-- Bump WordPress "tested up to" version to 5.9 (props [@phpbits](https://github.com/phpbits) via [#97](https://github.com/10up/simple-local-avatars/pull/97)).
+- Bump WordPress "tested up to" version to 5.9 (props [@jeffpaul](https://github.com/jeffpaul), [@ankitguptaindia](https://github.com/ankitguptaindia), [@dinhtungdu](https://github.com/dinhtungdu), [@phpbits](https://github.com/phpbits) via [#67](https://github.com/10up/simple-local-avatars/pull/67), [#75](https://github.com/10up/simple-local-avatars/pull/75), [#81](https://github.com/10up/simple-local-avatars/pull/81), [#97](https://github.com/10up/simple-local-avatars/pull/97)).
 - Format admin script (props [@thrijith](https://github.com/thrijith), [@dinhtungdu](https://github.com/dinhtungdu) via [#91](https://github.com/10up/simple-local-avatars/pull/91)).
 
 ### Fixed
-- Fix: Media ID as string in REST API (props [@diodoe](https://github.com/), [@dinhtungdu](https://github.com/dinhtungdu), [@dkotter](https://github.com/dkotter) via [#71](https://github.com/10up/simple-local-avatars/pull/71)).
+- Media ID as string in REST API (props [@diodoe](https://github.com/), [@dinhtungdu](https://github.com/dinhtungdu), [@dkotter](https://github.com/dkotter) via [#71](https://github.com/10up/simple-local-avatars/pull/71)).
 - Avatar rating text is not translated properly if a user has a custom language Set (props [@ActuallyConnor](https://github.com/ActuallyConnor), [@faisal-alvi](https://github.com/faisal-alvi) via [#89](https://github.com/10up/simple-local-avatars/pull/89)).
 
 ### Security
 - PHP 8 compatibility (props [@faisal-alvi](https://github.com/faisal-alvi), [@dkotter](https://github.com/dkotter), [@Sidsector9](https://github.com/Sidsector9) via [#103](https://github.com/10up/simple-local-avatars/pull/103)).
-- build(deps): bump rmccue/requests from 1.7.0 to 1.8.0 (props [dependabot@](https://github.com/dependabot) via [#77](https://github.com/10up/simple-local-avatars/pull/77)).
-- build(deps): bump nanoid from 3.1.28 to 3.2.0 (props [dependabot@](https://github.com/dependabot) via [#98](https://github.com/10up/simple-local-avatars/pull/98)).
-- build(deps): bump minimist from 1.2.5 to 1.2.6 (props [dependabot@](https://github.com/dependabot) via [#105](https://github.com/10up/simple-local-avatars/pull/105)).
+- Bump `rmccue/requests` from 1.7.0 to 1.8.0 (props [dependabot@](https://github.com/dependabot) via [#77](https://github.com/10up/simple-local-avatars/pull/77)).
+- Bump `nanoid` from 3.1.28 to 3.2.0 (props [dependabot@](https://github.com/dependabot) via [#98](https://github.com/10up/simple-local-avatars/pull/98)).
+- Bump `minimist` from 1.2.5 to 1.2.6 (props [dependabot@](https://github.com/dependabot) via [#105](https://github.com/10up/simple-local-avatars/pull/105)).
 
 ## [2.2.0] - 2020-10-27
 ### Added
@@ -151,6 +147,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 - Initial release
 
 [Unreleased]: https://github.com/10up/simple-local-avatars/compare/trunk...develop
+[2.2.0]: https://github.com/10up/simple-local-avatars/compare/2.2.0...2.3.0
 [2.2.0]: https://github.com/10up/simple-local-avatars/compare/2.1.1...2.2.0
 [2.1.1]: https://github.com/10up/simple-local-avatars/compare/2.1...2.1.1
 [2.1]: https://github.com/10up/simple-local-avatars/compare/2.0...2.1
