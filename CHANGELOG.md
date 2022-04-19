@@ -97,7 +97,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 ### Fixed
 - Assorted minor code optimizations
 
-## [1.2.4]
+## [1.2.4] - 2011-07-02
 ### Added
 - Support for front end avatar uploads (e.g. Theme My Profile)
 
