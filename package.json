@@ -1,0 +1,32 @@
+{
+    "name": "simple-local-avatars",
+    "version": "2.3.0",
+    "description": "Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!",
+    "scripts": {
+        "build": "wp-scripts build",
+        "check-engines": "wp-scripts check-engines",
+        "check-licenses": "wp-scripts check-licenses",
+        "format": "wp-scripts format",
+        "lint:css": "wp-scripts lint-style",
+        "lint:js": "wp-scripts lint-js",
+        "lint:md:docs": "wp-scripts lint-md-docs",
+        "lint:md:js": "wp-scripts lint-md-js",
+        "lint:pkg-json": "wp-scripts lint-pkg-json",
+        "packages-update": "wp-scripts packages-update",
+        "start": "wp-scripts start",
+        "test:e2e": "wp-scripts test-e2e",
+        "test:unit": "wp-scripts test-unit-js"
+    },
+    "directories": {
+        "test": "tests"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:10up/simple-local-avatars.git"
+    },
+    "author": "10up",
+    "license": "GNU General Public License v2.0",
+    "devDependencies": {
+        "@wordpress/scripts": "^18.0.1"
+    }
+}
