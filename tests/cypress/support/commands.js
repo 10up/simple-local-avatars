@@ -23,3 +23,12 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add( 'visitAdminPage', ( page = 'index.php' ) => {
+    cy.login();
+    if ( page.includes( 'http' ) ) {
+        cy.visit( page );
+    } else {
+        cy.visit( `/wp-admin/${ page.replace( /^\/|\/$/g, '' ) }` );
+    }
+} );
