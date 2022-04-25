@@ -20,7 +20,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 - Format admin script (props [@thrijith](https://github.com/thrijith), [@dinhtungdu](https://github.com/dinhtungdu) via [#91](https://github.com/10up/simple-local-avatars/pull/91)).
 
 ### Fixed
-- Media ID as string in REST API (props [@diodoe](https://github.com/), [@dinhtungdu](https://github.com/dinhtungdu), [@dkotter](https://github.com/dkotter) via [#71](https://github.com/10up/simple-local-avatars/pull/71)).
+- Media ID as string in REST API (props [@diodoe](https://github.com/diodoe), [@dinhtungdu](https://github.com/dinhtungdu), [@dkotter](https://github.com/dkotter) via [#71](https://github.com/10up/simple-local-avatars/pull/71)).
 - Avatar rating text is not translated properly if a user has a custom language Set (props [@ActuallyConnor](https://github.com/ActuallyConnor), [@faisal-alvi](https://github.com/faisal-alvi) via [#89](https://github.com/10up/simple-local-avatars/pull/89)).
 
 ### Security
