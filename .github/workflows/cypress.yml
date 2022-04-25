@@ -1,4 +1,4 @@
-name: E2E test
+name: Cypress
 
 on:
   pull_request:
