@@ -1143,7 +1143,7 @@ class Simple_Local_Avatars {
 			[
 				'nonce'            => wp_create_nonce( 'sla_clear_cache_nonce' ),
 				'error'            => esc_html__( 'Something went wrong while clearing cache, please try again.', 'simple-local-avatars' ),
-				'insertMediaTitle' => __( 'Choose default avatar', 'simple-local-avatars' ),
+				'insertMediaTitle' => esc_html__( 'Choose default avatar', 'simple-local-avatars' ),
 			]
 		);
 	}
@@ -1243,13 +1243,16 @@ class Simple_Local_Avatars {
 		if ( ! did_action( 'wp_enqueue_media' ) ) {
 			wp_enqueue_media();
 		}
+		$default_avatar_file_url = '';
 		$default_avatar_file_id  = get_option( 'simple_local_avatar_default', '' );
-		$default_avatar_file_url = wp_get_attachment_image_url( $default_avatar_file_id );
+		if ( ! empty( $default_avatar_file_id ) ) {
+			$default_avatar_file_url = wp_get_attachment_image_url( $default_avatar_file_id );
+		}
 		ob_start();
 		?>
-		<input type="hidden" name="simple-local-avatar-file-id" id="simple-local-avatar-file-id" value="<?php echo esc_attr( $default_avatar_file_id ); ?>"/>
-		<input type="hidden" name="simple-local-avatar-file-url" id="simple-local-avatar-file-url" value="<?php echo esc_url( $default_avatar_file_url ); ?>"/>
-		<input type="button" name="simple-local-avatar" id="simple-local-avatar-upload" class="button-secondary" value="<?php esc_html_e( 'Choose Default Avatar', 'simple-local-avatar' ); ?>"/>
+		<input type="hidden" name="simple-local-avatar-file-id" id="simple-local-avatar-file-id" value="<?php echo ! empty( $default_avatar_file_id ) ? esc_attr( $default_avatar_file_id ) : ''; ?>"/>
+		<input type="hidden" name="simple-local-avatar-file-url" id="simple-local-avatar-file-url" value="<?php echo ! empty( $default_avatar_file_url ) ? esc_url( $default_avatar_file_url ) : ''; ?>"/>
+		<input type="button" name="simple-local-avatar" id="simple-local-avatar-default" class="button-secondary" value="<?php esc_attr_e( 'Choose Default Avatar', 'simple-local-avatar' ); ?>"/>
 		<?php
 		$defaults['simple_local_avatar'] = ob_get_clean();
 
@@ -1266,12 +1269,13 @@ class Simple_Local_Avatars {
 
 		// check for uploaded files
 		if ( 'options.php' === $pagenow && ! empty( $file_id ) ) {
-			update_option( 'simple_local_avatar_default', $_POST['simple-local-avatar-file-id'] );
+			update_option( 'simple_local_avatar_default', $file_id );
 		}
 	}
   
-  /** Migrate the user's avatar data from WP User Avatar/ProfilePress
-	 *
+	/**
+	 * Migrate the user's avatar data from WP User Avatar/ProfilePress
+	 * 
 	 * This function creates a new option in the wp_options table to store the processed user IDs
 	 * so that we can run this command multiple times without processing the same user over and over again.
 	 *
@@ -1430,5 +1434,5 @@ class Simple_Local_Avatars {
 				esc_html( $count )
 			)
 		);
-  }
+	}
 }

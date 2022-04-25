@@ -3,7 +3,7 @@
 	// Cache the button.
 	const $clearCacheBtn = $( '#clear_cache_btn' );
 	const $clearCacheMessage = $( '#clear_cache_message' );
-	const $simpleLocalAvatarUpload = $('#simple-local-avatar-upload');
+	const $simpleLocalAvatarDefault = $('#simple-local-avatar-default');
 	const $simpleLocalAvatarFileUrl = $('#simple-local-avatar-file-url');
 	const $simpleLocalAvatarFileId = $('#simple-local-avatar-file-id');
 
@@ -62,7 +62,10 @@
 		} );
 	}
 
-	$simpleLocalAvatarUpload.click(function(e) {
+	/**
+	 * Default avatar upload field listener in Settings -> Discussions.
+	 */
+	$simpleLocalAvatarDefault.click(function(e) {
 		e.preventDefault();
 		var _this = $(this);
 		var image = wp.media({
@@ -77,7 +80,7 @@
 				var uploaded_image = image.state().get('selection').first();
 				uploaded_image = uploaded_image.toJSON();
 				var avatar_preview = uploaded_image?.sizes?.thumbnail?.url;
-				if ( typeof avatar_preview === 'undefined' ) {
+				if ( 'undefined' === typeof avatar_preview ) {
 					avatar_preview = uploaded_image.url;
 				}
 				var simpleDefaultAvatarImg = _this.parent().find('img.avatar');
@@ -85,7 +88,7 @@
 				simpleDefaultAvatarImg.attr( 'src', avatar_preview );
 				simpleDefaultAvatarImg.attr( 'srcset', avatar_preview );
 				$simpleLocalAvatarFileUrl.val(avatar_preview);
-				$simpleLocalAvatarFileId.val(avatar_preview);
+				$simpleLocalAvatarFileId.val(uploaded_image.id);
 			});
 	});
 
@@ -95,7 +98,7 @@
 		$simpleDefaultAvatarImg.attr('srcset', $simpleLocalAvatarFileUrl.val());
 	}
 
-	if ( $simpleLocalAvatarFileId.val() === '' ) {
+	if ( '' === $simpleLocalAvatarFileId.val() ) {
 		$simpleLocalAvatarFileId.parent().find('img.avatar').hide();
 	}
 } )( jQuery );
