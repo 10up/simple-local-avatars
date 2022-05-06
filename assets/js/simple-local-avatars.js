@@ -277,7 +277,7 @@ jQuery(document).ready(function ($) {
 		e.preventDefault();
 		var _this = $(this);
 		var image = wp.media({
-			title: slaAdmin.insertMediaTitle,
+			title: i10n_SimpleLocalAvatars.insertMediaTitle,
 			multiple: false,
 			library : {
 				type : 'image',
