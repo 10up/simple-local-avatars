@@ -126,7 +126,6 @@ class Simple_Local_Avatars {
 			WP_CLI::add_command( 'simple-local-avatars migrate wp-user-avatar', array( $this, 'wp_cli_migrate_from_wp_user_avatar' ) );
 		}
 
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 		add_action( 'wp_ajax_sla_clear_user_cache', array( $this, 'sla_clear_user_cache' ) );
 
 		add_filter( 'avatar_defaults', array( $this, 'add_avatar_default_field' ) );
@@ -655,8 +654,10 @@ class Simple_Local_Avatars {
 				'insertIntoPost'                  => __( 'Set as avatar', 'simple-local-avatars' ),
 				'selectCrop'                      => __( 'Select avatar and Crop', 'simple-local-avatars' ),
 				'deleteNonce'                     => $this->remove_nonce,
+				'cacheNonce'                      => wp_create_nonce( 'sla_clear_cache_nonce' ),
 				'mediaNonce'                      => wp_create_nonce( 'assign_simple_local_avatar_nonce' ),
 				'migrateFromWpUserAvatarNonce'    => wp_create_nonce( 'migrate_from_wp_user_avatar_nonce' ),
+				'clearCacheError'                 => esc_html__( 'Something went wrong while clearing cache, please try again.', 'simple-local-avatars' ),
 				'migrateFromWpUserAvatarSuccess'  => __( 'Number of avatars successfully migrated from WP User Avatar', 'simple-local-avatars' ),
 				'migrateFromWpUserAvatarFailure'  => __( 'No avatars were migrated from WP User Avatar.', 'simple-local-avatars' ),
 				'migrateFromWpUserAvatarProgress' => __( 'Migration in progress.', 'simple-local-avatars' ),
@@ -1177,29 +1178,6 @@ class Simple_Local_Avatars {
 			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above' ),
 			'R'  => __( 'R &#8212; Intended for adult audiences above 17' ),
 			'X'  => __( 'X &#8212; Even more mature than above' ),
-		);
-	}
-
-	/**
-	 * Load script required for handling any actions.
-	 */
-	public function admin_scripts() {
-		wp_enqueue_script(
-			'sla_admin',
-			SLA_PLUGIN_URL . 'assets/js/admin.js',
-			[ 'jquery' ],
-			SLA_VERSION,
-			true
-		);
-
-		wp_localize_script(
-			'sla_admin',
-			'slaAdmin',
-			[
-				'nonce'            => wp_create_nonce( 'sla_clear_cache_nonce' ),
-				'error'            => esc_html__( 'Something went wrong while clearing cache, please try again.', 'simple-local-avatars' ),
-				'insertMediaTitle' => esc_html__( 'Choose default avatar', 'simple-local-avatars' ),
-			]
 		);
 	}
 
