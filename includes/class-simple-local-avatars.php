@@ -275,7 +275,7 @@ class Simple_Local_Avatars {
 	/**
 	 * Get a user ID from certain possible values.
 	 *
-	 * @since 2.4.1
+	 * @since 2.5.0
 	 *
 	 * @param mixed $id_or_email The Gravatar to retrieve. Accepts a user ID, Gravatar MD5 hash,
 	 *                           user email, WP_User object, WP_Post object, or WP_Comment object.
@@ -397,7 +397,7 @@ class Simple_Local_Avatars {
 	/**
 	 * Get local avatar alt text.
 	 *
-	 * @since 2.4.1
+	 * @since 2.5.0
 	 *
 	 * @param mixed $id_or_email The Gravatar to retrieve. Accepts a user ID, Gravatar MD5 hash,
 	 *                           user email, WP_User object, WP_Post object, or WP_Comment object.
