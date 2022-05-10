@@ -262,9 +262,40 @@ class Simple_Local_Avatars {
 
 		if ( ! empty( $args['url'] ) ) {
 			$args['found_avatar'] = true;
+
+			// If custom alt text isn't passed, pull alt text from the local image.
+			if ( empty( $args['alt'] ) ) {
+				$args['alt'] = $this->get_simple_local_avatar_alt( $id_or_email );
+			}
 		}
 
 		return $args;
+	}
+
+	/**
+	 * Get a user ID from certain possible values.
+	 *
+	 * @since 2.4.1
+	 *
+	 * @param mixed $id_or_email The Gravatar to retrieve. Accepts a user ID, Gravatar MD5 hash,
+	 *                           user email, WP_User object, WP_Post object, or WP_Comment object.
+	 * @return int|false
+	 */
+	public function get_user_id( $id_or_email ) {
+		$user_id = false;
+
+		if ( is_numeric( $id_or_email ) ) {
+			$user_id = (int) $id_or_email;
+		} elseif ( is_object( $id_or_email ) && ! empty( $id_or_email->user_id ) ) {
+			$user_id = (int) $id_or_email->user_id;
+		} elseif ( $id_or_email instanceof WP_Post && ! empty( $id_or_email->post_author ) ) {
+			$user_id = (int) $id_or_email->post_author;
+		} elseif ( is_string( $id_or_email ) ) {
+			$user    = get_user_by( 'email', $id_or_email );
+			$user_id = $user ? $user->ID : '';
+		}
+
+		return $user_id;
 	}
 
 	/**
@@ -277,16 +308,7 @@ class Simple_Local_Avatars {
 	 * @param int   $size        Requested avatar size.
 	 */
 	public function get_simple_local_avatar_url( $id_or_email, $size ) {
-		if ( is_numeric( $id_or_email ) ) {
-			$user_id = (int) $id_or_email;
-		} elseif ( is_object( $id_or_email ) && ! empty( $id_or_email->user_id ) ) {
-			$user_id = (int) $id_or_email->user_id;
-		} elseif ( $id_or_email instanceof WP_Post && ! empty( $id_or_email->post_author ) ) {
-			$user_id = (int) $id_or_email->post_author;
-		} elseif ( is_string( $id_or_email ) ) {
-			$user    = get_user_by( 'email', $id_or_email );
-			$user_id = $user ? $user->ID : '';
-		}
+		$user_id = $this->get_user_id( $id_or_email );
 
 		if ( empty( $user_id ) ) {
 			return '';
@@ -370,6 +392,31 @@ class Simple_Local_Avatars {
 		}
 
 		return esc_url( $local_avatars[ $size ] );
+	}
+
+	/**
+	 * Get local avatar alt text.
+	 *
+	 * @since 2.4.1
+	 *
+	 * @param mixed $id_or_email The Gravatar to retrieve. Accepts a user ID, Gravatar MD5 hash,
+	 *                           user email, WP_User object, WP_Post object, or WP_Comment object.
+	 * @return string
+	 */
+	public function get_simple_local_avatar_alt( $id_or_email ) {
+		$user_id = $this->get_user_id( $id_or_email );
+
+		if ( empty( $user_id ) ) {
+			return '';
+		}
+
+		// Fetch local avatar from meta and make sure we have a media ID.
+		$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
+		if ( empty( $local_avatars['media_id'] ) ) {
+			return '';
+		}
+
+		return esc_attr( get_post_meta( $local_avatars['media_id'], '_wp_attachment_image_alt', true ) );
 	}
 
 	/**
