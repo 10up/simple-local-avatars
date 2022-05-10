@@ -30,7 +30,6 @@
 
 /.DS_Store
 /.gitattributes
-/.gitignore
 /phpcs.xml
 /phpunit.xml
 /wpacceptance.json
