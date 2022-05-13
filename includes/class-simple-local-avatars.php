@@ -356,9 +356,9 @@ class Simple_Local_Avatars {
 						if ( ! is_wp_error( $saved ) ) {
 							// Transform the destination file path into URL.
 							$dest_file_url = '';
-							if ( strpos( $dest_file, $upload_path['basedir'] ) ) {
+							if ( false !== strpos( $dest_file, $upload_path['basedir'] ) ) {
 								$dest_file_url = str_replace( $upload_path['basedir'], $upload_path['baseurl'], $dest_file );
-							} else if ( is_multisite() && strpos( $dest_file, ABSPATH . 'wp-content/uploads' ) ) {
+							} else if ( is_multisite() && false !== strpos( $dest_file, ABSPATH . 'wp-content/uploads' ) ) {
 								$dest_file_url = str_replace( ABSPATH . 'wp-content/uploads', network_site_url( '/wp-content/uploads' ), $dest_file );
 							}
 
