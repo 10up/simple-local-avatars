@@ -354,7 +354,7 @@ class Simple_Local_Avatars {
 						$dest_file = $editor->generate_filename();
 						$saved     = $editor->save( $dest_file );
 						if ( ! is_wp_error( $saved ) ) {
-							// Transform the destination file path into URl.
+							// Transform the destination file path into URL.
 							$dest_file_url = '';
 							if ( false !== strpos( $dest_file, $upload_path['basedir'] ) ) {
 								$dest_file_url = str_replace( $upload_path['basedir'], $upload_path['baseurl'], $dest_file );
