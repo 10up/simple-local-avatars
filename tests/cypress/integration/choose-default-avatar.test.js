@@ -12,7 +12,7 @@ describe( 'Check if a default avatar can be set', () => {
     cy.visit( '/wp-admin/options-discussion.php' );
     cy.get('#simple-local-avatar-default').click();
 
-    cy.get( '#menu-item-browse' ).click();
+    cy.get( '.media-menu-item:nth-child(2)' ).click();
     cy.get( 'li.attachment.save-ready:first-child' ).click();
     cy.get( '.media-button-select' ).click();
     cy.get( '#avatar_simple_local_avatar' ).check();

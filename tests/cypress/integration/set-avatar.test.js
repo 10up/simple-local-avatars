@@ -14,7 +14,7 @@ describe('Check if admin can upload, crop and select local avatar', () => {
         cy.visit( '/wp-admin/profile.php' );
         cy.get( '#simple-local-avatar-media' ).click();
 
-        cy.get( '#menu-item-browse' ).click();
+        cy.get( '.media-menu-item:nth-child(2)' ).click();
         cy.get( 'li.attachment.save-ready:first-child' ).click();
         cy.get( '.media-button-select' ).click();
 
