@@ -6,5 +6,12 @@
   "videosFolder": "tests/cypress/videos",
   "downloadsFolder": "tests/cypress/downloads",
   "supportFile": "tests/cypress/support/index.js",
-  "video": false
+  "video": false,
+  "testFiles": [
+    "set-avatar.test.js",
+    "choose-default-avatar.test.js",
+    "avatars-migration.test.js",
+    "clear-avatars-cache.test.js",
+    "delete-avatar.test.js"
+  ]
 }
