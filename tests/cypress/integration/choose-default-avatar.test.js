@@ -13,7 +13,7 @@ describe( 'Check if a default avatar can be set', () => {
     cy.get('#simple-local-avatar-default').click();
 
     cy.get( '.media-menu-item:nth-child(2)' ).click();
-    cy.get( 'li.attachment.save-ready:first-child' ).click();
+    cy.get( 'li.attachment:first-child' ).click();
     cy.get( '.media-button-select' ).click();
     cy.get( '#avatar_simple_local_avatar' ).check();
     cy.get( '#submit' ).click();

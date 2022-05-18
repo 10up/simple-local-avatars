@@ -15,7 +15,7 @@ describe('Check if admin can upload, crop and select local avatar', () => {
         cy.get( '#simple-local-avatar-media' ).click();
 
         cy.get( '.media-menu-item:nth-child(2)' ).click();
-        cy.get( 'li.attachment.save-ready:first-child' ).click();
+        cy.get( 'li.attachment:first-child' ).click();
         cy.get( '.media-button-select' ).click();
 
         cy.get('body').then($body => {
