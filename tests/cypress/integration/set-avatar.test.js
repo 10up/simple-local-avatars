@@ -1,11 +1,11 @@
 import 'cypress-file-upload';
 
-describe('Check if "Select avatar and Crop" popup appears', () => {
+describe('Check if admin can upload, crop and select local avatar', () => {
     before(() => {
         cy.login();
     });
 
-    it('Can admin open "Select avatar and Crop" popup?', () => {
+    it('Can admin upload, crop and select local avatar?', () => {
 
         // Check and upload at least one media file.
         cy.visit('/wp-admin/upload.php?mode=list');
