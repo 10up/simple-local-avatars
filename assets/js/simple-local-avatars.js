@@ -31,31 +31,11 @@ jQuery(document).ready(function ($) {
 		const cropControl = {
 			id: 'control-id',
 			params: {
-				flex_width: false, // set to true if the width of the cropped image can be different to the width defined here
-				flex_height: false, // set to true if the height of the cropped image can be different to the height defined here
+				flex_width: true, // set to true if the width of the cropped image can be different to the width defined here
+				flex_height: true, // set to true if the height of the cropped image can be different to the height defined here
 				width: 200, // set the desired width of the destination image here
 				height: 200, // set the desired height of the destination image here
 			},
-		};
-
-		/**
-		 * Return whether the image must be cropped, based on required dimensions.
-		 *
-		 * @param {boolean} flexW
-		 * @param {boolean} flexH
-		 * @param {number}  distW
-		 * @param {number}  distH
-		 * @param {number}  imgW
-		 * @param {number}  imgH
-		 * @returns {boolean}
-		 */
-		cropControl.mustBeCropped = function (flexW, flexH, distW, distH, imgW, imgH) {
-			// Skip cropping if the image matches the crop dimension.
-			if (imgW === distW && imgH === distH) {
-				return false;
-			}
-
-			return true;
 		};
 
 		/**
@@ -354,10 +334,8 @@ function simple_local_avatar_calculate_image_select_options(attachment, controll
 
 	const ratio = xInit / yInit;
 
-	controller.set(
-		'canSkipCrop',
-		!control.mustBeCropped(false, false, xInit, yInit, realWidth, realHeight),
-	);
+    // Enable skip cropping button.
+    controller.set('canSkipCrop', true);
 
 	const xImg = xInit;
 	const yImg = yInit;
@@ -386,7 +364,6 @@ function simple_local_avatar_calculate_image_select_options(attachment, controll
 		y1,
 		x2: xInit + x1,
 		y2: yInit + y1,
-		aspectRatio: `${xInit}:${yInit}`,
 	};
 }
 
@@ -440,7 +417,7 @@ function simple_local_avatar_set_image_from_url(url, attachmentId, width, height
 }
 
 /**
- * Set the avatar image, once it is selected from the media library. 
+ * Set the avatar image, once it is selected from the media library.
  *
  * @param {object} attachment
  */
