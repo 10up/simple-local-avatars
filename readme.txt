@@ -5,7 +5,7 @@ Tags: avatar, gravatar, user photos, users, profile
 Requires at least: 4.6
 Tested up to: 6.0
 Requires PHP: 5.6
-Stable tag: 2.3.0
+Stable tag: 2.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,20 +41,26 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 
 == Changelog ==
 
-= 2.3.0 =
+= 2.4.0 - 2022-05-10 =
+* **Added:** Ability to set a default avatar. (props [@mehulkaklotar](https://github.com/mehulkaklotar), [@jeffpaul](https://github.com/jeffpaul), [@dinhtungdu](https://github.com/dinhtungdu), [@faisal-alvi](https://github.com/faisal-alvi) via [#96](https://github.com/10up/simple-local-avatars/pull/96)).
+* **Fixed:** Correct plugin name in changelog. (props [@grappler](https://github.com/grappler), [@jeffpaul](https://github.com/jeffpaul) via [#117](https://github.com/10up/simple-local-avatars/pull/117)).
+* **Fixed:** Avatar cache not being cleared. (props [@thefrosty](https://github.com/thefrosty), [@jeffpaul](https://github.com/jeffpaul), [@faisal-alvi](https://github.com/faisal-alvi), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#118](https://github.com/10up/simple-local-avatars/pull/118) & [#120](https://github.com/10up/simple-local-avatars/pull/120)).
+* **Security:** Dev dependency `@wordpress/scripts` upgraded to resolve deeper level dependency security issues. (props [@jeffpaul](https://github.com/jeffpaul), [@faisal-alvi](https://github.com/faisal-alvi), [@cadic](https://github.com/cadic) via [#119](https://github.com/10up/simple-local-avatars/pull/119)).
+
+= 2.3.0 - 2022-04-25 =
 * **Added:** Crop screen (props [@jeffpaul](https://github.com/jeffpaul), [@helen](https://github.com/helen), [@ajmaurya99](https://github.com/ajmaurya99), [@Antonio-Lagun](https://github.com/Antonio-Lagun), [@faisal-alvi](https://github.com/faisal-alvi)).
 * **Added:** Avatar preview for Subscribers (props [@ankitguptaindia](https://github.com/ankitguptaindia), [@dinhtungdu](https://github.com/dinhtungdu), [@dkotter](https://github.com/dkotter)).
 * **Added:** More robust multisite support and shared avatar setting (props [@adamsilverstein](https://github.com/adamsilverstein), [@helen](https://github.com/helen), [@jeffpaul](https://github.com/jeffpaul), [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi), [@holle75](https://github.com/holle75)).
 * **Added:** Settings link to plugin action links (props [@rahulsprajapati](https://github.com/rahulsprajapati), [@jeffpaul](https://github.com/jeffpaul), [@iamdharmesh](https://github.com/iamdharmesh)).
-* **Added:** Dashboard setting and WP-CLI command to migrate avatars from WP User Avatars (props [@jeffpaul](https://github.com/jeffpaul), [@claytoncollie](https://github.com/claytoncollie), [@helen](https://github.com/helen), [@faisal-alvi](https://github.com/faisal-alvi)).
+* **Added:** Dashboard setting and WP-CLI command to migrate avatars from [WP User Avatar](https://wordpress.org/plugins/wp-user-avatar/) (props [@jeffpaul](https://github.com/jeffpaul), [@claytoncollie](https://github.com/claytoncollie), [@helen](https://github.com/helen), [@faisal-alvi](https://github.com/faisal-alvi)).
 * **Added:** Option to clear cache of user meta to remove image sizes that do not exist (props [@jeffpaul](https://github.com/jeffpaul), [@ituk](https://github.com/ituk), [@dinhtungdu](https://github.com/dinhtungdu), [@sparkbold](https://github.com/sparkbold), [@thrijith](https://github.com/thrijith)).
 * **Added:** Package file (props [@faisal-alvi](https://github.com/faisal-alvi), [@jeffpaul](https://github.com/jeffpaul), [@claytoncollie](https://github.com/claytoncollie), [@cadic](https://github.com/cadic)).
 * **Added:** PHP Unit Tests (props [@faisal-alvi](https://github.com/faisal-alvi), [@iamdharmesh](https://github.com/iamdharmesh)).
 * **Added:** "No Response" GitHub Action (props [@jeffpaul](https://github.com/jeffpaul)).
 * **Changed:** Bump WordPress "tested up to" version to 5.9 (props [@jeffpaul](https://github.com/jeffpaul), [@ankitguptaindia](https://github.com/ankitguptaindia), [@dinhtungdu](https://github.com/dinhtungdu), [@phpbits](https://github.com/phpbits)).
-* **Changed:** - Bump WordPress "tested up to" version to 6.0 (props [@ajmaurya99](https://github.com/ajmaurya99) via [#110](https://github.com/10up/simple-local-avatars/pull/110)).
+* **Changed:** Bump WordPress "tested up to" version to 6.0 (props [@ajmaurya99](https://github.com/ajmaurya99) via [#110](https://github.com/10up/simple-local-avatars/pull/110)).
 * **Changed:** Format admin script (props [@thrijith](https://github.com/thrijith), [@dinhtungdu](https://github.com/dinhtungdu)).
-* **Fixed:** Media ID as string in REST API (props [@diodoe](https://github.com/), [@dinhtungdu](https://github.com/dinhtungdu), [@dkotter](https://github.com/dkotter)).
+* **Fixed:** Media ID as string in REST API (props [@diodoe](https://github.com/diodoe), [@dinhtungdu](https://github.com/dinhtungdu), [@dkotter](https://github.com/dkotter)).
 * **Fixed:**  Avatar rating text is not translated properly if a user has a custom language Set (props [@ActuallyConnor](https://github.com/ActuallyConnor), [@faisal-alvi](https://github.com/faisal-alvi)).
 * **Security:** PHP 8 compatibility (props [@faisal-alvi](https://github.com/faisal-alvi), [@dkotter](https://github.com/dkotter), [@Sidsector9](https://github.com/Sidsector9)).
 * **Security:** Bump `rmccue/requests` from 1.7.0 to 1.8.0 (props [dependabot@](https://github.com/dependabot)).

@@ -2,13 +2,24 @@
 
 All notable changes to this project will be documented in this file, per [the Keep a Changelog standard](http://keepachangelog.com/).
 
+## [2.4.0] - 2022-05-10
+### Added
+- Ability to set a default avatar. (props [@mehulkaklotar](https://github.com/mehulkaklotar), [@jeffpaul](https://github.com/jeffpaul), [@dinhtungdu](https://github.com/dinhtungdu), [@faisal-alvi](https://github.com/faisal-alvi) via [#96](https://github.com/10up/simple-local-avatars/pull/96)).
+
+### Fixed
+- Correct plugin name in changelog. (props [@grappler](https://github.com/grappler), [@jeffpaul](https://github.com/jeffpaul) via [#117](https://github.com/10up/simple-local-avatars/pull/117)).
+- Avatar cache not being cleared. (props [@thefrosty](https://github.com/thefrosty), [@jeffpaul](https://github.com/jeffpaul), [@faisal-alvi](https://github.com/faisal-alvi), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#118](https://github.com/10up/simple-local-avatars/pull/118) & [#120](https://github.com/10up/simple-local-avatars/pull/120)).
+
+### Security
+- Dev dependency `@wordpress/scripts` upgraded to resolve deeper level dependency security issues. (props [@jeffpaul](https://github.com/jeffpaul), [@faisal-alvi](https://github.com/faisal-alvi), [@cadic](https://github.com/cadic) via [#119](https://github.com/10up/simple-local-avatars/pull/119)).
+
 ## [2.3.0] - 2022-04-25
 ### Added
 - Crop screen (props [@jeffpaul](https://github.com/jeffpaul), [@helen](https://github.com/helen), [@ajmaurya99](https://github.com/ajmaurya99), [@Antonio-Lagun](https://github.com/Antonio-Lagun), [@faisal-alvi](https://github.com/faisal-alvi) via [#83](https://github.com/10up/simple-local-avatars/pull/83)).
 - Avatar preview for Subscribers (props [@ankitguptaindia](https://github.com/ankitguptaindia), [@dinhtungdu](https://github.com/dinhtungdu), [@dkotter](https://github.com/dkotter) via [#74](https://github.com/10up/simple-local-avatars/pull/74)).
 - More robust multisite support and shared avatar setting (props [@adamsilverstein](https://github.com/adamsilverstein), [@helen](https://github.com/helen), [@jeffpaul](https://github.com/jeffpaul), [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi), [@holle75](https://github.com/holle75) via [#72](https://github.com/10up/simple-local-avatars/pull/72)).
 - Settings link to plugin action links (props [@rahulsprajapati](https://github.com/rahulsprajapati), [@jeffpaul](https://github.com/jeffpaul), [@iamdharmesh](https://github.com/iamdharmesh) via [#92](https://github.com/10up/simple-local-avatars/pull/92)).
-- Dashboard setting and WP-CLI command to migrate avatars from WP User Avatars (props [@jeffpaul](https://github.com/jeffpaul), [@claytoncollie](https://github.com/claytoncollie), [@helen](https://github.com/helen), [@faisal-alvi](https://github.com/faisal-alvi) via [#85](https://github.com/10up/simple-local-avatars/pull/85)).
+- Dashboard setting and WP-CLI command to migrate avatars from [WP User Avatar](https://wordpress.org/plugins/wp-user-avatar/) (props [@jeffpaul](https://github.com/jeffpaul), [@claytoncollie](https://github.com/claytoncollie), [@helen](https://github.com/helen), [@faisal-alvi](https://github.com/faisal-alvi) via [#85](https://github.com/10up/simple-local-avatars/pull/85)).
 - Option to clear cache of user meta to remove image sizes that do not exist (props [@jeffpaul](https://github.com/jeffpaul), [@ituk](https://github.com/ituk), [@dinhtungdu](https://github.com/dinhtungdu), [@sparkbold](https://github.com/sparkbold), [@thrijith](https://github.com/thrijith) via [#90](https://github.com/10up/simple-local-avatars/pull/90)).
 - Package file (props [@faisal-alvi](https://github.com/faisal-alvi), [@jeffpaul](https://github.com/jeffpaul), [@claytoncollie](https://github.com/claytoncollie), [@cadic](https://github.com/cadic) via [#94](https://github.com/10up/simple-local-avatars/pull/94)).
 - PHP Unit Tests (props [@faisal-alvi](https://github.com/faisal-alvi), [@iamdharmesh](https://github.com/iamdharmesh) via [#101](https://github.com/10up/simple-local-avatars/pull/101)).
@@ -20,7 +31,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 - Format admin script (props [@thrijith](https://github.com/thrijith), [@dinhtungdu](https://github.com/dinhtungdu) via [#91](https://github.com/10up/simple-local-avatars/pull/91)).
 
 ### Fixed
-- Media ID as string in REST API (props [@diodoe](https://github.com/), [@dinhtungdu](https://github.com/dinhtungdu), [@dkotter](https://github.com/dkotter) via [#71](https://github.com/10up/simple-local-avatars/pull/71)).
+- Media ID as string in REST API (props [@diodoe](https://github.com/diodoe), [@dinhtungdu](https://github.com/dinhtungdu), [@dkotter](https://github.com/dkotter) via [#71](https://github.com/10up/simple-local-avatars/pull/71)).
 - Avatar rating text is not translated properly if a user has a custom language Set (props [@ActuallyConnor](https://github.com/ActuallyConnor), [@faisal-alvi](https://github.com/faisal-alvi) via [#89](https://github.com/10up/simple-local-avatars/pull/89)).
 
 ### Security

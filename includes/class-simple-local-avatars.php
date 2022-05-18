@@ -126,9 +126,9 @@ class Simple_Local_Avatars {
 			WP_CLI::add_command( 'simple-local-avatars migrate wp-user-avatar', array( $this, 'wp_cli_migrate_from_wp_user_avatar' ) );
 		}
 
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 		add_action( 'wp_ajax_sla_clear_user_cache', array( $this, 'sla_clear_user_cache' ) );
 
+		add_filter( 'avatar_defaults', array( $this, 'add_avatar_default_field' ) );
 		add_action( 'wpmu_new_blog', array( $this, 'set_defaults' ) );
 	}
 
@@ -262,9 +262,40 @@ class Simple_Local_Avatars {
 
 		if ( ! empty( $args['url'] ) ) {
 			$args['found_avatar'] = true;
+
+			// If custom alt text isn't passed, pull alt text from the local image.
+			if ( empty( $args['alt'] ) ) {
+				$args['alt'] = $this->get_simple_local_avatar_alt( $id_or_email );
+			}
 		}
 
 		return $args;
+	}
+
+	/**
+	 * Get a user ID from certain possible values.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @param mixed $id_or_email The Gravatar to retrieve. Accepts a user ID, Gravatar MD5 hash,
+	 *                           user email, WP_User object, WP_Post object, or WP_Comment object.
+	 * @return int|false
+	 */
+	public function get_user_id( $id_or_email ) {
+		$user_id = false;
+
+		if ( is_numeric( $id_or_email ) ) {
+			$user_id = (int) $id_or_email;
+		} elseif ( is_object( $id_or_email ) && ! empty( $id_or_email->user_id ) ) {
+			$user_id = (int) $id_or_email->user_id;
+		} elseif ( $id_or_email instanceof WP_Post && ! empty( $id_or_email->post_author ) ) {
+			$user_id = (int) $id_or_email->post_author;
+		} elseif ( is_string( $id_or_email ) ) {
+			$user    = get_user_by( 'email', $id_or_email );
+			$user_id = $user ? $user->ID : '';
+		}
+
+		return $user_id;
 	}
 
 	/**
@@ -277,16 +308,7 @@ class Simple_Local_Avatars {
 	 * @param int   $size        Requested avatar size.
 	 */
 	public function get_simple_local_avatar_url( $id_or_email, $size ) {
-		if ( is_numeric( $id_or_email ) ) {
-			$user_id = (int) $id_or_email;
-		} elseif ( is_object( $id_or_email ) && ! empty( $id_or_email->user_id ) ) {
-			$user_id = (int) $id_or_email->user_id;
-		} elseif ( $id_or_email instanceof WP_Post && ! empty( $id_or_email->post_author ) ) {
-			$user_id = (int) $id_or_email->post_author;
-		} elseif ( is_string( $id_or_email ) ) {
-			$user    = get_user_by( 'email', $id_or_email );
-			$user_id = $user ? $user->ID : '';
-		}
+		$user_id = $this->get_user_id( $id_or_email );
 
 		if ( empty( $user_id ) ) {
 			return '';
@@ -354,7 +376,15 @@ class Simple_Local_Avatars {
 						$dest_file = $editor->generate_filename();
 						$saved     = $editor->save( $dest_file );
 						if ( ! is_wp_error( $saved ) ) {
-							$local_avatars[ $size ] = str_replace( $upload_path['basedir'], $upload_path['baseurl'], $dest_file );
+							// Transform the destination file path into URL.
+							$dest_file_url = '';
+							if ( false !== strpos( $dest_file, $upload_path['basedir'] ) ) {
+								$dest_file_url = str_replace( $upload_path['basedir'], $upload_path['baseurl'], $dest_file );
+							} else if ( is_multisite() && false !== strpos( $dest_file, ABSPATH . 'wp-content/uploads' ) ) {
+								$dest_file_url = str_replace( ABSPATH . 'wp-content/uploads', network_site_url( '/wp-content/uploads' ), $dest_file );
+							}
+
+							$local_avatars[ $size ] = $dest_file_url;
 						}
 					}
 				}
@@ -370,6 +400,31 @@ class Simple_Local_Avatars {
 		}
 
 		return esc_url( $local_avatars[ $size ] );
+	}
+
+	/**
+	 * Get local avatar alt text.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @param mixed $id_or_email The Gravatar to retrieve. Accepts a user ID, Gravatar MD5 hash,
+	 *                           user email, WP_User object, WP_Post object, or WP_Comment object.
+	 * @return string
+	 */
+	public function get_simple_local_avatar_alt( $id_or_email ) {
+		$user_id = $this->get_user_id( $id_or_email );
+
+		if ( empty( $user_id ) ) {
+			return '';
+		}
+
+		// Fetch local avatar from meta and make sure we have a media ID.
+		$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
+		if ( empty( $local_avatars['media_id'] ) ) {
+			return '';
+		}
+
+		return esc_attr( get_post_meta( $local_avatars['media_id'], '_wp_attachment_image_alt', true ) );
 	}
 
 	/**
@@ -397,6 +452,12 @@ class Simple_Local_Avatars {
 			$default = includes_url( 'images/blank.gif' );
 		} elseif ( 'gravatar_default' === $default ) {
 			$default = "$host/avatar/?s={$size}";
+		} elseif ( 'simple_local_avatar' === $default ) {
+			$default           = "$host/avatar/?d=$default&amp;s={$size}";
+			$default_avatar_id = get_option( 'simple_local_avatar_default', '' );
+			if ( ! empty( $default_avatar_id ) ) {
+				$default = wp_get_attachment_image_url( $default_avatar_id );
+			}
 		} else {
 			$default = "$host/avatar/?d=$default&amp;s={$size}";
 		}
@@ -485,6 +546,9 @@ class Simple_Local_Avatars {
 				'desc' => esc_html__( 'Clear cache of stored avatars', 'simple-local-avatars' ),
 			)
 		);
+
+		// Save default avatar file.
+		$this->save_default_avatar_file_id();
 	}
 
 	/**
@@ -641,12 +705,14 @@ class Simple_Local_Avatars {
 			'i10n_SimpleLocalAvatars',
 			array(
 				'user_id'                         => $user_id,
-				'insertMediaTitle'                => __( 'Choose an Avatar', 'simple-local-avatars' ),
 				'insertIntoPost'                  => __( 'Set as avatar', 'simple-local-avatars' ),
 				'selectCrop'                      => __( 'Select avatar and Crop', 'simple-local-avatars' ),
 				'deleteNonce'                     => $this->remove_nonce,
+				'cacheNonce'                      => wp_create_nonce( 'sla_clear_cache_nonce' ),
 				'mediaNonce'                      => wp_create_nonce( 'assign_simple_local_avatar_nonce' ),
 				'migrateFromWpUserAvatarNonce'    => wp_create_nonce( 'migrate_from_wp_user_avatar_nonce' ),
+				'clearCacheError'                 => esc_html__( 'Something went wrong while clearing cache, please try again.', 'simple-local-avatars' ),
+				'insertMediaTitle'                => esc_html__( 'Choose default avatar', 'simple-local-avatars' ),
 				'migrateFromWpUserAvatarSuccess'  => __( 'Number of avatars successfully migrated from WP User Avatar', 'simple-local-avatars' ),
 				'migrateFromWpUserAvatarFailure'  => __( 'No avatars were migrated from WP User Avatar.', 'simple-local-avatars' ),
 				'migrateFromWpUserAvatarProgress' => __( 'Migration in progress.', 'simple-local-avatars' ),
@@ -1171,28 +1237,6 @@ class Simple_Local_Avatars {
 	}
 
 	/**
-	 * Load script required for handling any actions.
-	 */
-	public function admin_scripts() {
-		wp_enqueue_script(
-			'sla_admin',
-			SLA_PLUGIN_URL . 'assets/js/admin.js',
-			[ 'jquery' ],
-			SLA_VERSION,
-			true
-		);
-
-		wp_localize_script(
-			'sla_admin',
-			'slaAdmin',
-			[
-				'nonce' => wp_create_nonce( 'sla_clear_cache_nonce' ),
-				'error' => esc_html__( 'Something went wrong while clearing cache, please try again.', 'simple-local-avatars' ),
-			]
-		);
-	}
-
-	/**
 	 * Clear user cache.
 	 */
 	public function sla_clear_user_cache() {
@@ -1274,6 +1318,47 @@ class Simple_Local_Avatars {
 
 			// Update meta, remove sizes that don't exist.
 			update_user_meta( $user_id, 'simple_local_avatar', $local_avatars );
+		}
+	}
+
+	/**
+	 * Add default avatar upload file field.
+	 *
+	 * @param array $defaults Default options for avatar.
+	 *
+	 * @return array Default options of avatar.
+	 */
+	public function add_avatar_default_field( $defaults ) {
+		if ( ! did_action( 'wp_enqueue_media' ) ) {
+			wp_enqueue_media();
+		}
+		$default_avatar_file_url = '';
+		$default_avatar_file_id  = get_option( 'simple_local_avatar_default', '' );
+		if ( ! empty( $default_avatar_file_id ) ) {
+			$default_avatar_file_url = wp_get_attachment_image_url( $default_avatar_file_id );
+		}
+		ob_start();
+		?>
+		<input type="hidden" name="simple-local-avatar-file-id" id="simple-local-avatar-file-id" value="<?php echo ! empty( $default_avatar_file_id ) ? esc_attr( $default_avatar_file_id ) : ''; ?>"/>
+		<input type="hidden" name="simple-local-avatar-file-url" id="simple-local-avatar-file-url" value="<?php echo ! empty( $default_avatar_file_url ) ? esc_url( $default_avatar_file_url ) : ''; ?>"/>
+		<input type="button" name="simple-local-avatar" id="simple-local-avatar-default" class="button-secondary" value="<?php esc_attr_e( 'Choose Default Avatar', 'simple-local-avatar' ); ?>"/>
+		<?php
+		$defaults['simple_local_avatar'] = ob_get_clean();
+
+		return $defaults;
+	}
+
+	/**
+	 * Save default avatar attachment id in option.
+	 */
+	private function save_default_avatar_file_id() {
+		global $pagenow;
+
+		$file_id = filter_input( INPUT_POST, 'simple-local-avatar-file-id', FILTER_SANITIZE_NUMBER_INT );
+
+		// check for uploaded files
+		if ( 'options.php' === $pagenow && ! empty( $file_id ) ) {
+			update_option( 'simple_local_avatar_default', $file_id );
 		}
 	}
 
@@ -1364,7 +1449,6 @@ class Simple_Local_Avatars {
 		}
 
 		return $count;
-
 	}
 
 	/**

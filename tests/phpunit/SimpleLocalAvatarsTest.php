@@ -171,8 +171,13 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		       ->with( 'avatar_rating' )
 		       ->andReturn( false );
 
+		WP_Mock::userFunction( 'get_post_meta' )
+		       ->with( 101, '_wp_attachment_image_alt', true )
+		       ->andReturn( 'Custom alt text' );
+
 		$avatar_data = $this->instance->get_avatar_data( [ 'size' => 96 ], 1 );
 		$this->assertEquals( 'https://example.com/avatar-96x96.png', $avatar_data['url'] );
+		$this->assertEquals( 'Custom alt text', $avatar_data['alt'] );
 	}
 
 	public function test_get_simple_local_avatar_url_with_empty_id() {
@@ -198,6 +203,32 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 
 	public function test_get_simple_local_avatar_url() {
 		$this->assertEquals( 'https://example.com/avatar-96x96.png', $this->instance->get_simple_local_avatar_url( 1, 96 ) );
+	}
+
+	public function test_get_simple_local_avatar_alt() {
+		WP_Mock::userFunction( 'get_post_meta' )
+		       ->with( 101, '_wp_attachment_image_alt', true )
+		       ->andReturn( 'Custom alt text' );
+
+		$this->assertEquals( 'Custom alt text', $this->instance->get_simple_local_avatar_alt( 1 ) );
+	}
+
+	public function test_get_simple_local_avatar_alt_with_override() {
+		WP_Mock::userFunction( 'get_post_meta' )
+		       ->with( 101, '_wp_attachment_image_alt', true )
+		       ->andReturn( 'Custom alt text' );
+
+		$avatar_data = $this->instance->get_avatar_data( [ 'size' => 96, 'alt' => 'Override alt' ], 1 );
+		$this->assertEquals( 'Override alt', $avatar_data['alt'] );
+	}
+
+	public function test_get_simple_local_avatar_alt_with_no_override() {
+		WP_Mock::userFunction( 'get_post_meta' )
+		       ->with( 101, '_wp_attachment_image_alt', true )
+		       ->andReturn( '' );
+
+		$avatar_data = $this->instance->get_avatar_data( [ 'size' => 96, 'alt' => '' ], 1 );
+		$this->assertEquals( '', $avatar_data['alt'] );
 	}
 
 	public function test_admin_init() {
