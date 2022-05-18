@@ -33,9 +33,10 @@ Cypress.Commands.add( 'visitAdminPage', ( page = 'index.php' ) => {
     }
 } );
 
-Cypress.Commands.add( 'atleastOneMedia', ( page = '/wp-admin/upload.php?mode=list' ) => {
+Cypress.Commands.add( 'atleastOneMedia', () => {
     cy.login();
     // Check and upload at least one media file.
+    cy.visit('/wp-admin/upload.php?mode=list');
     cy.get('body').then($body => {
         if (0 !== $body.find('.no-items').length) {
             cy.visit('/wp-admin/media-new.php?browser-uploader');
