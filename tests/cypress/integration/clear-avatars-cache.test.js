@@ -1,9 +1,9 @@
-describe( 'Check if "Select avatar and Crop" popup appears', () => {
+describe( 'Check if avatar cache can be cleared', () => {
   before(() => {
     cy.login();
   });
 
-  it('Can admin do an avatar migration?', () => {
+  it('Can admin clear avatar cache?', () => {
 
     // Visit profile page and clear the avatar cache.
     cy.visit( '/wp-admin/options-discussion.php' );

@@ -1,19 +1,12 @@
-describe( 'Check if admin can choose default avatar', () => {
+describe( 'Check if a default avatar can be set', () => {
   before(() => {
     cy.login();
   });
 
-  it('Can admin choose a default avatar?', () => {
+  it('Can admin set a default avatar?', () => {
 
     // Check and upload at least one media file.
-    cy.visit('/wp-admin/upload.php?mode=list');
-    cy.get('body').then($body => {
-      if (0 !== $body.find('.no-items').length) {
-        cy.visit('/wp-admin/media-new.php?browser-uploader');
-        cy.get('#async-upload').attachFile('../../../.wordpress-org/icon-256x256.png');
-        cy.get('#html-upload').click();
-      }
-    });
+    cy.atleastOneMedia();
 
     // Visit profile page and choose a default avatar.
     cy.visit( '/wp-admin/options-discussion.php' );
