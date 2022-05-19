@@ -334,8 +334,8 @@ function simple_local_avatar_calculate_image_select_options(attachment, controll
 
 	const ratio = xInit / yInit;
 
-    // Enable skip cropping button.
-    controller.set('canSkipCrop', true);
+	// Enable skip cropping button.
+	controller.set('canSkipCrop', true);
 
 	const xImg = xInit;
 	const yImg = yInit;
