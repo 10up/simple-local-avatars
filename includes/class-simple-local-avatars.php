@@ -118,6 +118,8 @@ class Simple_Local_Avatars {
 		add_action( 'wp_ajax_remove_simple_local_avatar', array( $this, 'action_remove_simple_local_avatar' ) );
 		add_action( 'user_edit_form_tag', array( $this, 'user_edit_form_tag' ) );
 
+		add_action( 'init', array( $this, 'front_end_remove_avatar' ) );
+
 		add_action( 'rest_api_init', array( $this, 'register_rest_fields' ) );
 
 		add_action( 'wp_ajax_migrate_from_wp_user_avatar', array( $this, 'ajax_migrate_from_wp_user_avatar' ) );
@@ -1524,4 +1526,15 @@ class Simple_Local_Avatars {
 			)
 		);
 	}
+
+	function front_end_remove_avatar() {
+		// TODO: This is missing nonce, so we only allow you to remove your own avatar
+		if( !empty($_GET['action']) && $_GET['action'] == 'remove-simple-local-avatar' && !empty($_GET['user_id']) ) {
+			$user_id = $_GET['user_id'];
+			if( get_current_user_id() == $user_id ) {
+				$this->avatar_delete( $user_id );
+			}
+		}
+
+	} 
 }
