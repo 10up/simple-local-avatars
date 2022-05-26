@@ -943,6 +943,10 @@ class Simple_Local_Avatars {
 			if ( ! function_exists( 'media_handle_upload' ) ) {
 				include_once ABSPATH . 'wp-admin/includes/media.php';
 			}
+			
+			if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
+				include_once ABSPATH . 'wp-admin/includes/image.php';
+			}
 
 			// allow developers to override file size upload limit for avatars
 			add_filter( 'upload_size_limit', array( $this, 'upload_size_limit' ) );
