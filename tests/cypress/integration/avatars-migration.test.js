@@ -1,9 +1,9 @@
-describe('Check if avatar migration works', () => {
+describe('Avatar migration', () => {
     before(() => {
         cy.login();
     });
 
-    it('Can admin do an avatar migration?', () => {
+    it('Test "no migration" from WP User Avatar', () => {
 
         // Visit profile page and perform migration.
         cy.visit('/wp-admin/options-discussion.php');
