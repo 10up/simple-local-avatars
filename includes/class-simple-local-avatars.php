@@ -1303,7 +1303,13 @@ class Simple_Local_Avatars {
 	 */
 	private function clear_user_avatar_cache( $local_avatars, $user_id, $media_id ) {
 		if ( ! empty( $media_id ) ) {
-			$file_name_data = pathinfo( wp_get_original_image_path( $media_id ) );
+			// In order to support WP 4.9.
+			if ( function_exists( 'wp_get_original_image_path' ) ) {
+				$file_name_data = pathinfo( wp_get_original_image_path( $media_id ) );
+			} else {
+				$file_name_data = pathinfo( get_attached_file( $media_id ) );
+			}
+
 			$file_dir_name  = $file_name_data['dirname'];
 			$file_name      = $file_name_data['filename'];
 			$file_ext       = $file_name_data['extension'];
