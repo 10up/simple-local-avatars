@@ -846,7 +846,7 @@ class Simple_Local_Avatars {
 							// At FE, show the file input field regardless of the caps.
 							if ( ! is_admin() || ! current_user_can( 'upload_files' ) ) {
 								?>
-								<p style="display: inline-block;">
+								<p style="display: inline-block; width: 26em;">
 									<span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br />
 									<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
 									<span class="spinner" id="simple-local-avatar-spinner"></span>
