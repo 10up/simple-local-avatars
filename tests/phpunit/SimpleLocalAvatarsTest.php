@@ -86,7 +86,9 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 
 		WP_Mock::expectActionAdded( 'admin_init', [ $this->instance, 'admin_init' ] );
 
-		WP_Mock::expectActionAdded( 'enqueue_scripts', [ $this->instance, 'enqueue_scripts' ] );
+		WP_Mock::expectActionAdded( 'wp_enqueue_scripts', [ $this->instance, 'enqueue_scripts' ] );
+		WP_Mock::expectActionAdded( 'admin_enqueue_scripts', [ $this->instance, 'enqueue_scripts' ] );
+
 		WP_Mock::expectActionAdded( 'show_user_profile', [ $this->instance, 'edit_user_profile' ] );
 		WP_Mock::expectActionAdded( 'edit_user_profile', [ $this->instance, 'edit_user_profile' ] );
 
