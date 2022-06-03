@@ -313,6 +313,9 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		WP_Mock::userFunction( 'add_query_arg' );
 		WP_Mock::userFunction( 'disabled' );
 
+		WP_Mock::userFunction( 'is_admin' )
+		       ->andReturn( true );
+
 		WP_Mock::userFunction( 'get_simple_local_avatar' )
 		       ->with( 1 )
 		       ->andReturn( '<img src="test-image-user-avatar"/>' );
