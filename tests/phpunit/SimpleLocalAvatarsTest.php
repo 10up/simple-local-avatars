@@ -86,7 +86,7 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 
 		WP_Mock::expectActionAdded( 'admin_init', [ $this->instance, 'admin_init' ] );
 
-		WP_Mock::expectActionAdded( 'admin_enqueue_scripts', [ $this->instance, 'admin_enqueue_scripts' ] );
+		WP_Mock::expectActionAdded( 'enqueue_scripts', [ $this->instance, 'enqueue_scripts' ] );
 		WP_Mock::expectActionAdded( 'show_user_profile', [ $this->instance, 'edit_user_profile' ] );
 		WP_Mock::expectActionAdded( 'edit_user_profile', [ $this->instance, 'edit_user_profile' ] );
 
@@ -250,9 +250,9 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$this->instance->load_discussion_page();
 	}
 
-	public function test_admin_enqueue_scripts_wrong_screen() {
+	public function test_enqueue_scripts_wrong_screen() {
 		WP_Mock::userFunction( 'current_user_can' )->never();
-		$this->instance->admin_enqueue_scripts( 'index.php' );
+		$this->instance->enqueue_scripts( 'index.php' );
 	}
 
 	public function test_sanitize_options() {
