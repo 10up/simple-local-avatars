@@ -687,7 +687,7 @@ class Simple_Local_Avatars {
 		 * @param string $hook_suffix Page hook.
 		 * @return array
 		 */
-		$screens = apply_filters( 'simple_local_avatars_enqueue_scripts', array( 'profile.php', 'user-edit.php', 'options-discussion.php' ), $hook_suffix );
+		$screens = apply_filters( 'simple_local_avatars_admin_enqueue_scripts', array( 'profile.php', 'user-edit.php', 'options-discussion.php' ), $hook_suffix );
 
 		// Allow SLA actions on a bbPress profile edit page at FE.
 		if ( function_exists( 'bbp_is_user_home_edit' ) && bbp_is_user_home_edit() ) {
