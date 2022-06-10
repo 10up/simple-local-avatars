@@ -107,7 +107,10 @@ class Simple_Local_Avatars {
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		// Load the JS on BE & FE both, in order to support third party plugins like bbPress.
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+
 		add_action( 'show_user_profile', array( $this, 'edit_user_profile' ) );
 		add_action( 'edit_user_profile', array( $this, 'edit_user_profile' ) );
 
@@ -675,7 +678,7 @@ class Simple_Local_Avatars {
 	 *
 	 * @param string $hook_suffix Page hook
 	 */
-	public function admin_enqueue_scripts( $hook_suffix ) {
+	public function enqueue_scripts( $hook_suffix ) {
 
 		/**
 		 * Filter the admin screens where we enqueue our scripts.
@@ -685,6 +688,11 @@ class Simple_Local_Avatars {
 		 * @return array
 		 */
 		$screens = apply_filters( 'simple_local_avatars_admin_enqueue_scripts', array( 'profile.php', 'user-edit.php', 'options-discussion.php' ), $hook_suffix );
+
+		// Allow SLA actions on a bbPress profile edit page at FE.
+		if ( function_exists( 'bbp_is_user_home_edit' ) && bbp_is_user_home_edit() ) {
+			$hook_suffix = 'profile.php';
+		}
 
 		if ( ! in_array( $hook_suffix, $screens, true ) ) {
 			return;
@@ -704,6 +712,7 @@ class Simple_Local_Avatars {
 			'simple-local-avatars',
 			'i10n_SimpleLocalAvatars',
 			array(
+				'ajaxurl'                         => admin_url( 'admin-ajax.php' ),
 				'user_id'                         => $user_id,
 				'insertIntoPost'                  => __( 'Set as avatar', 'simple-local-avatars' ),
 				'selectCrop'                      => __( 'Select avatar and Crop', 'simple-local-avatars' ),
@@ -834,7 +843,8 @@ class Simple_Local_Avatars {
 							<?php
 							// if user is author and above hide the choose file option
 							// force them to use the WP Media Selector
-							if ( ! current_user_can( 'upload_files' ) ) {
+							// At FE, show the file input field regardless of the caps.
+							if ( ! is_admin() || ! current_user_can( 'upload_files' ) ) {
 								?>
 								<p style="display: inline-block; width: 26em;">
 									<span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br />
@@ -942,6 +952,14 @@ class Simple_Local_Avatars {
 			// front end (theme my profile etc) support
 			if ( ! function_exists( 'media_handle_upload' ) ) {
 				include_once ABSPATH . 'wp-admin/includes/media.php';
+			}
+
+			// front end (plugin bbPress etc) support
+			if ( ! function_exists( 'wp_handle_upload' ) ) {
+				include_once ABSPATH . 'wp-admin/includes/file.php';
+			}
+			if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
+				include_once ABSPATH . 'wp-admin/includes/image.php';
 			}
 
 			// allow developers to override file size upload limit for avatars
