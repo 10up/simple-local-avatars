@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, per [the Keep a Changelog standard](http://keepachangelog.com/).
 
-## [2.2.0] - 2022-06-XX
+## [2.5.0] - 2022-06-XX
 ### Added
 - Cypress tests for E2E testing. (props [@faisal-alvi](https://github.com/faisal-alvi), [@vikrampm1](https://github.com/vikrampm1), [@Sidsector9](https://github.com/Sidsector9)) via [#115](https://github.com/10up/simple-local-avatars/pull/115))
 - Skip cropping button introduced! (props [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi), [@cadic](https://github.com/cadic), [@jeffpaul](https://github.com/jeffpaul) via [#130](https://github.com/10up/simple-local-avatars/pull/130))
