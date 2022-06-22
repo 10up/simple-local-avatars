@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file, per [the Keep a Changelog standard](http://keepachangelog.com/).
 
+## [2.2.0] - 2022-06-XX
+### Added
+- Cypress tests for E2E testing. (props [@faisal-alvi](https://github.com/faisal-alvi), [@vikrampm1](https://github.com/vikrampm1), [@Sidsector9](https://github.com/Sidsector9)) via [#115](https://github.com/10up/simple-local-avatars/pull/115))
+- Skip cropping button introduced! (props [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi), [@cadic](https://github.com/cadic), [@jeffpaul](https://github.com/jeffpaul) via [#130](https://github.com/10up/simple-local-avatars/pull/130))
+- If an image used for a local avatar has alt text assigned, ensure that alt text is used when rendering the image (props [@dkotter](https://github.com/dkotter), [@pixelloop](https://github.com/pixelloop), [@faisal-alvi](https://github.com/faisal-alvi)) via [#127](https://github.com/10up/simple-local-avatars/pull/127))
+- The support for the bbPress plugin by loading the JS at FE on the profile edit page. (props [@foliovision](https://github.com/foliovision), [@faisal-alvi](https://github.com/faisal-alvi), [@iamdharmesh](https://github.com/iamdharmesh)) via [#134](https://github.com/10up/simple-local-avatars/pull/134))
+
+### Fixed
+- Broken avatar URLs for network-configured shared avatars with non-standard thumbnail sizes. (props [@vladolaru](https://github.com/vladolaru), [@faisal-alvi](https://github.com/faisal-alvi)) via [#125](https://github.com/10up/simple-local-avatars/pull/125))
+- `HTTP_REFERER` is null and causing php warning. (props [@alireza-salehi](https://github.com/alireza-salehi), [@faisal-alvi](https://github.com/faisal-alvi), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#129](https://github.com/10up/simple-local-avatars/pull/129))
+
 ## [2.4.0] - 2022-05-10
 ### Added
 - Ability to set a default avatar. (props [@mehulkaklotar](https://github.com/mehulkaklotar), [@jeffpaul](https://github.com/jeffpaul), [@dinhtungdu](https://github.com/dinhtungdu), [@faisal-alvi](https://github.com/faisal-alvi) via [#96](https://github.com/10up/simple-local-avatars/pull/96)).
