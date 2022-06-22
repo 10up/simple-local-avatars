@@ -35,3 +35,4 @@
 /wpacceptance.json
 /assets/js/simple-local-avatars.js
 /.phpunit.result.cache
+/.wp-env.json
