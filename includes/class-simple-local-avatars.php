@@ -99,6 +99,7 @@ class Simple_Local_Avatars {
 	 * Register actions and filters.
 	 */
 	public function add_hooks() {
+		global $pagenow;
 
 		add_filter( 'plugin_action_links_' . SLA_PLUGIN_BASENAME, array( $this, 'plugin_filter_action_links' ) );
 
@@ -133,6 +134,14 @@ class Simple_Local_Avatars {
 
 		add_filter( 'avatar_defaults', array( $this, 'add_avatar_default_field' ) );
 		add_action( 'wpmu_new_blog', array( $this, 'set_defaults' ) );
+
+		if ( 'profile.php' === $pagenow ) {
+			add_filter( 'media_view_strings', function ( $strings ) {
+				$strings['skipCropping'] = esc_html__( 'Default Crop', 'simple-local-avatars' );
+
+				return $strings;
+			}, 10, 1 );
+		}
 	}
 
 	/**
