@@ -364,6 +364,7 @@ function simple_local_avatar_calculate_image_select_options(attachment, controll
 		y1,
 		x2: xInit + x1,
 		y2: yInit + y1,
+		aspectRatio: `${xInit}:${yInit}`,
 	};
 }
 
