@@ -2,17 +2,19 @@
 
 All notable changes to this project will be documented in this file, per [the Keep a Changelog standard](http://keepachangelog.com/).
 
+## [Unreleased] - TBD
+
 ## [2.5.0] - 2022-06-24
 ### Added
-- Cypress tests for E2E testing. (props [@faisal-alvi](https://github.com/faisal-alvi), [@vikrampm1](https://github.com/vikrampm1), [@Sidsector9](https://github.com/Sidsector9)) via [#115](https://github.com/10up/simple-local-avatars/pull/115))
-- Skip cropping button introduced! (props [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi), [@cadic](https://github.com/cadic), [@jeffpaul](https://github.com/jeffpaul), [@dinhtungdu](https://github.com/dinhtungdu) via [#130](https://github.com/10up/simple-local-avatars/pull/130))
-- Updated the button name from "Skip Crop" to "Default Crop" only on the edit profile page. (props [@faisal-alvi](https://github.com/faisal-alvi), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#136](https://github.com/10up/simple-local-avatars/pull/136))
-- If an image used for a local avatar has alt text assigned, ensure that alt text is used when rendering the image (props [@dkotter](https://github.com/dkotter), [@pixelloop](https://github.com/pixelloop), [@faisal-alvi](https://github.com/faisal-alvi)) via [#127](https://github.com/10up/simple-local-avatars/pull/127))
-- The support for the bbPress plugin by loading the JS at FE on the profile edit page. (props [@foliovision](https://github.com/foliovision), [@faisal-alvi](https://github.com/faisal-alvi), [@iamdharmesh](https://github.com/iamdharmesh)) via [#134](https://github.com/10up/simple-local-avatars/pull/134))
+- Skip cropping button (props [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi), [@cadic](https://github.com/cadic), [@jeffpaul](https://github.com/jeffpaul), [@dinhtungdu](https://github.com/dinhtungdu) via [#130](https://github.com/10up/simple-local-avatars/pull/130))!
+- Updated the button name from "Skip Crop" to "Default Crop" only on the edit profile page (props [@faisal-alvi](https://github.com/faisal-alvi), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#136](https://github.com/10up/simple-local-avatars/pull/136)).
+- If an image used for a local avatar has alt text assigned, ensure that alt text is used when rendering the image (props [@dkotter](https://github.com/dkotter), [@pixelloop](https://github.com/pixelloop), [@faisal-alvi](https://github.com/faisal-alvi) via [#127](https://github.com/10up/simple-local-avatars/pull/127)).
+- Support for bbPress by loading the JS at FE on the profile edit page (props [@foliovision](https://github.com/foliovision), [@faisal-alvi](https://github.com/faisal-alvi), [@iamdharmesh](https://github.com/iamdharmesh) via [#134](https://github.com/10up/simple-local-avatars/pull/134)).
+- Cypress E2E tests (props [@faisal-alvi](https://github.com/faisal-alvi), [@vikrampm1](https://github.com/vikrampm1), [@Sidsector9](https://github.com/Sidsector9) via [#115](https://github.com/10up/simple-local-avatars/pull/115)).
 
 ### Fixed
-- Broken avatar URLs for network-configured shared avatars with non-standard thumbnail sizes. (props [@vladolaru](https://github.com/vladolaru), [@faisal-alvi](https://github.com/faisal-alvi)) via [#125](https://github.com/10up/simple-local-avatars/pull/125))
-- `HTTP_REFERER` is null and causing php warning. (props [@alireza-salehi](https://github.com/alireza-salehi), [@faisal-alvi](https://github.com/faisal-alvi), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#129](https://github.com/10up/simple-local-avatars/pull/129))
+- Broken avatar URLs for network-configured shared avatars with non-standard thumbnail sizes (props [@vladolaru](https://github.com/vladolaru), [@faisal-alvi](https://github.com/faisal-alvi) via [#125](https://github.com/10up/simple-local-avatars/pull/125)).
+- `HTTP_REFERER` is null and causing PHP warning (props [@alireza-salehi](https://github.com/alireza-salehi), [@faisal-alvi](https://github.com/faisal-alvi), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#129](https://github.com/10up/simple-local-avatars/pull/129)).
 
 ## [2.4.0] - 2022-05-10
 ### Added
@@ -171,7 +173,9 @@ All notable changes to this project will be documented in this file, per [the Ke
 - Initial release
 
 [Unreleased]: https://github.com/10up/simple-local-avatars/compare/trunk...develop
-[2.2.0]: https://github.com/10up/simple-local-avatars/compare/2.2.0...2.3.0
+[2.5.0]: https://github.com/10up/simple-local-avatars/compare/2.4.0...2.5.0
+[2.4.0]: https://github.com/10up/simple-local-avatars/compare/2.3.0...2.4.0
+[2.3.0]: https://github.com/10up/simple-local-avatars/compare/2.2.0...2.3.0
 [2.2.0]: https://github.com/10up/simple-local-avatars/compare/2.1.1...2.2.0
 [2.1.1]: https://github.com/10up/simple-local-avatars/compare/2.1...2.1.1
 [2.1]: https://github.com/10up/simple-local-avatars/compare/2.0...2.1
