@@ -86,7 +86,9 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 
 		WP_Mock::expectActionAdded( 'admin_init', [ $this->instance, 'admin_init' ] );
 
-		WP_Mock::expectActionAdded( 'admin_enqueue_scripts', [ $this->instance, 'admin_enqueue_scripts' ] );
+		WP_Mock::expectActionAdded( 'wp_enqueue_scripts', [ $this->instance, 'enqueue_scripts' ] );
+		WP_Mock::expectActionAdded( 'admin_enqueue_scripts', [ $this->instance, 'enqueue_scripts' ] );
+
 		WP_Mock::expectActionAdded( 'show_user_profile', [ $this->instance, 'edit_user_profile' ] );
 		WP_Mock::expectActionAdded( 'edit_user_profile', [ $this->instance, 'edit_user_profile' ] );
 
@@ -171,8 +173,13 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		       ->with( 'avatar_rating' )
 		       ->andReturn( false );
 
+		WP_Mock::userFunction( 'get_post_meta' )
+		       ->with( 101, '_wp_attachment_image_alt', true )
+		       ->andReturn( 'Custom alt text' );
+
 		$avatar_data = $this->instance->get_avatar_data( [ 'size' => 96 ], 1 );
 		$this->assertEquals( 'https://example.com/avatar-96x96.png', $avatar_data['url'] );
+		$this->assertEquals( 'Custom alt text', $avatar_data['alt'] );
 	}
 
 	public function test_get_simple_local_avatar_url_with_empty_id() {
@@ -200,6 +207,32 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$this->assertEquals( 'https://example.com/avatar-96x96.png', $this->instance->get_simple_local_avatar_url( 1, 96 ) );
 	}
 
+	public function test_get_simple_local_avatar_alt() {
+		WP_Mock::userFunction( 'get_post_meta' )
+		       ->with( 101, '_wp_attachment_image_alt', true )
+		       ->andReturn( 'Custom alt text' );
+
+		$this->assertEquals( 'Custom alt text', $this->instance->get_simple_local_avatar_alt( 1 ) );
+	}
+
+	public function test_get_simple_local_avatar_alt_with_override() {
+		WP_Mock::userFunction( 'get_post_meta' )
+		       ->with( 101, '_wp_attachment_image_alt', true )
+		       ->andReturn( 'Custom alt text' );
+
+		$avatar_data = $this->instance->get_avatar_data( [ 'size' => 96, 'alt' => 'Override alt' ], 1 );
+		$this->assertEquals( 'Override alt', $avatar_data['alt'] );
+	}
+
+	public function test_get_simple_local_avatar_alt_with_no_override() {
+		WP_Mock::userFunction( 'get_post_meta' )
+		       ->with( 101, '_wp_attachment_image_alt', true )
+		       ->andReturn( '' );
+
+		$avatar_data = $this->instance->get_avatar_data( [ 'size' => 96, 'alt' => '' ], 1 );
+		$this->assertEquals( '', $avatar_data['alt'] );
+	}
+
 	public function test_admin_init() {
 		WP_Mock::userFunction( 'get_option' )
 		       ->with( 'simple_local_avatars_caps' )
@@ -219,9 +252,9 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$this->instance->load_discussion_page();
 	}
 
-	public function test_admin_enqueue_scripts_wrong_screen() {
+	public function test_enqueue_scripts_wrong_screen() {
 		WP_Mock::userFunction( 'current_user_can' )->never();
-		$this->instance->admin_enqueue_scripts( 'index.php' );
+		$this->instance->enqueue_scripts( 'index.php' );
 	}
 
 	public function test_sanitize_options() {
@@ -281,6 +314,9 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		WP_Mock::userFunction( 'wp_nonce_field' );
 		WP_Mock::userFunction( 'add_query_arg' );
 		WP_Mock::userFunction( 'disabled' );
+
+		WP_Mock::userFunction( 'is_admin' )
+		       ->andReturn( true );
 
 		WP_Mock::userFunction( 'get_simple_local_avatar' )
 		       ->with( 1 )

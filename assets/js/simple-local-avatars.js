@@ -31,31 +31,11 @@ jQuery(document).ready(function ($) {
 		const cropControl = {
 			id: 'control-id',
 			params: {
-				flex_width: false, // set to true if the width of the cropped image can be different to the width defined here
-				flex_height: false, // set to true if the height of the cropped image can be different to the height defined here
+				flex_width: true, // set to true if the width of the cropped image can be different to the width defined here
+				flex_height: true, // set to true if the height of the cropped image can be different to the height defined here
 				width: 200, // set the desired width of the destination image here
 				height: 200, // set the desired height of the destination image here
 			},
-		};
-
-		/**
-		 * Return whether the image must be cropped, based on required dimensions.
-		 *
-		 * @param {boolean} flexW
-		 * @param {boolean} flexH
-		 * @param {number}  distW
-		 * @param {number}  distH
-		 * @param {number}  imgW
-		 * @param {number}  imgH
-		 * @returns {boolean}
-		 */
-		cropControl.mustBeCropped = function (flexW, flexH, distW, distH, imgW, imgH) {
-			// Skip cropping if the image matches the crop dimension.
-			if (imgW === distW && imgH === distH) {
-				return false;
-			}
-
-			return true;
 		};
 
 		/**
@@ -149,7 +129,7 @@ jQuery(document).ready(function ($) {
 		if (avatar_working) return;
 
 		avatar_lock('lock');
-		$.get(ajaxurl, {
+		$.get(i10n_SimpleLocalAvatars.ajaxurl, {
 			action: 'remove_simple_local_avatar',
 			user_id: i10n_SimpleLocalAvatars.user_id,
 			_wpnonce: i10n_SimpleLocalAvatars.deleteNonce,
@@ -183,7 +163,7 @@ jQuery(document).ready(function ($) {
 
 	$( document.getElementById('simple-local-avatars-migrate-from-wp-user-avatar') ).on( 'click', function(event) {
 		event.preventDefault();
-		jQuery.post( ajaxurl, { action: 'migrate_from_wp_user_avatar', migrateFromWpUserAvatarNonce: i10n_SimpleLocalAvatars.migrateFromWpUserAvatarNonce } )
+		jQuery.post( i10n_SimpleLocalAvatars.ajaxurl, { action: 'migrate_from_wp_user_avatar', migrateFromWpUserAvatarNonce: i10n_SimpleLocalAvatars.migrateFromWpUserAvatarNonce } )
 			.always( function() {
 				$('.simple-local-avatars-migrate-from-wp-user-avatar-progress').empty();
 				$('.simple-local-avatars-migrate-from-wp-user-avatar-progress').text(i10n_SimpleLocalAvatars.migrateFromWpUserAvatarProgress);
@@ -244,7 +224,7 @@ jQuery(document).ready(function ($) {
 	function processStep( step, data ) {
 		data.step = step;
 		$.ajax( {
-			url: ajaxurl,
+			url: i10n_SimpleLocalAvatars.ajaxurl,
 			dataType: 'json',
 			data: data,
 			method: 'POST',
@@ -354,10 +334,8 @@ function simple_local_avatar_calculate_image_select_options(attachment, controll
 
 	const ratio = xInit / yInit;
 
-	controller.set(
-		'canSkipCrop',
-		!control.mustBeCropped(false, false, xInit, yInit, realWidth, realHeight),
-	);
+	// Enable skip cropping button.
+	controller.set('canSkipCrop', true);
 
 	const xImg = xInit;
 	const yImg = yInit;
@@ -421,7 +399,7 @@ function simple_local_avatar_set_image_from_url(url, attachmentId, width, height
 
 	avatar_lock('lock');
 	jQuery
-		.post(ajaxurl, {
+		.post(i10n_SimpleLocalAvatars.ajaxurl, {
 			action: 'assign_simple_local_avatar_media',
 			media_id: attachmentId,
 			user_id: i10n_SimpleLocalAvatars.user_id,
@@ -440,14 +418,14 @@ function simple_local_avatar_set_image_from_url(url, attachmentId, width, height
 }
 
 /**
- * Set the avatar image, once it is selected from the media library. 
+ * Set the avatar image, once it is selected from the media library.
  *
  * @param {object} attachment
  */
 function simple_local_avatar_set_image_from_attachment(attachment) {
 	avatar_lock('lock');
 	jQuery
-		.post(ajaxurl, {
+		.post(i10n_SimpleLocalAvatars.ajaxurl, {
 			action: 'assign_simple_local_avatar_media',
 			media_id: attachment.id,
 			user_id: i10n_SimpleLocalAvatars.user_id,

@@ -80,7 +80,7 @@ class Simple_Local_Avatars {
 			&& (
 				( // And either an ajax request not in the network admin.
 					defined( 'DOING_AJAX' ) && DOING_AJAX
-					&& ! preg_match( '#^' . network_admin_url() . '#i', $_SERVER['HTTP_REFERER'] )
+					&& isset( $_SERVER['HTTP_REFERER'] ) && ! preg_match( '#^' . network_admin_url() . '#i', $_SERVER['HTTP_REFERER'] )
 				)
 				||
 				( // Or normal request not in the network admin.
@@ -99,6 +99,7 @@ class Simple_Local_Avatars {
 	 * Register actions and filters.
 	 */
 	public function add_hooks() {
+		global $pagenow;
 
 		add_filter( 'plugin_action_links_' . SLA_PLUGIN_BASENAME, array( $this, 'plugin_filter_action_links' ) );
 
@@ -107,7 +108,10 @@ class Simple_Local_Avatars {
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		// Load the JS on BE & FE both, in order to support third party plugins like bbPress.
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+
 		add_action( 'show_user_profile', array( $this, 'edit_user_profile' ) );
 		add_action( 'edit_user_profile', array( $this, 'edit_user_profile' ) );
 
@@ -130,6 +134,14 @@ class Simple_Local_Avatars {
 
 		add_filter( 'avatar_defaults', array( $this, 'add_avatar_default_field' ) );
 		add_action( 'wpmu_new_blog', array( $this, 'set_defaults' ) );
+
+		if ( 'profile.php' === $pagenow ) {
+			add_filter( 'media_view_strings', function ( $strings ) {
+				$strings['skipCropping'] = esc_html__( 'Default Crop', 'simple-local-avatars' );
+
+				return $strings;
+			}, 10, 1 );
+		}
 	}
 
 	/**
@@ -262,9 +274,40 @@ class Simple_Local_Avatars {
 
 		if ( ! empty( $args['url'] ) ) {
 			$args['found_avatar'] = true;
+
+			// If custom alt text isn't passed, pull alt text from the local image.
+			if ( empty( $args['alt'] ) ) {
+				$args['alt'] = $this->get_simple_local_avatar_alt( $id_or_email );
+			}
 		}
 
 		return $args;
+	}
+
+	/**
+	 * Get a user ID from certain possible values.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @param mixed $id_or_email The Gravatar to retrieve. Accepts a user ID, Gravatar MD5 hash,
+	 *                           user email, WP_User object, WP_Post object, or WP_Comment object.
+	 * @return int|false
+	 */
+	public function get_user_id( $id_or_email ) {
+		$user_id = false;
+
+		if ( is_numeric( $id_or_email ) ) {
+			$user_id = (int) $id_or_email;
+		} elseif ( is_object( $id_or_email ) && ! empty( $id_or_email->user_id ) ) {
+			$user_id = (int) $id_or_email->user_id;
+		} elseif ( $id_or_email instanceof WP_Post && ! empty( $id_or_email->post_author ) ) {
+			$user_id = (int) $id_or_email->post_author;
+		} elseif ( is_string( $id_or_email ) ) {
+			$user    = get_user_by( 'email', $id_or_email );
+			$user_id = $user ? $user->ID : '';
+		}
+
+		return $user_id;
 	}
 
 	/**
@@ -277,16 +320,7 @@ class Simple_Local_Avatars {
 	 * @param int   $size        Requested avatar size.
 	 */
 	public function get_simple_local_avatar_url( $id_or_email, $size ) {
-		if ( is_numeric( $id_or_email ) ) {
-			$user_id = (int) $id_or_email;
-		} elseif ( is_object( $id_or_email ) && ! empty( $id_or_email->user_id ) ) {
-			$user_id = (int) $id_or_email->user_id;
-		} elseif ( $id_or_email instanceof WP_Post && ! empty( $id_or_email->post_author ) ) {
-			$user_id = (int) $id_or_email->post_author;
-		} elseif ( is_string( $id_or_email ) ) {
-			$user    = get_user_by( 'email', $id_or_email );
-			$user_id = $user ? $user->ID : '';
-		}
+		$user_id = $this->get_user_id( $id_or_email );
 
 		if ( empty( $user_id ) ) {
 			return '';
@@ -354,7 +388,15 @@ class Simple_Local_Avatars {
 						$dest_file = $editor->generate_filename();
 						$saved     = $editor->save( $dest_file );
 						if ( ! is_wp_error( $saved ) ) {
-							$local_avatars[ $size ] = str_replace( $upload_path['basedir'], $upload_path['baseurl'], $dest_file );
+							// Transform the destination file path into URL.
+							$dest_file_url = '';
+							if ( false !== strpos( $dest_file, $upload_path['basedir'] ) ) {
+								$dest_file_url = str_replace( $upload_path['basedir'], $upload_path['baseurl'], $dest_file );
+							} else if ( is_multisite() && false !== strpos( $dest_file, ABSPATH . 'wp-content/uploads' ) ) {
+								$dest_file_url = str_replace( ABSPATH . 'wp-content/uploads', network_site_url( '/wp-content/uploads' ), $dest_file );
+							}
+
+							$local_avatars[ $size ] = $dest_file_url;
 						}
 					}
 				}
@@ -370,6 +412,31 @@ class Simple_Local_Avatars {
 		}
 
 		return esc_url( $local_avatars[ $size ] );
+	}
+
+	/**
+	 * Get local avatar alt text.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @param mixed $id_or_email The Gravatar to retrieve. Accepts a user ID, Gravatar MD5 hash,
+	 *                           user email, WP_User object, WP_Post object, or WP_Comment object.
+	 * @return string
+	 */
+	public function get_simple_local_avatar_alt( $id_or_email ) {
+		$user_id = $this->get_user_id( $id_or_email );
+
+		if ( empty( $user_id ) ) {
+			return '';
+		}
+
+		// Fetch local avatar from meta and make sure we have a media ID.
+		$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
+		if ( empty( $local_avatars['media_id'] ) ) {
+			return '';
+		}
+
+		return esc_attr( get_post_meta( $local_avatars['media_id'], '_wp_attachment_image_alt', true ) );
 	}
 
 	/**
@@ -620,7 +687,7 @@ class Simple_Local_Avatars {
 	 *
 	 * @param string $hook_suffix Page hook
 	 */
-	public function admin_enqueue_scripts( $hook_suffix ) {
+	public function enqueue_scripts( $hook_suffix ) {
 
 		/**
 		 * Filter the admin screens where we enqueue our scripts.
@@ -630,6 +697,11 @@ class Simple_Local_Avatars {
 		 * @return array
 		 */
 		$screens = apply_filters( 'simple_local_avatars_admin_enqueue_scripts', array( 'profile.php', 'user-edit.php', 'options-discussion.php' ), $hook_suffix );
+
+		// Allow SLA actions on a bbPress profile edit page at FE.
+		if ( function_exists( 'bbp_is_user_home_edit' ) && bbp_is_user_home_edit() ) {
+			$hook_suffix = 'profile.php';
+		}
 
 		if ( ! in_array( $hook_suffix, $screens, true ) ) {
 			return;
@@ -649,6 +721,7 @@ class Simple_Local_Avatars {
 			'simple-local-avatars',
 			'i10n_SimpleLocalAvatars',
 			array(
+				'ajaxurl'                         => admin_url( 'admin-ajax.php' ),
 				'user_id'                         => $user_id,
 				'insertIntoPost'                  => __( 'Set as avatar', 'simple-local-avatars' ),
 				'selectCrop'                      => __( 'Select avatar and Crop', 'simple-local-avatars' ),
@@ -779,7 +852,8 @@ class Simple_Local_Avatars {
 							<?php
 							// if user is author and above hide the choose file option
 							// force them to use the WP Media Selector
-							if ( ! current_user_can( 'upload_files' ) ) {
+							// At FE, show the file input field regardless of the caps.
+							if ( ! is_admin() || ! current_user_can( 'upload_files' ) ) {
 								?>
 								<p style="display: inline-block; width: 26em;">
 									<span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br />
@@ -887,6 +961,14 @@ class Simple_Local_Avatars {
 			// front end (theme my profile etc) support
 			if ( ! function_exists( 'media_handle_upload' ) ) {
 				include_once ABSPATH . 'wp-admin/includes/media.php';
+			}
+
+			// front end (plugin bbPress etc) support
+			if ( ! function_exists( 'wp_handle_upload' ) ) {
+				include_once ABSPATH . 'wp-admin/includes/file.php';
+			}
+			if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
+				include_once ABSPATH . 'wp-admin/includes/image.php';
 			}
 
 			// allow developers to override file size upload limit for avatars
@@ -1248,7 +1330,13 @@ class Simple_Local_Avatars {
 	 */
 	private function clear_user_avatar_cache( $local_avatars, $user_id, $media_id ) {
 		if ( ! empty( $media_id ) ) {
-			$file_name_data = pathinfo( wp_get_original_image_path( $media_id ) );
+			// In order to support WP 4.9.
+			if ( function_exists( 'wp_get_original_image_path' ) ) {
+				$file_name_data = pathinfo( wp_get_original_image_path( $media_id ) );
+			} else {
+				$file_name_data = pathinfo( get_attached_file( $media_id ) );
+			}
+
 			$file_dir_name  = $file_name_data['dirname'];
 			$file_name      = $file_name_data['filename'];
 			$file_ext       = $file_name_data['extension'];
@@ -1306,10 +1394,10 @@ class Simple_Local_Avatars {
 			update_option( 'simple_local_avatar_default', $file_id );
 		}
 	}
-  
+
 	/**
 	 * Migrate the user's avatar data from WP User Avatar/ProfilePress
-	 * 
+	 *
 	 * This function creates a new option in the wp_options table to store the processed user IDs
 	 * so that we can run this command multiple times without processing the same user over and over again.
 	 *
