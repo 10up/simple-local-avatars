@@ -29,7 +29,7 @@ The `develop` branch is the development branch which means it contains the next 
 ## Release instructions
 
 1. Branch: Starting from `develop`, cut a release branch named `release/X.Y.Z` for your changes.
-1. Version bump: Bump the version number in `package.json`, `readme.txt`, and `simple-local-avatars.php` if it does not already reflect the version being released.
+1. Version bump: Bump the version number in `package.json`, `readme.txt`, and `simple-local-avatars.php` if it does not already reflect the version being released.  Update both the plugin "Version:" property and the plugin `SLA_VERSION` constant in `simple-local-avatars.php`.
 1. Changelog: Add/update the changelog in both `CHANGELOG.md` and `readme.txt`.
 1. Props: update `CREDITS.md` with any new contributors, confirm maintainers are accurate.
 1. New files: Check to be sure any new files/paths that are unnecessary in the production version are included in `.distignore`.
