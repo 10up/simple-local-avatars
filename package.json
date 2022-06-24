@@ -1,6 +1,6 @@
 {
   "name": "simple-local-avatars",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!",
   "scripts": {
     "build": "wp-scripts build",
