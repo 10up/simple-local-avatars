@@ -19,7 +19,7 @@
     "source": "https://github.com/10up/simple-local-avatars"
   },
   "require": {
-    "php": ">=7.4"
+    "php": ">=7.1"
   },
   "require-dev": {
     "10up/phpcs-composer": "dev-master",
