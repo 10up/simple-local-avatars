@@ -4,7 +4,7 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 	private $instance;
 
 	public function setUp(): void {
-		parent::setUp();
+		\WP_Mock::setUp();
 
 		$this->instance = Mockery::mock( 'Simple_Local_Avatars' )->makePartial();
 
@@ -75,7 +75,7 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$this->addToAssertionCount(
 			Mockery::getContainer()->mockery_getExpectationCount()
 		);
-		parent::tearDown();
+		\WP_Mock::tearDown();
 	}
 
 	public function test_add_hooks() {
