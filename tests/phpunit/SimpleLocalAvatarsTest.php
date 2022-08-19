@@ -106,12 +106,12 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 	}
 
 	public function test_is_network() {
-		\WP_Mock::userFunction( 'get_site_option', [
+		WP_Mock::userFunction( 'get_site_option', [
 			'args'   => [ 'active_sitewide_plugins', [] ],
 			'return' => [],
 			'times'  => 1,
 		] );
-		\WP_Mock::userFunction( 'is_multisite', [
+		WP_Mock::userFunction( 'is_multisite', [
 			'return' => false,
 			'times'  => 1,
 		] );
