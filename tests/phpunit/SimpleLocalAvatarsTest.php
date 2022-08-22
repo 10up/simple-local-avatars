@@ -4,7 +4,7 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 	private $instance;
 
 	public function setUp(): void {
-		parent::setUp();
+		\WP_Mock::setUp();
 
 		$this->instance = Mockery::mock( 'Simple_Local_Avatars' )->makePartial();
 
@@ -75,7 +75,7 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$this->addToAssertionCount(
 			Mockery::getContainer()->mockery_getExpectationCount()
 		);
-		parent::tearDown();
+		\WP_Mock::tearDown();
 	}
 
 	public function test_add_hooks() {
@@ -165,7 +165,7 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$this->assertNotEmpty( $action_links );
 
 		$this->assertArrayHasKey( 'settings', $action_links );
-		$this->assertContains( 'options-discussion.php', $action_links['settings'] );
+		$this->assertStringContainsString( 'options-discussion.php', $action_links['settings'] );
 	}
 
 	public function test_get_avatar_data() {
@@ -301,11 +301,11 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		WP_Mock::userFunction( 'checked' )
 		       ->andReturn( 'checked' );
 
-		$expected = '<label for="simple-local-avatars-shared"><input type="checkbox" name="simple_local_avatars[shared]" id="simple-local-avatars-shared" value="1" checked />This is a description.</label>';
-
-		$this->expectOutputString( $expected );
-
+		ob_start();
 		$this->instance->avatar_settings_field( $args );
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'This is a description.', $output );
 	}
 
 	public function test_edit_user_profile() {
@@ -329,11 +329,11 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$profileuser     = new stdClass();
 		$profileuser->ID = 1;
 
-		$expected = '<div id="simple-local-avatar-section"><h3>Avatar</h3><table class="form-table"><tr class="upload-avatar-row"><th scope="row"><label for="simple-local-avatar">Upload Avatar</label></th><td style="width: 50px;" id="simple-local-avatar-photo"><img src="test-image-user-avatar"/></td><td><p style="display: inline-block; width: 26em;"><span class="description">Choose an image from your computer:</span><br /><input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" /><span class="spinner" id="simple-local-avatar-spinner"></span></p><p><a href="" class="button item-delete submitdelete deletion" id="simple-local-avatar-remove"  style="display:none;">Delete local avatar</a></p></td></tr><tr class="ratings-row"><th scope="row">Rating</th><td colspan="2"><fieldset id="simple-local-avatar-ratings" ><legend class="screen-reader-text"><span>Rating</span></legend><label><input type=\'radio\' name=\'simple_local_avatar_rating\' value=\'G\' />G &#8212; Suitable for all audiences</label><br /><label><input type=\'radio\' name=\'simple_local_avatar_rating\' value=\'PG\' />PG &#8212; Possibly offensive, usually for audiences 13 and above</label><br /><label><input type=\'radio\' name=\'simple_local_avatar_rating\' value=\'R\' />R &#8212; Intended for adult audiences above 17</label><br /><label><input type=\'radio\' name=\'simple_local_avatar_rating\' value=\'X\' />X &#8212; Even more mature than above</label><br /><p class="description">If the local avatar is inappropriate for this site, Gravatar will be attempted.</p></fieldset></td></tr></table></div>';
-
-		$this->expectOutputString( $expected );
-
+		ob_start();
 		$this->instance->edit_user_profile( $profileuser );
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'Choose an image from your computer', $output );
 	}
 
 	public function test_assign_new_user_avatar() {
