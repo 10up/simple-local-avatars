@@ -21,7 +21,7 @@ Just edit a user profile, and scroll down to the new "Avatar" field. The plug-in
 1. Has a simple, native interface
 1. Fully supports Gravatar and default avatars if no local avatar is set for the user - but also allows you turn off Gravatar
 1. Generates the requested avatar size on demand (and stores the new size for efficiency), so it looks great, just like Gravatar!
-1. Let's you decide whether lower privilege users (subscribers, contributors) can upload their own avatar
+1. Lets you decide whether lower privilege users (subscribers, contributors) can upload their own avatar
 1. Enables rating of local avatars, just like Gravatar
 
 == Installation ==
