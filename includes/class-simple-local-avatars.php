@@ -953,7 +953,7 @@ class Simple_Local_Avatars {
 		$meta_value['blog_id'] = get_current_blog_id();
 
 		update_user_meta( $user_id, $this->user_key, $meta_value ); // save user information (overwriting old).
-		do_action("simple_local_avatar_updated", $user_id);
+		do_action( 'simple_local_avatar_updated' , $user_id );
 	}
 
 	/**
