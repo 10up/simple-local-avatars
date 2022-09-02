@@ -1055,7 +1055,7 @@ class Simple_Local_Avatars {
 			}
 
 			$this->avatar_delete( $user_id );    // delete old images if successful
-			do_action("simple_local_avatar_deleted", $user_id);
+			do_action( 'simple_local_avatar_deleted', $user_id );
 
 			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 				echo wp_kses_post( get_simple_local_avatar( $user_id ) );
