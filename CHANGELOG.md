@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file, per [the Ke
 
 ## [Unreleased] - TBD
 
+## [2.6.0] - 2022-09-13
+### Added
+-  If a default avatar image is used, ensure that outputs alt text. This will either be default text (Avatar photo) or the alt text from the uploaded default image (props [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi) via [#147](https://github.com/10up/simple-local-avatars/pull/147))
+- Two hooks, simple_local_avatar_updated and simple_local_avatar_deleted (props [@t-lock](https://github.com/t-lock), [@faisal-alvi](https://github.com/faisal-alvi), [@dkotter](https://github.com/dkotter) via [#149](https://github.com/10up/simple-local-avatars/pull/149))
+
+### Changed
+- Bump min WordPress to 5.7 and min PHP to 7.4 (props [@vikrampm1](https://github.com/vikrampm1), [@faisal-alvi](https://github.com/faisal-alvi), [@cadic](https://github.com/cadic) via [#143](https://github.com/10up/simple-local-avatars/pull/143))
+- The plugin is now available via Composer without any additional steps required (props [@faisal-alvi](https://github.com/faisal-alvi), [@kovshenin](https://github.com/kovshenin), [@jeffpaul](https://github.com/jeffpaul) via [#145](https://github.com/10up/simple-local-avatars/pull/145))
+
+### Security
+- Bump terser from 5.14.1 to 5.14.2 (props [@dependabot](https://github.com/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#142](https://github.com/10up/simple-local-avatars/pull/142))
+
 ## [2.5.0] - 2022-06-24
 ### Added
 - Skip cropping button (props [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi), [@cadic](https://github.com/cadic), [@jeffpaul](https://github.com/jeffpaul), [@dinhtungdu](https://github.com/dinhtungdu) via [#130](https://github.com/10up/simple-local-avatars/pull/130))!
