@@ -5,7 +5,7 @@ Tags:              avatar, gravatar, user photos, users, profile
 Requires at least: 5.7
 Tested up to:      6.0
 Requires PHP:      7.4
-Stable tag:        2.5.0
+Stable tag:        2.6.0
 License:           GPLv2 or later
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,7 +41,7 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 
 == Changelog ==
 
-= 2.4.0 - 2022-06-24 =
+= 2.5.0 - 2022-06-24 =
 * **Added:** Skip cropping button (props [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi), [@cadic](https://github.com/cadic), [@jeffpaul](https://github.com/jeffpaul), [@dinhtungdu](https://github.com/dinhtungdu) via [#130](https://github.com/10up/simple-local-avatars/pull/130))!
 * **Added:** Updated the button name from "Skip Crop" to "Default Crop" only on the edit profile page (props [@faisal-alvi](https://github.com/faisal-alvi), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#136](https://github.com/10up/simple-local-avatars/pull/136)).
 * **Added:** If an image used for a local avatar has alt text assigned, ensure that alt text is used when rendering the image (props [@dkotter](https://github.com/dkotter), [@pixelloop](https://github.com/pixelloop), [@faisal-alvi](https://github.com/faisal-alvi) via [#127](https://github.com/10up/simple-local-avatars/pull/127)).
