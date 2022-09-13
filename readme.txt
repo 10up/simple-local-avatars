@@ -2,10 +2,10 @@
 Contributors:      jakemgold, 10up, thinkoomph, jeffpaul, faisal03
 Donate link:       https://10up.com/plugins/simple-local-avatars-wordpress/
 Tags:              avatar, gravatar, user photos, users, profile
-Requires at least: 4.6
+Requires at least: 5.7
 Tested up to:      6.0
-Requires PHP:      5.6
-Stable tag:        2.5.0
+Requires PHP:      7.4
+Stable tag:        2.6.0
 License:           GPLv2 or later
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,7 +21,7 @@ Just edit a user profile, and scroll down to the new "Avatar" field. The plug-in
 1. Has a simple, native interface
 1. Fully supports Gravatar and default avatars if no local avatar is set for the user - but also allows you turn off Gravatar
 1. Generates the requested avatar size on demand (and stores the new size for efficiency), so it looks great, just like Gravatar!
-1. Let's you decide whether lower privilege users (subscribers, contributors) can upload their own avatar
+1. Lets you decide whether lower privilege users (subscribers, contributors) can upload their own avatar
 1. Enables rating of local avatars, just like Gravatar
 
 == Installation ==
@@ -40,6 +40,16 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 1. Avatar upload field on a user profile page
 
 == Changelog ==
+
+= 2.6.0 - 2022-09-13 =
+**Note that this release bumps the minimum required version of WordPress from 4.6 to 5.7 and PHP from 5.6 to 7.4.**
+
+* **Added:** If a default avatar image is used, ensure that outputs alt text. This will either be default text (Avatar photo) or the alt text from the uploaded default image (props [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi) via [#147](https://github.com/10up/simple-local-avatars/pull/147))
+* **Added:** Two hooks, `simple_local_avatar_updated` and `simple_local_avatar_deleted`,  (props [@t-lock](https://github.com/t-lock), [@faisal-alvi](https://github.com/faisal-alvi), [@dkotter](https://github.com/dkotter) via [#149](https://github.com/10up/simple-local-avatars/pull/149))
+* **Changed:** Bump minimum required version of WordPress from 4.6 to 5.7 (props [@vikrampm1](https://github.com/vikrampm1), [@faisal-alvi](https://github.com/faisal-alvi), [@cadic](https://github.com/cadic) via [#143](https://github.com/10up/simple-local-avatars/pull/143)).
+* **Changed:** Bump minimum required version of PHP from 5.6 to 7.4 (props [@vikrampm1](https://github.com/vikrampm1), [@faisal-alvi](https://github.com/faisal-alvi), [@cadic](https://github.com/cadic) via [#143](https://github.com/10up/simple-local-avatars/pull/143)).
+* **Changed:**The plugin is now available via Composer without any additional steps required (props [@faisal-alvi](https://github.com/faisal-alvi), [@kovshenin](https://github.com/kovshenin), [@jeffpaul](https://github.com/jeffpaul) via [#145](https://github.com/10up/simple-local-avatars/pull/145))
+* **Security:** Bump `terser` from 5.14.1 to 5.14.2 (props [@dependabot](https://github.com/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#142](https://github.com/10up/simple-local-avatars/pull/142))
 
 = 2.5.0 - 2022-06-24 =
 * **Added:** Skip cropping button (props [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi), [@cadic](https://github.com/cadic), [@jeffpaul](https://github.com/jeffpaul), [@dinhtungdu](https://github.com/dinhtungdu) via [#130](https://github.com/10up/simple-local-avatars/pull/130))!
@@ -162,6 +172,9 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 * Initial release.
 
 == Upgrade Notice ==
+
+= 2.6.0 =
+**Note that this release bumps the minimum required version of WordPress from 4.6 to 5.7 and PHP from 5.6 to 7.4.**
 
 = 2.1 =
 *Important note:* All avatar uploads now go into the media library. Don't worry - users without the ability to upload files cannot otherwise see the contents of your media library. This allows local avatars to respect other functionality your site may have around uploaded images, such as external hosting.

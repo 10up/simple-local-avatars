@@ -426,17 +426,36 @@ class Simple_Local_Avatars {
 	public function get_simple_local_avatar_alt( $id_or_email ) {
 		$user_id = $this->get_user_id( $id_or_email );
 
+		/**
+		 * Filter the default avatar alt text.
+		 *
+		 * @param string $alt Default alt text.
+		 * @return string
+		 */
+		$default_alt = apply_filters( 'simple_local_avatars_default_alt', __( 'Avatar photo', 'simple-local-avatars' ) );
+
 		if ( empty( $user_id ) ) {
-			return '';
+			return $default_alt;
 		}
 
 		// Fetch local avatar from meta and make sure we have a media ID.
 		$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
 		if ( empty( $local_avatars['media_id'] ) ) {
-			return '';
+			$alt = '';
+			// If no avatar is set, check if we are using a default avatar with alt text.
+			if ( 'simple_local_avatar' === get_option( 'avatar_default' ) ) {
+				$default_avatar_id = get_option( 'simple_local_avatar_default', '' );
+				if ( ! empty( $default_avatar_id ) ) {
+					$alt = get_post_meta( $default_avatar_id, '_wp_attachment_image_alt', true );
+				}
+			}
+
+			return $alt ? $alt : $default_alt;
 		}
 
-		return esc_attr( get_post_meta( $local_avatars['media_id'], '_wp_attachment_image_alt', true ) );
+		$alt = get_post_meta( $local_avatars['media_id'], '_wp_attachment_image_alt', true );
+
+		return $alt ? $alt : $default_alt;
 	}
 
 	/**
@@ -934,6 +953,15 @@ class Simple_Local_Avatars {
 		$meta_value['blog_id'] = get_current_blog_id();
 
 		update_user_meta( $user_id, $this->user_key, $meta_value ); // save user information (overwriting old).
+
+		/**
+		 * Enable themes and other plugins to react to changes to a user's avatar.
+		 *
+		 * @since 2.6.0
+		 *
+		 * @param int $user_id Id of the user who's avatar was updated
+		 */
+		do_action( 'simple_local_avatar_updated' , $user_id );
 	}
 
 	/**
@@ -1035,6 +1063,15 @@ class Simple_Local_Avatars {
 			}
 
 			$this->avatar_delete( $user_id );    // delete old images if successful
+
+			/**
+			 * Enable themes and other plugins to react to avatar deletions.
+			 *
+			 * @since 2.6.0
+			 *
+			 * @param int $user_id Id of the user who's avatar was deleted.
+			 */
+			do_action( 'simple_local_avatar_deleted', $user_id );
 
 			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 				echo wp_kses_post( get_simple_local_avatar( $user_id ) );

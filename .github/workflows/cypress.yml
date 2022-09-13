@@ -12,11 +12,11 @@ jobs:
       matrix:
         core:
           - {name: 'WP latest', version: 'latest'}
-          - {name: 'WP minimum', version: 'WordPress/WordPress#4.9'}
+          - {name: 'WP minimum', version: 'WordPress/WordPress#5.7'}
           - {name: 'WP trunk', version: 'WordPress/WordPress#master'}
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Install dependencies
       run: npm install
     - name: Composer (optional)
