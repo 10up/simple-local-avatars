@@ -142,6 +142,13 @@ class Simple_Local_Avatars {
 				return $strings;
 			}, 10, 1 );
 		}
+
+		// Fix: An error occurred cropping the image (https://github.com/10up/simple-local-avatars/issues/141)
+		if ( isset( $_POST['action'] ) && 'crop-image' === $_POST['action'] && is_admin() && wp_doing_ajax() ) {
+			add_action( 'plugins_loaded', function() {
+				remove_all_actions( 'setup_theme' );
+			});
+		}
 	}
 
 	/**
