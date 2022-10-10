@@ -139,7 +139,6 @@ class Simple_Local_Avatars {
 		} else {
 			add_action( 'wp_initialize_site', array( $this, 'set_defaults' ) );
 		}
-		
 
 		if ( 'profile.php' === $pagenow ) {
 			add_filter( 'media_view_strings', function ( $strings ) {
