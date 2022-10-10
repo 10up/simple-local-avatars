@@ -1239,7 +1239,7 @@ class Simple_Local_Avatars {
 	/**
 	 * Set plugin defaults for a new site
 	 *
-	 * @param int|WP_Site $blog_id Blog ID.
+	 * @param int|WP_Site $blog_id Blog ID or object.
 	 */
 	public function set_defaults( $blog_id ) {
 		if ( 'enforce' === $this->get_network_mode() ) {
