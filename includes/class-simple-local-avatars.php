@@ -134,7 +134,7 @@ class Simple_Local_Avatars {
 		add_action( 'wp_ajax_sla_clear_user_cache', array( $this, 'sla_clear_user_cache' ) );
 
 		add_filter( 'avatar_defaults', array( $this, 'add_avatar_default_field' ) );
-		if ( version_compare( $wp_version, '5.1', '<' ) {
+		if ( version_compare( $wp_version, '5.1', '<' ) ) {
 			add_action( 'wpmu_new_blog', array( $this, 'set_defaults' ) );
 		} else {
 			add_action( 'wp_initialize_site', array( $this, 'set_defaults' ) );
