@@ -100,6 +100,7 @@ class Simple_Local_Avatars {
 	 */
 	public function add_hooks() {
 		global $pagenow;
+		global $wp_version;
 
 		add_filter( 'plugin_action_links_' . SLA_PLUGIN_BASENAME, array( $this, 'plugin_filter_action_links' ) );
 
@@ -133,7 +134,11 @@ class Simple_Local_Avatars {
 		add_action( 'wp_ajax_sla_clear_user_cache', array( $this, 'sla_clear_user_cache' ) );
 
 		add_filter( 'avatar_defaults', array( $this, 'add_avatar_default_field' ) );
-		add_action( 'wpmu_new_blog', array( $this, 'set_defaults' ) );
+		if ( version_compare( $wp_version, '5.1', '<' ) ) {
+			add_action( 'wpmu_new_blog', array( $this, 'set_defaults' ) );
+		} else {
+			add_action( 'wp_initialize_site', array( $this, 'set_defaults' ) );
+		}
 
 		if ( 'profile.php' === $pagenow ) {
 			add_filter( 'media_view_strings', function ( $strings ) {
@@ -1233,11 +1238,15 @@ class Simple_Local_Avatars {
 	/**
 	 * Set plugin defaults for a new site
 	 *
-	 * @param int $blog_id Blog ID.
+	 * @param int|WP_Site $blog_id Blog ID or object.
 	 */
 	public function set_defaults( $blog_id ) {
 		if ( 'enforce' === $this->get_network_mode() ) {
 			return;
+		}
+
+		if ( $blog_id instanceof WP_Site ) {
+			$blog_id = (int) $blog_id->blog_id;
 		}
 
 		switch_to_blog( $blog_id );
