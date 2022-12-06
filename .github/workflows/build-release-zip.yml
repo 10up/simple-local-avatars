@@ -14,17 +14,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Cache vendor
-        id: cache-composer
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-vendor
-        with:
-          path: |
-            vendor
-            ~/.composer/cache
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/composer.json') }}
-
       - name: Cache node_modules
         id: cache-node-modules
         uses: actions/cache@v3
@@ -43,10 +32,6 @@ jobs:
       - name: Install Node dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm install
-
-      - name: Install Composer dependencies
-        if: steps.cache-vendor.outputs.cache-hit != 'true'
-        run: composer install --no-dev
 
       - name: Build plugin
         run: npm run build
