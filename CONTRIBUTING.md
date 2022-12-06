@@ -38,6 +38,7 @@ The `develop` branch is the development branch which means it contains the next 
 - [ ] Merge: Make a non-fast-forward merge from your release branch to `develop` (or merge the pull request), then do the same for `develop` into `trunk` (`git checkout trunk && git merge --no-ff develop`). `trunk` contains the latest stable release.
 - [ ] Test: Run through common tasks while on `trunk` to be sure it functions correctly.
 - [ ] Push: Push your `trunk` branch to GitHub (e.g. `git push origin trunk`).
+- [ ] Test the pre-release ZIP locally by downloading it from the **Build release zip** action artifact to ensure the plugin doesn't break after release.
 - [ ] Release: Create a [new release](https://github.com/10up/simple-local-avatars/releases/new), naming the tag and the release with the new version number, and targeting the `trunk` branch.  Paste the changelog from `CHANGELOG.md` into the body of the release and include a link to the [closed issues on the milestone](https://github.com/10up/simple-local-avatars/milestone/#?closed=1).
 - [ ] SVN: Wait for the [GitHub Action](https://github.com/10up/simple-local-avatars/actions) to finish deploying to the WordPress.org repository.  If all goes well, users with SVN commit access for that plugin will receive an emailed diff of changes.
 - [ ] Check WordPress.org: Ensure that the changes are live on https://wordpress.org/plugins/simple-local-avatars/. This may take a few minutes.
