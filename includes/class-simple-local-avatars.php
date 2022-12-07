@@ -988,13 +988,23 @@ class Simple_Local_Avatars {
 		}
 
 		// check for uploaded files
-		if ( ! empty( $_FILES['simple-local-avatar']['name'] ) ) :
+		if ( ! empty( $_FILES['simple-local-avatar']['name'] ) && $_FILES['simple-local-avatar']['error'] === 0 ) :
 
 			// need to be more secure since low privelege users can upload
-			if ( false !== strpos( $_FILES['simple-local-avatar']['name'], '.php' ) ) {
-				$this->avatar_upload_error = __( 'For security reasons, the extension ".php" cannot be in your file name.', 'simple-local-avatars' );
-				add_action( 'user_profile_update_errors', array( $this, 'user_profile_update_errors' ) );
+			$allowed_mime_types = wp_get_mime_types();
+			$file_mime_type = strtolower( $_FILES['simple-local-avatar']['type'] );
 
+			if ( ! ( strpos( $file_mime_type, 'image/' ) === 0 ) || ! in_array( $file_mime_type, $allowed_mime_types ) ) {
+				$this->avatar_upload_error = __( 'Only image can be uploaded as avatar', 'simple-local-avatars' );
+				add_action( 'user_profile_update_errors', array( $this, 'user_profile_update_errors' ) );
+				return;
+			}
+
+			// Restrict file size
+			$max_upload_size = apply_filters( 'simple_local_avatar_max_size', wp_max_upload_size() );
+			if ( $_FILES['simple-local-avatar']['size'] > $max_upload_size ) {
+				$this->avatar_upload_error = sprintf( __( 'Max allowed avatar size is %s', 'simple-local-avatars' ), size_format( $max_upload_size ) );
+				add_action( 'user_profile_update_errors', array( $this, 'user_profile_update_errors' ) );
 				return;
 			}
 
