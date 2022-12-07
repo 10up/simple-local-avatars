@@ -16,8 +16,8 @@
     "start": "wp-scripts start",
     "test:e2e": "wp-scripts test-e2e",
     "test:unit": "wp-scripts test-unit-js",
-    "cypress:open": "cypress open --config-file tests/cypress/config.json",
-    "cypress:run": "cypress run --config-file tests/cypress/config.json",
+    "cypress:open": "cypress open --config-file tests/cypress/config.config.js",
+    "cypress:run": "cypress run --config-file tests/cypress/config.config.js",
     "env": "wp-env",
     "env:start": "wp-env start",
     "env:stop": "wp-env stop",
@@ -36,7 +36,7 @@
     "@10up/cypress-wp-utils": "github:10up/cypress-wp-utils#build",
     "@wordpress/env": "^5.2.0",
     "@wordpress/scripts": "^23.0.0",
-    "cypress": "^9.5.4",
+    "cypress": "^11.2.0",
     "cypress-file-upload": "^5.0.8"
   }
 }

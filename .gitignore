@@ -33,3 +33,8 @@ Session.vim
 # Windows
 Thumbs.db
 Desktop.ini
+
+# Cypress
+tests/cypress/screenshots
+tests/cypress/videos
+tests/cypress/downloads
