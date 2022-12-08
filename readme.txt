@@ -5,7 +5,7 @@ Tags:              avatar, gravatar, user photos, users, profile
 Requires at least: 5.7
 Tested up to:      6.1
 Requires PHP:      7.4
-Stable tag:        2.7.0
+Stable tag:        2.7.1
 License:           GPLv2 or later
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,7 +41,10 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 
 == Changelog ==
 
-= 2.7.0] = 2022-12-08
+= 2.7.1 - 2022-12-08 =
+* **Added:** Added missing files from the last release and changed the readme file to fix the bullet points and added fullstops.
+
+= 2.7.0 - 2022-12-08 =
 * **Added:** Added `Build release zip` GitHub Action (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@faisal-alvi](https://github.com/faisal-alvi) via [#168](https://github.com/10up/simple-local-avatars/pull/168)).
 * **Changed:** Set plugin defaults on `wp_initialize_site` instead of deprecated action `wpmu_new_blog` (props [@kadamwhite](https://github.com/kadamwhite), [@faisal-alvi](https://github.com/faisal-alvi) via [#156](https://github.com/10up/simple-local-avatars/pull/156)).
 * **Changed:** Support Level from Active to Stable (props [@jeffpaul](https://github.com/jeffpaul), [@dkotter](https://github.com/dkotter) via [#159](https://github.com/10up/simple-local-avatars/pull/159)).
