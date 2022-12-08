@@ -17,12 +17,12 @@ Adds an avatar upload field to user profiles if the current user has media permi
 
 Just edit a user profile, and scroll down to the new "Avatar" field. The plug-in will take care of cropping and sizing!
 
-1. Stores avatars in the "uploads" folder where all of your other media is kept
-1. Has a simple, native interface
-1. Fully supports Gravatar and default avatars if no local avatar is set for the user - but also allows you turn off Gravatar
-1. Generates the requested avatar size on demand (and stores the new size for efficiency), so it looks great, just like Gravatar!
-1. Lets you decide whether lower privilege users (subscribers, contributors) can upload their own avatar
-1. Enables rating of local avatars, just like Gravatar
+1. Stores avatars in the "uploads" folder where all of your other media is kept.
+2. Has a simple, native interface.
+3. Fully supports Gravatar and default avatars if no local avatar is set for the user - but also allows you turn off Gravatar.
+4. Generates the requested avatar size on demand (and stores the new size for efficiency), so it looks great, just like Gravatar!
+5. Lets you decide whether lower privilege users (subscribers, contributors) can upload their own avatar.
+6. Enables rating of local avatars, just like Gravatar.
 
 == Installation ==
 
