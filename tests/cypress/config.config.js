@@ -12,8 +12,7 @@ module.exports = defineConfig({
     setupNodeEvents(on, config) {
       return require(__dirname+'/plugins/index.js')(on, config)
     },
-    specPattern:
-      __dirname+'/integration/*.test.js',
+    specPattern: __dirname+'/integration/*.test.js',
     supportFile: __dirname+'/support/index.js',
   },
 })
