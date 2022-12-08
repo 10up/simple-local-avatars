@@ -5,7 +5,7 @@ Tags:              avatar, gravatar, user photos, users, profile
 Requires at least: 5.7
 Tested up to:      6.1
 Requires PHP:      7.4
-Stable tag:        2.7.0
+Stable tag:        2.7.1
 License:           GPLv2 or later
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,12 +17,12 @@ Adds an avatar upload field to user profiles if the current user has media permi
 
 Just edit a user profile, and scroll down to the new "Avatar" field. The plug-in will take care of cropping and sizing!
 
-1. Stores avatars in the "uploads" folder where all of your other media is kept
-1. Has a simple, native interface
-1. Fully supports Gravatar and default avatars if no local avatar is set for the user - but also allows you turn off Gravatar
-1. Generates the requested avatar size on demand (and stores the new size for efficiency), so it looks great, just like Gravatar!
-1. Lets you decide whether lower privilege users (subscribers, contributors) can upload their own avatar
-1. Enables rating of local avatars, just like Gravatar
+1. Stores avatars in the "uploads" folder where all of your other media is kept.
+2. Has a simple, native interface.
+3. Fully supports Gravatar and default avatars if no local avatar is set for the user - but also allows you turn off Gravatar.
+4. Generates the requested avatar size on demand (and stores the new size for efficiency), so it looks great, just like Gravatar!
+5. Lets you decide whether lower privilege users (subscribers, contributors) can upload their own avatar.
+6. Enables rating of local avatars, just like Gravatar.
 
 == Installation ==
 
@@ -41,7 +41,10 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 
 == Changelog ==
 
-= 2.7.0] = 2022-12-08
+= 2.7.1 - 2022-12-08 =
+* **Added:** Added missing files from the last release and changed the readme file to fix the bullet points and added fullstops.
+
+= 2.7.0 - 2022-12-08 =
 * **Added:** Added `Build release zip` GitHub Action (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@faisal-alvi](https://github.com/faisal-alvi) via [#168](https://github.com/10up/simple-local-avatars/pull/168)).
 * **Changed:** Set plugin defaults on `wp_initialize_site` instead of deprecated action `wpmu_new_blog` (props [@kadamwhite](https://github.com/kadamwhite), [@faisal-alvi](https://github.com/faisal-alvi) via [#156](https://github.com/10up/simple-local-avatars/pull/156)).
 * **Changed:** Support Level from Active to Stable (props [@jeffpaul](https://github.com/jeffpaul), [@dkotter](https://github.com/dkotter) via [#159](https://github.com/10up/simple-local-avatars/pull/159)).

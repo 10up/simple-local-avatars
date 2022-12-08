@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file, per [the Ke
 
 ## [Unreleased] - TBD
 
+## [2.7.1] - 2022-12-08
+### Added
+- Added missing files from the last release and changed the readme file to fix the bullet points and added fullstops.
+
 ## [2.7.0] - 2022-12-08
 ### Added
 - Added `Build release zip` GitHub Action (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@faisal-alvi](https://github.com/faisal-alvi) via [#168](https://github.com/10up/simple-local-avatars/pull/168)).
@@ -207,6 +211,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 - Initial release
 
 [Unreleased]: https://github.com/10up/simple-local-avatars/compare/trunk...develop
+[2.7.1]: https://github.com/10up/simple-local-avatars/compare/2.7.0...2.7.1
 [2.7.0]: https://github.com/10up/simple-local-avatars/compare/2.6.0...2.7.0
 [2.6.0]: https://github.com/10up/simple-local-avatars/compare/2.5.0...2.6.0
 [2.5.0]: https://github.com/10up/simple-local-avatars/compare/2.4.0...2.5.0
