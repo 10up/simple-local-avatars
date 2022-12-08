@@ -68,13 +68,7 @@ class Simple_Local_Avatars {
 		$this->options        = (array) get_option( 'simple_local_avatars' );
 		$this->user_key       = 'simple_local_avatar';
 		$this->rating_key     = 'simple_local_avatar_rating';
-		$this->avatar_ratings = array(
-			'G'  => __( 'G &#8212; Suitable for all audiences' ),
-			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above' ),
-			'R'  => __( 'R &#8212; Intended for adult audiences above 17' ),
-			'X'  => __( 'X &#8212; Even more mature than above' ),
-		);
-
+		
 		if (
 			! $this->is_avatar_shared() // Are we sharing avatars?
 			&& (
@@ -512,6 +506,13 @@ class Simple_Local_Avatars {
 	 * Register admin settings.
 	 */
 	public function admin_init() {
+		$this->avatar_ratings = array(
+			'G'  => __( 'G &#8212; Suitable for all audiences', ),
+			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above', ),
+			'R'  => __( 'R &#8212; Intended for adult audiences above 17', ),
+			'X'  => __( 'X &#8212; Even more mature than above', ),
+		);
+
 		// upgrade pre 2.0 option
 		$old_ops = get_option( 'simple_local_avatars_caps' );
 		if ( $old_ops ) {
