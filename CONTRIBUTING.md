@@ -35,8 +35,8 @@ The `develop` branch is the development branch which means it contains the next 
 - [ ] New files: Check to be sure any new files/paths that are unnecessary in the production version are included in [.distignore](https://github.com/10up/simple-local-avatars/blob/develop/.distignore).
 - [ ] Readme updates: Make any other readme changes as necessary. `README.md` is geared toward GitHub and `readme.txt` contains WordPress.org-specific content. The two are slightly different.
 - [ ] Make sure the release date is added in the `CHANGELOG.md`.
-- [ ] Merge: Make a non-fast-forward merge from your release branch to `develop` (or merge the pull request), then do the same for `develop` into `trunk` (`git checkout trunk && git merge --no-ff develop`). `trunk` contains the latest stable release.
 - [ ] Take the latest ` develop` pull in your local, this is for the merged release PR changes.
+- [ ] Merge: Make a non-fast-forward merge from your release branch to `develop` (or merge the pull request), then do the same for `develop` into `trunk` (`git checkout trunk && git merge --no-ff develop`). `trunk` contains the latest stable release.
 - [ ] Test: Run through common tasks while on `trunk` to be sure it functions correctly.
 - [ ] Push: Push your `trunk` branch to GitHub (e.g. `git push origin trunk`).
 - [ ] Test the pre-release ZIP locally by [downloading](https://github.com/10up/simple-local-avatars/actions/workflows/build-release-zip.yml) it from the **Build release zip** action artifact to ensure the plugin doesn't break after release.
