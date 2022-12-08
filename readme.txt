@@ -51,6 +51,7 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 * **Security:** Bump `@wordpress/env` from 4.9.0 to 5.2.0 and `got` from 10.7.0 to 11.8.5 (props [@dependabot](https://github.com/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#153](https://github.com/10up/simple-local-avatars/pull/153)).
 * **Security:** Bump `loader-utils` from 2.0.2 to 2.0.3 (props [@dependabot](https://github.com/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#160](https://github.com/10up/simple-local-avatars/pull/160)).
 * **Security:** Bump `loader-utils` from 2.0.3 to 2.0.4 (props [@dependabot](https://github.com/dependabot), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#162](https://github.com/10up/simple-local-avatars/pull/162)).
+* **Security:** Bump `simple-git` from 3.9.0 to 3.15.1 (props [@dependabot](https://github.com/dependabot) via [#176](https://github.com/10up/simple-local-avatars/pull/176)).
 
 = 2.6.0 - 2022-09-13 =
 **Note that this release bumps the minimum required version of WordPress from 4.6 to 5.7 and PHP from 5.6 to 7.4.**
