@@ -7,6 +7,14 @@
   "downloadsFolder": "tests/cypress/downloads",
   "supportFile": "tests/cypress/support/index.js",
   "video": false,
+  "reporter": "mochawesome",
+  "reporterOptions": {
+    "reportFilename": "mochawesome-[name]",
+    "reportDir": "tests/cypress/reports",
+    "overwrite": false,
+    "html": false,
+    "json": true
+  },
   "testFiles": [
     "set-avatar.test.js",
     "choose-default-avatar.test.js",
