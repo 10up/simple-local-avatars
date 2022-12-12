@@ -32,6 +32,7 @@ jobs:
     - name: Test
       run: npm run cypress:run
     - name: Update summary
+      if: ${{ always() }}
       run: |
         npx mochawesome-merge ./tests/cypress/reports/*.json -o tests/cypress/reports/mochawesome.json
         rm -rf ./tests/cypress/reports/mochawesome-*.json
