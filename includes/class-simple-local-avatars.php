@@ -1000,13 +1000,7 @@ class Simple_Local_Avatars {
 				return;
 			}
 
-			/**
-			 * Change default WP file upload limit for avatar
-			 *
-			 * @param int Max upload size in Byte
-			 */
-			$max_upload_size = apply_filters( 'simple_local_avatars_upload_limit', wp_max_upload_size() );
-
+			$max_upload_size = $this->upload_size_limit( wp_max_upload_size() );
 			if ( $_FILES['simple-local-avatar']['size'] > $max_upload_size ) {
 				$this->avatar_upload_error = sprintf( __( 'Max allowed avatar size is %s', 'simple-local-avatars' ), size_format( $max_upload_size ) );
 				add_action( 'user_profile_update_errors', array( $this, 'user_profile_update_errors' ) );
@@ -1061,6 +1055,16 @@ class Simple_Local_Avatars {
 
 			update_user_meta( $user_id, $this->rating_key, $_POST['simple_local_avatar_rating'] );
 		}
+	}
+
+	/**
+	 * Allow developers to override the maximum allowable file size for avatar uploads
+	 *
+	 * @param  int $bytes WordPress default byte size check
+	 * @return int Maximum byte size
+	 */
+	public function upload_size_limit( $bytes ) {
+		return apply_filters( 'simple_local_avatars_upload_limit', $bytes );
 	}
 
 	/**
