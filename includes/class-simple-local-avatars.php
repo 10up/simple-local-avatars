@@ -885,19 +885,29 @@ class Simple_Local_Avatars {
 							// force them to use the WP Media Selector
 							// At FE, show the file input field regardless of the caps.
 							if ( ! is_admin() || ! current_user_can( 'upload_files' ) ) {
+								$old_avatars = (array) get_user_meta( $profileuser->ID, $this->user_key, true );
+								$has_local_avatar = ! empty( $old_avatars ) && ! empty( $old_avatars['media_id'] );
 								?>
-								<p style="display: inline-block; width: 26em;">
-									<span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br />
-									<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
-									<span class="spinner" id="simple-local-avatar-spinner"></span>
-								</p>
+								<div id="simple-local-avatar-upload-interface" style="display: inline-block; width: 26em;">
+									<div style="display:<?php echo $has_local_avatar ? 'block' : 'none'; ?>">
+										Delete or remove existing avatar to set a new one. 
+									</div>
+									<div style="display:<?php echo ! $has_local_avatar ? 'block' : 'none'; ?>">
+										<span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br />
+										<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
+										<span class="spinner" id="simple-local-avatar-spinner"></span>
+									</div>
+								</div>
 							<?php } ?>
 							<p>
 								<?php if ( current_user_can( 'upload_files' ) && did_action( 'wp_enqueue_media' ) ) : ?>
 									<a href="#" class="button hide-if-no-js" id="simple-local-avatar-media"><?php esc_html_e( 'Choose from Media Library', 'simple-local-avatars' ); ?></a> &nbsp;
 								<?php endif; ?>
 								<a href="<?php echo esc_url( $remove_url ); ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-remove" <?php echo empty( $profileuser->simple_local_avatar ) ? ' style="display:none;"' : ''; ?>>
-									<?php esc_html_e( 'Delete local avatar', 'simple-local-avatars' ); ?>
+									<?php esc_html_e( 'Delete', 'simple-local-avatars' ); ?>
+								</a>
+								<a href="<?php echo esc_url( $remove_url ); ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-disassociate" <?php echo empty( $profileuser->simple_local_avatar ) ? ' style="display:none;"' : ''; ?>>
+									<?php esc_html_e( 'Remove', 'simple-local-avatars' ); ?>
 								</a>
 							</p>
 							<?php
@@ -1074,7 +1084,8 @@ class Simple_Local_Avatars {
 				wp_die( esc_html__( 'You do not have permission to edit this user.', 'simple-local-avatars' ) );
 			}
 
-			$this->avatar_delete( $user_id );    // delete old images if successful
+			$delete_file = ! empty( $_GET['permanent_delete'] ) && $_GET['permanent_delete'] === 'true';
+			$this->avatar_delete( $user_id, $delete_file );    // delete old images if successful
 
 			/**
 			 * Enable themes and other plugins to react to avatar deletions.
@@ -1122,26 +1133,28 @@ class Simple_Local_Avatars {
 	 *
 	 * @param int $user_id User ID.
 	 */
-	public function avatar_delete( $user_id ) {
-		$old_avatars = (array) get_user_meta( $user_id, $this->user_key, true );
+	public function avatar_delete( $user_id, $delete_file = true ) {
+		if ( $delete_file === true ) {
+			$old_avatars = (array) get_user_meta( $user_id, $this->user_key, true );
 
-		if ( empty( $old_avatars ) ) {
-			return;
-		}
+			if ( empty( $old_avatars ) ) {
+				return;
+			}
 
-		// if it was uploaded media, don't erase the full size or try to erase an the ID
-		if ( array_key_exists( 'media_id', $old_avatars ) ) {
-			unset( $old_avatars['media_id'], $old_avatars['full'] );
-		}
+			// if it was uploaded media, don't erase the full size or try to erase an the ID
+			if ( array_key_exists( 'media_id', $old_avatars ) ) {
+				unset( $old_avatars['media_id'], $old_avatars['full'] );
+			}
 
-		if ( ! empty( $old_avatars ) ) {
-			$upload_path = wp_upload_dir();
+			if ( ! empty( $old_avatars ) ) {
+				$upload_path = wp_upload_dir();
 
-			foreach ( $old_avatars as $old_avatar ) {
-				// derive the path for the file based on the upload directory
-				$old_avatar_path = str_replace( $upload_path['baseurl'], $upload_path['basedir'], $old_avatar );
-				if ( file_exists( $old_avatar_path ) ) {
-					unlink( $old_avatar_path );
+				foreach ( $old_avatars as $old_avatar ) {
+					// derive the path for the file based on the upload directory
+					$old_avatar_path = str_replace( $upload_path['baseurl'], $upload_path['basedir'], $old_avatar );
+					if ( file_exists( $old_avatar_path ) ) {
+						unlink( $old_avatar_path );
+					}
 				}
 			}
 		}

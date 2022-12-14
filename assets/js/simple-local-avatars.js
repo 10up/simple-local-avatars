@@ -123,21 +123,25 @@ jQuery(document).ready(function ($) {
 	/**
 	 * If the Local Avatar is removed and set to the  default one
 	 */
-	$('#simple-local-avatar-remove').on('click', function (event) {
+	$('#simple-local-avatar-remove, #simple-local-avatar-disassociate').on('click', function (event) {
 		event.preventDefault();
 
 		if (avatar_working) return;
 
+		var button_wrapper = $(this).parent();
+
 		avatar_lock('lock');
 		$.get(i10n_SimpleLocalAvatars.ajaxurl, {
 			action: 'remove_simple_local_avatar',
+			permanent_delete: $(this).attr('id') === 'simple-local-avatar-remove',
 			user_id: i10n_SimpleLocalAvatars.user_id,
 			_wpnonce: i10n_SimpleLocalAvatars.deleteNonce,
 		})
 			.done(function (data) {
 				if (data !== '') {
 					avatar_container.innerHTML = data;
-					$('#simple-local-avatar-remove').hide();
+					$('#simple-local-avatar-upload-interface>div').toggle();
+					button_wrapper.hide();
 					avatar_ratings.disabled = true;
 				}
 			})
