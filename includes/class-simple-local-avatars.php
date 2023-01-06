@@ -68,13 +68,7 @@ class Simple_Local_Avatars {
 		$this->options        = (array) get_option( 'simple_local_avatars' );
 		$this->user_key       = 'simple_local_avatar';
 		$this->rating_key     = 'simple_local_avatar_rating';
-		$this->avatar_ratings = array(
-			'G'  => __( 'G &#8212; Suitable for all audiences', 'simple-local-avatars' ),
-			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above', 'simple-local-avatars' ),
-			'R'  => __( 'R &#8212; Intended for adult audiences above 17', 'simple-local-avatars' ),
-			'X'  => __( 'X &#8212; Even more mature than above', 'simple-local-avatars' ),
-		);
-
+		
 		if (
 			! $this->is_avatar_shared() // Are we sharing avatars?
 			&& (
@@ -512,6 +506,13 @@ class Simple_Local_Avatars {
 	 * Register admin settings.
 	 */
 	public function admin_init() {
+		$this->avatar_ratings = array(
+			'G'  => __( 'G &#8212; Suitable for all audiences', ),
+			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above', ),
+			'R'  => __( 'R &#8212; Intended for adult audiences above 17', ),
+			'X'  => __( 'X &#8212; Even more mature than above', ),
+		);
+
 		// upgrade pre 2.0 option
 		$old_ops = get_option( 'simple_local_avatars_caps' );
 		if ( $old_ops ) {
@@ -917,8 +918,6 @@ class Simple_Local_Avatars {
 						<fieldset id="simple-local-avatar-ratings" <?php disabled( empty( $profileuser->simple_local_avatar ) ); ?>>
 							<legend class="screen-reader-text"><span><?php esc_html_e( 'Rating' ); ?></span></legend>
 							<?php
-							$this->update_avatar_ratings();
-
 							if ( empty( $profileuser->simple_local_avatar_rating ) || ! array_key_exists( $profileuser->simple_local_avatar_rating, $this->avatar_ratings ) ) {
 								$profileuser->simple_local_avatar_rating = 'G';
 							}
@@ -1300,20 +1299,6 @@ class Simple_Local_Avatars {
 		}
 
 		return $classes;
-	}
-
-	/**
-	 * Overwriting existing avatar_ratings so this can be called just before the rating strings would be used so that
-	 * translations will work correctly.
-	 * Default text-domain because the strings have already been translated
-	 */
-	private function update_avatar_ratings() {
-		$this->avatar_ratings = array(
-			'G'  => __( 'G &#8212; Suitable for all audiences' ),
-			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above' ),
-			'R'  => __( 'R &#8212; Intended for adult audiences above 17' ),
-			'X'  => __( 'X &#8212; Even more mature than above' ),
-		);
 	}
 
 	/**
