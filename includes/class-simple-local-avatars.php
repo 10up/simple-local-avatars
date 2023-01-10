@@ -68,13 +68,7 @@ class Simple_Local_Avatars {
 		$this->options        = (array) get_option( 'simple_local_avatars' );
 		$this->user_key       = 'simple_local_avatar';
 		$this->rating_key     = 'simple_local_avatar_rating';
-		$this->avatar_ratings = array(
-			'G'  => __( 'G &#8212; Suitable for all audiences', 'simple-local-avatars' ),
-			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above', 'simple-local-avatars' ),
-			'R'  => __( 'R &#8212; Intended for adult audiences above 17', 'simple-local-avatars' ),
-			'X'  => __( 'X &#8212; Even more mature than above', 'simple-local-avatars' ),
-		);
-
+		
 		if (
 			! $this->is_avatar_shared() // Are we sharing avatars?
 			&& (
@@ -512,6 +506,13 @@ class Simple_Local_Avatars {
 	 * Register admin settings.
 	 */
 	public function admin_init() {
+		$this->avatar_ratings = array(
+			'G'  => __( 'G &#8212; Suitable for all audiences', ),
+			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above', ),
+			'R'  => __( 'R &#8212; Intended for adult audiences above 17', ),
+			'X'  => __( 'X &#8212; Even more mature than above', ),
+		);
+
 		// upgrade pre 2.0 option
 		$old_ops = get_option( 'simple_local_avatars_caps' );
 		if ( $old_ops ) {
@@ -917,8 +918,6 @@ class Simple_Local_Avatars {
 						<fieldset id="simple-local-avatar-ratings" <?php disabled( empty( $profileuser->simple_local_avatar ) ); ?>>
 							<legend class="screen-reader-text"><span><?php esc_html_e( 'Rating' ); ?></span></legend>
 							<?php
-							$this->update_avatar_ratings();
-
 							if ( empty( $profileuser->simple_local_avatar_rating ) || ! array_key_exists( $profileuser->simple_local_avatar_rating, $this->avatar_ratings ) ) {
 								$profileuser->simple_local_avatar_rating = 'G';
 							}
@@ -988,13 +987,22 @@ class Simple_Local_Avatars {
 		}
 
 		// check for uploaded files
-		if ( ! empty( $_FILES['simple-local-avatar']['name'] ) ) :
+		if ( ! empty( $_FILES['simple-local-avatar']['name'] ) && 0 === $_FILES['simple-local-avatar']['error'] ) :
 
 			// need to be more secure since low privelege users can upload
-			if ( false !== strpos( $_FILES['simple-local-avatar']['name'], '.php' ) ) {
-				$this->avatar_upload_error = __( 'For security reasons, the extension ".php" cannot be in your file name.', 'simple-local-avatars' );
-				add_action( 'user_profile_update_errors', array( $this, 'user_profile_update_errors' ) );
+			$allowed_mime_types = wp_get_mime_types();
+			$file_mime_type     = strtolower( $_FILES['simple-local-avatar']['type'] );
 
+			if ( ! ( 0 === strpos( $file_mime_type, 'image/' ) ) || ! in_array( $file_mime_type, $allowed_mime_types, true ) ) {
+				$this->avatar_upload_error = __( 'Only images can be uploaded as an avatar', 'simple-local-avatars' );
+				add_action( 'user_profile_update_errors', array( $this, 'user_profile_update_errors' ) );
+				return;
+			}
+
+			$max_upload_size = $this->upload_size_limit( wp_max_upload_size() );
+			if ( $_FILES['simple-local-avatar']['size'] > $max_upload_size ) {
+				$this->avatar_upload_error = sprintf( __( 'Max allowed avatar size is %s', 'simple-local-avatars' ), size_format( $max_upload_size ) );
+				add_action( 'user_profile_update_errors', array( $this, 'user_profile_update_errors' ) );
 				return;
 			}
 
@@ -1011,9 +1019,6 @@ class Simple_Local_Avatars {
 				include_once ABSPATH . 'wp-admin/includes/image.php';
 			}
 
-			// allow developers to override file size upload limit for avatars
-			add_filter( 'upload_size_limit', array( $this, 'upload_size_limit' ) );
-
 			$this->user_id_being_edited = $user_id; // make user_id known to unique_filename_callback function
 			$avatar_id                  = media_handle_upload(
 				'simple-local-avatar',
@@ -1029,8 +1034,6 @@ class Simple_Local_Avatars {
 					'unique_filename_callback' => array( $this, 'unique_filename_callback' ),
 				)
 			);
-
-			remove_filter( 'upload_size_limit', array( $this, 'upload_size_limit' ) );
 
 			if ( is_wp_error( $avatar_id ) ) { // handle failures.
 				$this->avatar_upload_error = '<strong>' . __( 'There was an error uploading the avatar:', 'simple-local-avatars' ) . '</strong> ' . esc_html( $avatar_id->get_error_message() );
@@ -1300,20 +1303,6 @@ class Simple_Local_Avatars {
 		}
 
 		return $classes;
-	}
-
-	/**
-	 * Overwriting existing avatar_ratings so this can be called just before the rating strings would be used so that
-	 * translations will work correctly.
-	 * Default text-domain because the strings have already been translated
-	 */
-	private function update_avatar_ratings() {
-		$this->avatar_ratings = array(
-			'G'  => __( 'G &#8212; Suitable for all audiences' ),
-			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above' ),
-			'R'  => __( 'R &#8212; Intended for adult audiences above 17' ),
-			'X'  => __( 'X &#8212; Even more mature than above' ),
-		);
 	}
 
 	/**

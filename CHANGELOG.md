@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file, per [the Ke
 
 ## [Unreleased] - TBD
 
+## [2.7.1] - 2022-12-08
+### Added
+- Added missing files from the last release and changed the readme file to fix the bullet points and added fullstops.
+
+## [2.7.0] - 2022-12-08
+### Added
+- Added `Build release zip` GitHub Action (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@faisal-alvi](https://github.com/faisal-alvi) via [#168](https://github.com/10up/simple-local-avatars/pull/168)).
+
+### Changed
+- Set plugin defaults on `wp_initialize_site` instead of deprecated action `wpmu_new_blog` (props [@kadamwhite](https://github.com/kadamwhite), [@faisal-alvi](https://github.com/faisal-alvi) via [#156](https://github.com/10up/simple-local-avatars/pull/156)).
+- Support Level from Active to Stable (props [@jeffpaul](https://github.com/jeffpaul), [@dkotter](https://github.com/dkotter) via [#159](https://github.com/10up/simple-local-avatars/pull/159)).
+- Build tools: Allow PHPCS installer plugin to run without prompting user (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@jeffpaul](https://github.com/jeffpaul) via [#164](https://github.com/10up/simple-local-avatars/pull/164)).
+- WP tested up to version bump to 6.1 (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@faisal-alvi](https://github.com/faisal-alvi) via [#165](https://github.com/10up/simple-local-avatars/pull/165)).
+
+### Fixed
+- Non admin users can not crop avatar (props [@jayedul](https://github.com/jayedul), [@faisal-alvi](https://github.com/faisal-alvi), [@zamanq](https://github.com/zamanq), [@dkotter](https://github.com/dkotter), [@jeffpaul](https://github.com/jeffpaul) via [#155](https://github.com/10up/simple-local-avatars/pull/155)).
+
+### Security
+- Bump `@wordpress/env` from 4.9.0 to 5.2.0 and `got` from 10.7.0 to 11.8.5 (props [@dependabot](https://github.com/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#153](https://github.com/10up/simple-local-avatars/pull/153)).
+- Bump `loader-utils` from 2.0.2 to 2.0.3 (props [@dependabot](https://github.com/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#160](https://github.com/10up/simple-local-avatars/pull/160)).
+- Bump `loader-utils` from 2.0.3 to 2.0.4 (props [@dependabot](https://github.com/dependabot), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#162](https://github.com/10up/simple-local-avatars/pull/162)).
+- Bump `simple-git` from 3.9.0 to 3.15.1 (props [@dependabot](https://github.com/dependabot) via [#176](https://github.com/10up/simple-local-avatars/pull/176)).
+
 ## [2.6.0] - 2022-09-13
 **Note that this release bumps the minimum required version of WordPress from 4.6 to 5.7 and PHP from 5.6 to 7.4.**
 
@@ -188,6 +211,8 @@ All notable changes to this project will be documented in this file, per [the Ke
 - Initial release
 
 [Unreleased]: https://github.com/10up/simple-local-avatars/compare/trunk...develop
+[2.7.1]: https://github.com/10up/simple-local-avatars/compare/2.7.0...2.7.1
+[2.7.0]: https://github.com/10up/simple-local-avatars/compare/2.6.0...2.7.0
 [2.6.0]: https://github.com/10up/simple-local-avatars/compare/2.5.0...2.6.0
 [2.5.0]: https://github.com/10up/simple-local-avatars/compare/2.4.0...2.5.0
 [2.4.0]: https://github.com/10up/simple-local-avatars/compare/2.3.0...2.4.0

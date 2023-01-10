@@ -5,7 +5,7 @@ Tags:              avatar, gravatar, user photos, users, profile
 Requires at least: 5.7
 Tested up to:      6.1
 Requires PHP:      7.4
-Stable tag:        2.6.0
+Stable tag:        2.7.1
 License:           GPLv2 or later
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,12 +17,12 @@ Adds an avatar upload field to user profiles if the current user has media permi
 
 Just edit a user profile, and scroll down to the new "Avatar" field. The plug-in will take care of cropping and sizing!
 
-1. Stores avatars in the "uploads" folder where all of your other media is kept
-1. Has a simple, native interface
-1. Fully supports Gravatar and default avatars if no local avatar is set for the user - but also allows you turn off Gravatar
-1. Generates the requested avatar size on demand (and stores the new size for efficiency), so it looks great, just like Gravatar!
-1. Lets you decide whether lower privilege users (subscribers, contributors) can upload their own avatar
-1. Enables rating of local avatars, just like Gravatar
+1. Stores avatars in the "uploads" folder where all of your other media is kept.
+2. Has a simple, native interface.
+3. Fully supports Gravatar and default avatars if no local avatar is set for the user - but also allows you turn off Gravatar.
+4. Generates the requested avatar size on demand (and stores the new size for efficiency), so it looks great, just like Gravatar!
+5. Lets you decide whether lower privilege users (subscribers, contributors) can upload their own avatar.
+6. Enables rating of local avatars, just like Gravatar.
 
 == Installation ==
 
@@ -40,6 +40,21 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 1. Avatar upload field on a user profile page
 
 == Changelog ==
+
+= 2.7.1 - 2022-12-08 =
+* **Added:** Added missing files from the last release and changed the readme file to fix the bullet points and added fullstops.
+
+= 2.7.0 - 2022-12-08 =
+* **Added:** Added `Build release zip` GitHub Action (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@faisal-alvi](https://github.com/faisal-alvi) via [#168](https://github.com/10up/simple-local-avatars/pull/168)).
+* **Changed:** Set plugin defaults on `wp_initialize_site` instead of deprecated action `wpmu_new_blog` (props [@kadamwhite](https://github.com/kadamwhite), [@faisal-alvi](https://github.com/faisal-alvi) via [#156](https://github.com/10up/simple-local-avatars/pull/156)).
+* **Changed:** Support Level from Active to Stable (props [@jeffpaul](https://github.com/jeffpaul), [@dkotter](https://github.com/dkotter) via [#159](https://github.com/10up/simple-local-avatars/pull/159)).
+* **Changed:** Build tools: Allow PHPCS installer plugin to run without prompting user (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@jeffpaul](https://github.com/jeffpaul) via [#164](https://github.com/10up/simple-local-avatars/pull/164)).
+* **Changed:** WP tested up to version bump to 6.1 (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@faisal-alvi](https://github.com/faisal-alvi) via [#165](https://github.com/10up/simple-local-avatars/pull/165)).
+* **Fixed:** Non admin users can not crop avatar (props [@jayedul](https://github.com/jayedul), [@faisal-alvi](https://github.com/faisal-alvi), [@zamanq](https://github.com/zamanq), [@dkotter](https://github.com/dkotter), [@jeffpaul](https://github.com/jeffpaul) via [#155](https://github.com/10up/simple-local-avatars/pull/155)).
+* **Security:** Bump `@wordpress/env` from 4.9.0 to 5.2.0 and `got` from 10.7.0 to 11.8.5 (props [@dependabot](https://github.com/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#153](https://github.com/10up/simple-local-avatars/pull/153)).
+* **Security:** Bump `loader-utils` from 2.0.2 to 2.0.3 (props [@dependabot](https://github.com/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#160](https://github.com/10up/simple-local-avatars/pull/160)).
+* **Security:** Bump `loader-utils` from 2.0.3 to 2.0.4 (props [@dependabot](https://github.com/dependabot), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#162](https://github.com/10up/simple-local-avatars/pull/162)).
+* **Security:** Bump `simple-git` from 3.9.0 to 3.15.1 (props [@dependabot](https://github.com/dependabot) via [#176](https://github.com/10up/simple-local-avatars/pull/176)).
 
 = 2.6.0 - 2022-09-13 =
 **Note that this release bumps the minimum required version of WordPress from 4.6 to 5.7 and PHP from 5.6 to 7.4.**
