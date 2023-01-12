@@ -37,4 +37,5 @@ Desktop.ini
 # Cypress
 tests/cypress/screenshots
 tests/cypress/videos
+tests/cypress/downloads
 tests/cypress/reports
