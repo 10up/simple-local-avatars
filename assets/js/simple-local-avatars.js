@@ -1,5 +1,7 @@
 /* eslint-disable no-undef, eqeqeq, no-use-before-define */
 
+import '../scss/simple-local-avatars.scss';
+
 let simple_local_avatar_frame;
 let avatar_spinner;
 let avatar_ratings;
@@ -11,12 +13,17 @@ let avatar_blob;
 let current_avatar;
 let avatar_working = false;
 
+function toggleState(state_class, add) {
+	jQuery('#sla-avatar-manager')[add ? 'addClass' : 'removeClass'](state_class);
+}
+
 jQuery(document).ready(function ($) {
-	avatar_input = $('#simple-local-avatar');
-	avatar_preview = $('#simple-local-avatar-photo img');
-	current_avatar = avatar_preview.attr('src');
-	avatar_ratings = $('#simple-local-avatar-ratings');
+	avatar_input     = $('#simple-local-avatar');
+	avatar_preview   = $('#simple-local-avatar-photo img');
+	current_avatar   = avatar_preview.attr('src');
+	avatar_ratings   = $('#simple-local-avatar-ratings');
 	avatar_container = $('#simple-local-avatar-photo');
+
 	$('#simple-local-avatar-media').on('click', function (event) {
 		event.preventDefault();
 
@@ -123,31 +130,29 @@ jQuery(document).ready(function ($) {
 	/**
 	 * If the Local Avatar is removed and set to the  default one
 	 */
-	$('#simple-local-avatar-remove, #simple-local-avatar-disassociate').on('click', function (event) {
+	$('#simple-local-avatar-delete, #simple-local-avatar-remove').on('click', function (event) {
 		event.preventDefault();
 
 		if (avatar_working) return;
 
-		var button_wrapper = $(this).parent();
-
 		avatar_lock('lock');
+		
 		$.get(i10n_SimpleLocalAvatars.ajaxurl, {
 			action: 'remove_simple_local_avatar',
-			permanent_delete: $(this).attr('id') === 'simple-local-avatar-remove',
+			permanent_delete: $(this).attr('id') === 'simple-local-avatar-delete',
 			user_id: i10n_SimpleLocalAvatars.user_id,
 			_wpnonce: i10n_SimpleLocalAvatars.deleteNonce,
 		})
-			.done(function (data) {
-				if (data !== '') {
-					avatar_container.innerHTML = data;
-					$('#simple-local-avatar-upload-interface>div').toggle();
-					button_wrapper.hide();
-					avatar_ratings.disabled = true;
-				}
-			})
-			.always(function () {
-				avatar_lock('unlock');
-			});
+		.done(function (data) {
+			if (data !== '') {
+				avatar_container.innerHTML = data;
+				avatar_ratings.disabled = true;
+				toggleState('has-local-avatar', false);
+			}
+		})
+		.always(function () {
+			avatar_lock('unlock');
+		});
 	});
 
 	/**
@@ -157,11 +162,11 @@ jQuery(document).ready(function ($) {
 		avatar_preview.attr('srcset', '');
 		avatar_preview.attr('height', 'auto');
 		URL.revokeObjectURL(avatar_blob);
+
 		if (event.target.files.length > 0) {
 			avatar_blob = URL.createObjectURL(event.target.files[0]);
 			avatar_preview.attr('src', avatar_blob);
-		} else {
-			avatar_preview.attr('src', current_avatar);
+			toggleState('has-local-avatar', true);
 		}
 	});
 
@@ -410,10 +415,11 @@ function simple_local_avatar_set_image_from_url(url, attachmentId, width, height
 			_wpnonce: i10n_SimpleLocalAvatars.mediaNonce,
 		})
 		.done(function (data) {
+			console.log('Called chooser', data);
 			if (data !== '') {
 				avatar_container.innerHTML = data;
-				jQuery('#simple-local-avatar-remove').show();
 				avatar_ratings.disabled = false;
+				toggleState('has-local-avatar', true);
 			}
 		})
 		.always(function () {
@@ -438,9 +444,9 @@ function simple_local_avatar_set_image_from_attachment(attachment) {
 		.done(function (data) {
 			if (data !== '') {
 				avatar_container.innerHTML = data;
-				jQuery('#simple-local-avatar-remove').show();
 				avatar_ratings.disabled = false;
 				avatar_lock('unlock');
+				toggleState('has-local-avatar', true);
 			}
 		})
 		.always(function () {

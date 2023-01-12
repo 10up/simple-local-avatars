@@ -10,11 +10,11 @@ describe('Check if admin can delete avatar', () => {
         // Visit profile page and delete an avatar.
         cy.visit('/wp-admin/profile.php');
         cy.get('body').then($body => {
-            if (0 !== $body.find('#simple-local-avatar-remove').length) {
-                cy.get('#simple-local-avatar-remove').click();
+            if (0 !== $body.find('#simple-local-avatar-delete').length) {
+                cy.get('#simple-local-avatar-delete').click();
             }
         });
 
-        cy.get('#simple-local-avatar-remove').should('not.be.visible');
+        cy.get('#simple-local-avatar-delete').should('not.be.visible');
     });
 });

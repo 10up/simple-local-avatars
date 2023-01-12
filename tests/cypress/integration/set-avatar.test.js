@@ -24,6 +24,6 @@ describe('Check if admin can upload, crop and select local avatar', () => {
             }
         });
 
-        cy.get('#simple-local-avatar-remove').should('be.visible');
+        cy.get('#simple-local-avatar-delete').should('be.visible');
     });
 });

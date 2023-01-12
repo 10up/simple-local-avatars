@@ -1,0 +1,13 @@
+#sla-avatar-manager{
+	&.has-local-avatar {
+		.sla-avatar-upload, .sla-avatar-choose{
+			display: none;
+		}
+	}
+
+	&:not(.has-local-avatar) {
+		.sla-avatar-action {
+			display: none;
+		}
+	}
+}
