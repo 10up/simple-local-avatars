@@ -854,26 +854,13 @@ class Simple_Local_Avatars {
 		$has_wp_media_access   = current_user_can( 'upload_files' ) && did_action( 'wp_enqueue_media' );
 		$has_raw_upload_access = ! $has_wp_media_access && ( ! is_admin() || ! current_user_can( 'upload_files' ) );
 		$old_avatars           = (array) get_user_meta( $profileuser->ID, $this->user_key, true );
-		$has_local_avatar      = $profileuser->simple_local_avatar || ( ! empty( $old_avatars ) && ! empty( $old_avatars['media_id'] ) );
-		$wrapper_class         = array();
-		
-		if ( $has_wp_media_access ) {
-			$wrapper_class[] = 'has-wp-media-access';
-		}
-		
-		if ( $has_raw_upload_access ) {
-			$wrapper_class[] = 'has-raw-upload-access';
-		}
-
-		if ( $has_local_avatar ) {
-			$wrapper_class[] = 'has-local-avatar';
-		}
+		$has_local_avatar      = ( ! empty( $profileuser->simple_local_avatar ) && $profileuser->simple_local_avatar ) || ( ! empty( $old_avatars ) && ! empty( $old_avatars['media_id'] ) );
 		?>
 		<div id="simple-local-avatar-section">
 			<h3><?php esc_html_e( 'Avatar', 'simple-local-avatars' ); ?></h3>
 
 			<table class="form-table">
-				<tr id="sla-avatar-manager" class="<?php echo esc_attr( implode( ' ', $wrapper_class ) ); ?>">
+				<tr id="sla-avatar-manager" class="<?php echo $has_local_avatar ? 'has-local-avatar' : ''; ?>">
 					<th scope="row"><label for="simple-local-avatar"><?php esc_html_e( 'Upload Avatar', 'simple-local-avatars' ); ?></label></th>
 					<td style="width: 50px;" id="simple-local-avatar-photo">
 						<?php
