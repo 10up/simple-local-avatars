@@ -25,7 +25,7 @@ module.exports = async (on, config) => {
     const port = wpEnvConfig.env.tests.port || null;
 
     if (port) {
-      config.baseUrl = 'http://localhost:8889/';
+      config.baseUrl = wpEnvConfig.env.tests.config.WP_SITEURL;
     }
   }
 
