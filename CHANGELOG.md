@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file, per [the Ke
 
 ## [Unreleased] - TBD
 
+## [2.7.2] - 2023-01-13
+### Added
+- Filter hook `simple_local_avatars_upload_limit` to restrict image upload size & image file checking enhanced (props [@Shirkit](https://github.com/Shirkit), [@jayedul](https://github.com/jayedul), [@faisal-alvi](https://github.com/faisal-alvi), [@jeffpaul](https://github.com/jeffpaul) via [#171](https://github.com/10up/simple-local-avatars/pull/171)).
+- GitHub Actions summary on Cypress e2e test runs (props [@faisal-alvi](https://github.com/faisal-alvi), [@jeffpaul](https://github.com/jeffpaul), [@iamdharmesh](https://github.com/iamdharmesh) via [#174](https://github.com/10up/simple-local-avatars/pull/174)).
+
+### Changed
+- Cypress integration migrated from 9.5.4 to 11.2.0 (props [@iamdharmesh](https://github.com/iamdharmesh), [@jayedul](https://github.com/jayedul), [@faisal-alvi](https://github.com/faisal-alvi) via [#172](https://github.com/10up/simple-local-avatars/pull/172)).
+
+### Fixed
+- PHP8 support for `assign_new_user_avatar` (props [@lllopo](https://github.com/lllopo), [@mattwatsoncodes](https://github.com/mattwatsoncodes), [@faisal-alvi](https://github.com/faisal-alvi) via [#183](https://github.com/10up/simple-local-avatars/pull/183)).
+- Fixed the user profile language not respected issue (props [@dkotter](https://github.com/dkotter), [@lllopo](https://github.com/lllopo), [@faisal-alvi](https://github.com/faisal-alvi), [@jeffpaul](https://github.com/jeffpaul) via [#175](https://github.com/10up/simple-local-avatars/pull/175)).
+
+### Removed
+- textdomain from the core strings and the function `update_avatar_ratings` as it's not required anymore (props [@dkotter](https://github.com/dkotter), [@lllopo](https://github.com/lllopo), [@faisal-alvi](https://github.com/faisal-alvi), [@jeffpaul](https://github.com/jeffpaul) via [#175](https://github.com/10up/simple-local-avatars/pull/175)).
+
+### Security
+- Bump `json5` from 1.0.1 to 1.0.2  (props [@dependabot](https://github.com/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#182](https://github.com/10up/simple-local-avatars/pull/182)).
+
 ## [2.7.1] - 2022-12-08
 ### Added
 - Added missing files from the last release and changed the readme file to fix the bullet points and added fullstops.
@@ -211,6 +229,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 - Initial release
 
 [Unreleased]: https://github.com/10up/simple-local-avatars/compare/trunk...develop
+[2.7.2]: https://github.com/10up/simple-local-avatars/compare/2.7.1...2.7.2
 [2.7.1]: https://github.com/10up/simple-local-avatars/compare/2.7.0...2.7.1
 [2.7.0]: https://github.com/10up/simple-local-avatars/compare/2.6.0...2.7.0
 [2.6.0]: https://github.com/10up/simple-local-avatars/compare/2.5.0...2.6.0
