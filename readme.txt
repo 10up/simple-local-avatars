@@ -5,7 +5,7 @@ Tags:              avatar, gravatar, user photos, users, profile
 Requires at least: 5.7
 Tested up to:      6.1
 Requires PHP:      7.4
-Stable tag:        2.7.2
+Stable tag:        2.7.3
 License:           GPLv2 or later
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,6 +40,10 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 1. Avatar upload field on a user profile page
 
 == Changelog ==
+
+= 2.7.3 - 2023-01-16 =
+* **Fixed:** Issue causing fatal errors when avatars used on front end of site (props [@Rottinator](https://github.com/Rottinator), [@peterwilsoncc](https://github.com/peterwilsoncc), [@ravinderk](https://github.com/ravinderk), [@faisal-alvi](https://github.com/faisal-alvi) via [#187](https://github.com/10up/simple-local-avatars/pull/187)).
+* **Fixed:** Deprecation error in admin on PHP 8.0 and later (props [@Rottinator](https://github.com/Rottinator), [@peterwilsoncc](https://github.com/peterwilsoncc), [@ravinderk](https://github.com/ravinderk), [@faisal-alvi](https://github.com/faisal-alvi) via [#187](https://github.com/10up/simple-local-avatars/pull/187)).
 
 = 2.7.2 - 2023-01-13 =
 * **Added:** Filter hook `simple_local_avatars_upload_limit` to restrict image upload size & image file checking enhanced (props [@Shirkit](https://github.com/Shirkit), [@jayedul](https://github.com/jayedul), [@faisal-alvi](https://github.com/faisal-alvi), [@jeffpaul](https://github.com/jeffpaul) via [#171](https://github.com/10up/simple-local-avatars/pull/171)).
