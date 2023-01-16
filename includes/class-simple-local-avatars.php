@@ -510,7 +510,7 @@ class Simple_Local_Avatars {
 	 * they can be translated. This method exists to define the ratings
 	 * after that has been done.
 	 *
-	 * @since x.x.x
+	 * @since 2.7.3
 	 */
 	public function define_avatar_ratings() {
 		/*
