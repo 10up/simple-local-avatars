@@ -1144,6 +1144,10 @@ class Simple_Local_Avatars {
 			$old_avatars = (array) get_user_meta( $user_id, $this->user_key, true );
 
 			if ( is_array( $old_avatars ) ) {
+				if ( ! function_exists( 'wp_delete_attachment' ) ) {
+					include_once ABSPATH . 'wp-admin/includes/image.php';
+				}
+				
 				// Delete attachment
 				if ( ! empty( $old_avatars['media_id'] ) ) {
 					wp_delete_attachment( $old_avatars['media_id'], true );
