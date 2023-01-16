@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file, per [the Ke
 
 ## [Unreleased] - TBD
 
+## [2.7.3] - 2023-01-16
+### Fixed
+- Issue causing fatal errors when avatars used on front end of site (props [@Rottinator](https://github.com/Rottinator), [@peterwilsoncc](https://github.com/peterwilsoncc), [@ravinderk](https://github.com/ravinderk), [@faisal-alvi](https://github.com/faisal-alvi), [@jeffpaul](https://github.com/jeffpaul) via [#187](https://github.com/10up/simple-local-avatars/pull/187)).
+- Deprecation error in admin on PHP 8.0 and later (props [@Rottinator](https://github.com/Rottinator), [@peterwilsoncc](https://github.com/peterwilsoncc), [@ravinderk](https://github.com/ravinderk), [@faisal-alvi](https://github.com/faisal-alvi), [@jeffpaul](https://github.com/jeffpaul) via [#187](https://github.com/10up/simple-local-avatars/pull/187)).
+
 ## [2.7.2] - 2023-01-13
 ### Added
 - Filter hook `simple_local_avatars_upload_limit` to restrict image upload size & image file checking enhanced (props [@Shirkit](https://github.com/Shirkit), [@jayedul](https://github.com/jayedul), [@faisal-alvi](https://github.com/faisal-alvi), [@jeffpaul](https://github.com/jeffpaul) via [#171](https://github.com/10up/simple-local-avatars/pull/171)).
@@ -229,6 +234,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 - Initial release
 
 [Unreleased]: https://github.com/10up/simple-local-avatars/compare/trunk...develop
+[2.7.3]: https://github.com/10up/simple-local-avatars/compare/2.7.2...2.7.3
 [2.7.2]: https://github.com/10up/simple-local-avatars/compare/2.7.1...2.7.2
 [2.7.1]: https://github.com/10up/simple-local-avatars/compare/2.7.0...2.7.1
 [2.7.0]: https://github.com/10up/simple-local-avatars/compare/2.6.0...2.7.0
