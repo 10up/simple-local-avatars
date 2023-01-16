@@ -68,7 +68,7 @@ class Simple_Local_Avatars {
 		$this->options        = (array) get_option( 'simple_local_avatars' );
 		$this->user_key       = 'simple_local_avatar';
 		$this->rating_key     = 'simple_local_avatar_rating';
-		
+
 		if (
 			! $this->is_avatar_shared() // Are we sharing avatars?
 			&& (
@@ -102,6 +102,7 @@ class Simple_Local_Avatars {
 		add_filter( 'pre_option_simple_local_avatars', array( $this, 'pre_option_simple_local_avatars' ), 10, 1 );
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
+		add_action( 'init', array( $this, 'define_avatar_ratings' ) );
 
 		// Load the JS on BE & FE both, in order to support third party plugins like bbPress.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
@@ -503,16 +504,28 @@ class Simple_Local_Avatars {
 	}
 
 	/**
-	 * Register admin settings.
+	 * Define the ratings avatar ratings.
+	 *
+	 * The ratings need to be defined after the languages have been loaded so
+	 * they can be translated. This method exists to define the ratings
+	 * after that has been done.
+	 *
+	 * @since x.x.x
 	 */
-	public function admin_init() {
+	public function define_avatar_ratings() {
 		$this->avatar_ratings = array(
 			'G'  => __( 'G &#8212; Suitable for all audiences', ),
 			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above', ),
 			'R'  => __( 'R &#8212; Intended for adult audiences above 17', ),
 			'X'  => __( 'X &#8212; Even more mature than above', ),
 		);
+	}
 
+	/**
+	 * Register admin settings.
+	 */
+	public function admin_init() {
+		$this->define_avatar_ratings();
 		// upgrade pre 2.0 option
 		$old_ops = get_option( 'simple_local_avatars_caps' );
 		if ( $old_ops ) {
