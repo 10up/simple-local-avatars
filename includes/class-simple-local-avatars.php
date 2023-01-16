@@ -513,6 +513,15 @@ class Simple_Local_Avatars {
 	 * @since x.x.x
 	 */
 	public function define_avatar_ratings() {
+		/*
+		 * Avatar ratings.
+		 *
+		 * The key should not be translated as it's used by WP Core in it's
+		 * english form (G, PG, etc).
+		 *
+		 * The values should be translated, these include the initial rating
+		 * name and the description for display to users.
+		 */
 		$this->avatar_ratings = array(
 			'G'  => __( 'G &#8212; Suitable for all audiences', ),
 			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above', ),
