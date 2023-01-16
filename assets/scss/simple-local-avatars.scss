@@ -1,6 +1,6 @@
-#sla-avatar-manager{
+#sla-avatar-manager {
 	&.has-local-avatar {
-		.sla-avatar-upload, .sla-avatar-choose{
+		.sla-avatar-upload, .sla-avatar-choose {
 			display: none;
 		}
 	}
@@ -8,6 +8,20 @@
 	&:not(.has-local-avatar) {
 		.sla-avatar-action {
 			display: none;
+		}
+	}
+
+	.sla-avatar-action {
+		&>div {
+			margin-bottom: 10px;
+		}
+
+		&>a {
+			display: inline-block;
+			
+			&:not(:last-child) {
+				margin-right: 8px;
+			}
 		}
 	}
 }

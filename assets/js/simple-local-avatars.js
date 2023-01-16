@@ -131,6 +131,10 @@ jQuery(document).ready(function ($) {
 
 		if (avatar_working) return;
 
+		if($(this).data('alert') && !window.confirm($(this).data('alert'))) {
+			return;
+		}
+
 		avatar_lock('lock');
 		
 		$.get(i10n_SimpleLocalAvatars.ajaxurl, {

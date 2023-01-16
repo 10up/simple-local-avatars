@@ -907,7 +907,7 @@ class Simple_Local_Avatars {
 								<div>
 									<?php esc_html_e( 'Delete or remove existing avatar to set a new one.', 'simple-local-avatars' ); ?> 
 								</div>
-								<a href="<?php echo esc_url( $remove_url ); ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-delete">
+								<a href="<?php echo esc_url( $remove_url ); ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-delete" data-alert="<?php echo esc_attr__( 'Are you sure to delete the image permanently?', 'simple-local-avatars' ); ?>">
 									<?php esc_html_e( 'Delete', 'simple-local-avatars' ); ?>
 								</a>
 								<a href="<?php echo esc_url( $remove_url ); ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-remove">
@@ -1139,24 +1139,20 @@ class Simple_Local_Avatars {
 	 *
 	 * @param int $user_id User ID.
 	 */
-	public function avatar_delete( $user_id, $delete_file = true ) {
-		if ( $delete_file === true ) {
+	public function avatar_delete( $user_id, $delete_attachment = true ) {
+		if ( $delete_attachment === true ) {
 			$old_avatars = (array) get_user_meta( $user_id, $this->user_key, true );
 
-			if ( empty( $old_avatars ) ) {
-				return;
-			}
+			if ( is_array( $old_avatars ) ) {
+				// Delete attachment
+				if ( ! empty( $old_avatars['media_id'] ) ) {
+					wp_delete_attachment( $old_avatars['media_id'], true );
+				}
 
-			// if it was uploaded media, don't erase the full size or try to erase an the ID
-			if ( array_key_exists( 'media_id', $old_avatars ) ) {
-				unset( $old_avatars['media_id'], $old_avatars['full'] );
-			}
-
-			if ( ! empty( $old_avatars ) ) {
+				// Delete custom cropped sizes which can not be deleted by wp_delete_attachment function
 				$upload_path = wp_upload_dir();
-
 				foreach ( $old_avatars as $old_avatar ) {
-					// derive the path for the file based on the upload directory
+					// Derive the path for the file based on the upload directory
 					$old_avatar_path = str_replace( $upload_path['baseurl'], $upload_path['basedir'], $old_avatar );
 					if ( file_exists( $old_avatar_path ) ) {
 						unlink( $old_avatar_path );
