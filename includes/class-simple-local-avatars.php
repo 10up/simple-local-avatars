@@ -858,9 +858,9 @@ class Simple_Local_Avatars {
 					<th scope="row"><label for="simple-local-avatar"><?php esc_html_e( 'Upload Avatar', 'simple-local-avatars' ); ?></label></th>
 					<td style="width: 50px;" id="simple-local-avatar-photo">
 						<?php
-						add_filter( 'pre_option_avatar_rating', '__return_null' );     // ignore ratings here
+						add_filter( 'pre_option_avatar_rating', '__return_empty_string' );     // ignore ratings here
 						echo wp_kses_post( get_simple_local_avatar( $profileuser->ID ) );
-						remove_filter( 'pre_option_avatar_rating', '__return_null' );
+						remove_filter( 'pre_option_avatar_rating', '__return_empty_string' );
 						?>
 					</td>
 					<td>
