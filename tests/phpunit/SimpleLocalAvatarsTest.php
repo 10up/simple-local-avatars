@@ -489,4 +489,18 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 
 		$this->instance->avatar_delete( 1 );
 	}
+
+	public function test_get_user_id() {
+		$this->assertEquals( 0, $this->instance->get_user_id( '0' ) );
+		$this->assertEquals( 0, $this->instance->get_user_id( 'test@example.com' ) );
+
+		$user = new WP_User( [ 'ID' => 1 ] );
+		$this->assertEquals( 1, $this->instance->get_user_id( $user ) );
+
+		$post = new WP_Post( [ 'post_author' => '1' ] );
+		$this->assertEquals( 1, $this->instance->get_user_id( $post ) );
+
+		$comment = new WP_Comment( [ 'user_id' => '1' ] );
+		$this->assertEquals( 1, $this->instance->get_user_id( $comment ) );
+	}
 }
