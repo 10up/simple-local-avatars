@@ -28,8 +28,8 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 			'X'  => __( 'X &#8212; Even more mature than above', 'simple-local-avatars' ),
 		) );
 
-		$user = Mockery::mock( WP_User::class );
-		$user->ID = 1;
+		$user               = Mockery::mock( WP_User::class );
+		$user->ID           = 1;
 		$user->display_name = 'TEST_USER';
 
 		// Init $POST.
@@ -493,15 +493,15 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$this->assertEquals( 1, $this->instance->get_user_id( '1' ) );
 		$this->assertEquals( 1, $this->instance->get_user_id( 'test@example.com' ) );
 
-		$user = Mockery::mock( WP_User::class );
+		$user     = Mockery::mock( WP_User::class );
 		$user->ID = 1;
 		$this->assertEquals( 1, $this->instance->get_user_id( $user ) );
 
-		$post = Mockery::mock( WP_Post::class );
+		$post              = Mockery::mock( WP_Post::class );
 		$post->post_author = 1;
 		$this->assertEquals( 1, $this->instance->get_user_id( $post ) );
 
-		$comment = Mockery::mock( WP_Comment::class );
+		$comment          = Mockery::mock( WP_Comment::class );
 		$comment->user_id = '1';
 		$this->assertEquals( 1, $this->instance->get_user_id( $comment ) );
 	}
