@@ -307,6 +307,8 @@ class Simple_Local_Avatars {
 			$user_id = (int) $id_or_email;
 		} elseif ( is_object( $id_or_email ) && ! empty( $id_or_email->user_id ) ) {
 			$user_id = (int) $id_or_email->user_id;
+		} elseif ( $id_or_email instanceof WP_User ) {
+			$user_id = $id_or_email->ID;
 		} elseif ( $id_or_email instanceof WP_Post && ! empty( $id_or_email->post_author ) ) {
 			$user_id = (int) $id_or_email->post_author;
 		} elseif ( is_string( $id_or_email ) ) {
