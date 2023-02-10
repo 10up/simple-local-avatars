@@ -68,7 +68,7 @@ class Simple_Local_Avatars {
 		$this->options        = (array) get_option( 'simple_local_avatars' );
 		$this->user_key       = 'simple_local_avatar';
 		$this->rating_key     = 'simple_local_avatar_rating';
-		
+
 		if (
 			! $this->is_avatar_shared() // Are we sharing avatars?
 			&& (
@@ -102,6 +102,7 @@ class Simple_Local_Avatars {
 		add_filter( 'pre_option_simple_local_avatars', array( $this, 'pre_option_simple_local_avatars' ), 10, 1 );
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
+		add_action( 'init', array( $this, 'define_avatar_ratings' ) );
 
 		// Load the JS on BE & FE both, in order to support third party plugins like bbPress.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
@@ -306,6 +307,8 @@ class Simple_Local_Avatars {
 			$user_id = (int) $id_or_email;
 		} elseif ( is_object( $id_or_email ) && ! empty( $id_or_email->user_id ) ) {
 			$user_id = (int) $id_or_email->user_id;
+		} elseif ( $id_or_email instanceof WP_User ) {
+			$user_id = $id_or_email->ID;
 		} elseif ( $id_or_email instanceof WP_Post && ! empty( $id_or_email->post_author ) ) {
 			$user_id = (int) $id_or_email->post_author;
 		} elseif ( is_string( $id_or_email ) ) {
@@ -503,16 +506,41 @@ class Simple_Local_Avatars {
 	}
 
 	/**
+	 * Define the ratings avatar ratings.
+	 *
+	 * The ratings need to be defined after the languages have been loaded so
+	 * they can be translated. This method exists to define the ratings
+	 * after that has been done.
+	 *
+	 * @since 2.7.3
+	 */
+	public function define_avatar_ratings() {
+		/*
+		 * Avatar ratings.
+		 *
+		 * The key should not be translated as it's used by WP Core in it's
+		 * english form (G, PG, etc).
+		 *
+		 * The values should be translated, these include the initial rating
+		 * name and the description for display to users.
+		 */
+		$this->avatar_ratings = array(
+			/* translators: Content suitability rating: https://en.wikipedia.org/wiki/Motion_Picture_Association_of_America_film_rating_system */
+			'G'  => __( 'G &#8212; Suitable for all audiences' ),
+			/* translators: Content suitability rating: https://en.wikipedia.org/wiki/Motion_Picture_Association_of_America_film_rating_system */
+			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above' ),
+			/* translators: Content suitability rating: https://en.wikipedia.org/wiki/Motion_Picture_Association_of_America_film_rating_system */
+			'R'  => __( 'R &#8212; Intended for adult audiences above 17' ),
+			/* translators: Content suitability rating: https://en.wikipedia.org/wiki/Motion_Picture_Association_of_America_film_rating_system */
+			'X'  => __( 'X &#8212; Even more mature than above' ),
+		);
+	}
+
+	/**
 	 * Register admin settings.
 	 */
 	public function admin_init() {
-		$this->avatar_ratings = array(
-			'G'  => __( 'G &#8212; Suitable for all audiences', ),
-			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above', ),
-			'R'  => __( 'R &#8212; Intended for adult audiences above 17', ),
-			'X'  => __( 'X &#8212; Even more mature than above', ),
-		);
-
+		$this->define_avatar_ratings();
 		// upgrade pre 2.0 option
 		$old_ops = get_option( 'simple_local_avatars_caps' );
 		if ( $old_ops ) {
@@ -864,9 +892,9 @@ class Simple_Local_Avatars {
 					<th scope="row"><label for="simple-local-avatar"><?php esc_html_e( 'Upload Avatar', 'simple-local-avatars' ); ?></label></th>
 					<td style="width: 50px;" id="simple-local-avatar-photo">
 						<?php
-						add_filter( 'pre_option_avatar_rating', '__return_null' );     // ignore ratings here
+						add_filter( 'pre_option_avatar_rating', '__return_empty_string' );     // ignore ratings here
 						echo wp_kses_post( get_simple_local_avatar( $profileuser->ID ) );
-						remove_filter( 'pre_option_avatar_rating', '__return_null' );
+						remove_filter( 'pre_option_avatar_rating', '__return_empty_string' );
 						?>
 					</td>
 					<td>
