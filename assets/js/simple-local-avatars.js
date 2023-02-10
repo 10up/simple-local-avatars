@@ -1,7 +1,5 @@
 /* eslint-disable no-undef, eqeqeq, no-use-before-define */
 
-import '../scss/simple-local-avatars.scss';
-
 let simple_local_avatar_frame;
 let avatar_spinner;
 let avatar_ratings;
