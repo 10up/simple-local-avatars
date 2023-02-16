@@ -234,6 +234,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 - Initial release
 
 [Unreleased]: https://github.com/10up/simple-local-avatars/compare/trunk...develop
+[2.7.4]: https://github.com/10up/simple-local-avatars/compare/2.7.3...2.7.4
 [2.7.3]: https://github.com/10up/simple-local-avatars/compare/2.7.2...2.7.3
 [2.7.2]: https://github.com/10up/simple-local-avatars/compare/2.7.1...2.7.2
 [2.7.1]: https://github.com/10up/simple-local-avatars/compare/2.7.0...2.7.1
