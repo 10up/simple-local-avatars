@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file, per [the Ke
 
 ## [Unreleased] - TBD
 
+## [2.7.4] - 2023-02-17
+### Fixed
+- Support passing `WP_User` to `get_avatar()` (props [@mattheu](https://github.com/mattheu), [@faisal-alvi](https://github.com/faisal-alvi) via [#193](https://github.com/10up/simple-local-avatars/pull/193)).
+- Remove trailing commas in function calls (props [@patrixer](https://github.com/patrixer), [@dkotter](https://github.com/dkotter), [@sekra24](https://github.com/sekra24), [@faisal-alvi](https://github.com/faisal-alvi) via [#196](https://github.com/10up/simple-local-avatars/pull/196)).
+
+### Security
+- Bump `simple-git` from 3.15.1 to 3.16.0 (props [@dependabot](https://github.com/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#191](https://github.com/10up/simple-local-avatars/pull/191)).
+- Bump `http-cache-semantics` from 4.1.0 to 4.1.1 (props [@dependabot](https://github.com/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#197](https://github.com/10up/simple-local-avatars/pull/197)).
+
 ## [2.7.3] - 2023-01-16
 ### Fixed
 - Issue causing fatal errors when avatars used on front end of site (props [@Rottinator](https://github.com/Rottinator), [@peterwilsoncc](https://github.com/peterwilsoncc), [@ravinderk](https://github.com/ravinderk), [@faisal-alvi](https://github.com/faisal-alvi) via [#187](https://github.com/10up/simple-local-avatars/pull/187)).
@@ -25,7 +34,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 - textdomain from the core strings and the function `update_avatar_ratings` as it's not required anymore (props [@dkotter](https://github.com/dkotter), [@lllopo](https://github.com/lllopo), [@faisal-alvi](https://github.com/faisal-alvi), [@jeffpaul](https://github.com/jeffpaul) via [#175](https://github.com/10up/simple-local-avatars/pull/175)).
 
 ### Security
-- Bump `json5` from 1.0.1 to 1.0.2  (props [@dependabot](https://github.com/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#182](https://github.com/10up/simple-local-avatars/pull/182)).
+- Bump `json5` from 1.0.1 to 1.0.2 (props [@dependabot](https://github.com/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#182](https://github.com/10up/simple-local-avatars/pull/182)).
 
 ## [2.7.1] - 2022-12-08
 ### Added
@@ -54,7 +63,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 **Note that this release bumps the minimum required version of WordPress from 4.6 to 5.7 and PHP from 5.6 to 7.4.**
 
 ### Added
--  If a default avatar image is used, ensure that outputs alt text. This will either be default text (Avatar photo) or the alt text from the uploaded default image (props [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi) via [#147](https://github.com/10up/simple-local-avatars/pull/147)).
+- If a default avatar image is used, ensure that outputs alt text. This will either be default text (Avatar photo) or the alt text from the uploaded default image (props [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi) via [#147](https://github.com/10up/simple-local-avatars/pull/147)).
 - Two hooks, `simple_local_avatar_updated` and `simple_local_avatar_deleted`, to allow theme or plugin developers to react to changes in local avatars in a consistent and precise way (props [@t-lock](https://github.com/t-lock), [@faisal-alvi](https://github.com/faisal-alvi), [@dkotter](https://github.com/dkotter) via [#149](https://github.com/10up/simple-local-avatars/pull/149)).
 
 ### Changed
@@ -234,6 +243,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 - Initial release
 
 [Unreleased]: https://github.com/10up/simple-local-avatars/compare/trunk...develop
+[2.7.4]: https://github.com/10up/simple-local-avatars/compare/2.7.3...2.7.4
 [2.7.3]: https://github.com/10up/simple-local-avatars/compare/2.7.2...2.7.3
 [2.7.2]: https://github.com/10up/simple-local-avatars/compare/2.7.1...2.7.2
 [2.7.1]: https://github.com/10up/simple-local-avatars/compare/2.7.0...2.7.1
