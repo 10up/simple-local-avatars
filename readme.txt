@@ -5,7 +5,7 @@ Tags:              avatar, gravatar, user photos, users, profile
 Requires at least: 5.7
 Tested up to:      6.1
 Requires PHP:      7.4
-Stable tag:        2.7.3
+Stable tag:        2.7.4
 License:           GPLv2 or later
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,6 +40,12 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 1. Avatar upload field on a user profile page
 
 == Changelog ==
+
+= 2.7.4 - 2023-02-17 =
+* **Fixed:** Support passing `WP_User` to `get_avatar()` (props [@mattheu](https://github.com/mattheu), [@faisal-alvi](https://github.com/faisal-alvi) via [#193](https://github.com/10up/simple-local-avatars/pull/193)).
+* **Fixed:** Remove trailing commas in function calls (props [@patrixer](https://github.com/patrixer), [@dkotter](https://github.com/dkotter), [@sekra24](https://github.com/sekra24), [@faisal-alvi](https://github.com/faisal-alvi) via [#196](https://github.com/10up/simple-local-avatars/pull/196)).
+* **Security:** Bump `simple-git` from 3.15.1 to 3.16.0 (props [@dependabot](https://github.com/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#191](https://github.com/10up/simple-local-avatars/pull/191)).
+* **Security:** Bump `http-cache-semantics` from 4.1.0 to 4.1.1 (props [@dependabot](https://github.com/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#197](https://github.com/10up/simple-local-avatars/pull/197)).
 
 = 2.7.3 - 2023-01-16 =
 * **Fixed:** Issue causing fatal errors when avatars used on front end of site (props [@Rottinator](https://github.com/Rottinator), [@peterwilsoncc](https://github.com/peterwilsoncc), [@ravinderk](https://github.com/ravinderk), [@faisal-alvi](https://github.com/faisal-alvi) via [#187](https://github.com/10up/simple-local-avatars/pull/187)).
