@@ -397,6 +397,9 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		       ->with( $user_id, 'simple_local_avatar', $meta_value )
 		       ->andReturn( 101 );
 
+		WP_Mock::userFunction( 'wp_delete_attachment' )
+		       ->never();
+
 		$this->instance->assign_new_user_avatar( $url_or_media_id, $user_id );
 	}
 
@@ -484,6 +487,9 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		       ->andReturn( [] );
 
 		WP_Mock::userFunction( 'delete_user_meta' )
+		       ->never();
+
+		WP_Mock::userFunction( 'wp_delete_attachment' )
 		       ->never();
 
 		$this->instance->avatar_delete( 1 );
