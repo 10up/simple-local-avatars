@@ -918,16 +918,16 @@ class Simple_Local_Avatars {
 								<p style="display: inline-block; width: 26em;">
 									<span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br />
 									<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
-									<span class="spinner" id="simple-local-avatar-spinner"></span>
 								</p>
 							<?php } ?>
-							<p>
+							<p style="width: 28em">
 								<?php if ( current_user_can( 'upload_files' ) && did_action( 'wp_enqueue_media' ) ) : ?>
 									<a href="#" class="button hide-if-no-js" id="simple-local-avatar-media"><?php esc_html_e( 'Choose from Media Library', 'simple-local-avatars' ); ?></a> &nbsp;
 								<?php endif; ?>
 								<a href="<?php echo esc_url( $remove_url ); ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-remove" <?php echo empty( $profileuser->simple_local_avatar ) ? ' style="display:none;"' : ''; ?>>
 									<?php esc_html_e( 'Delete local avatar', 'simple-local-avatars' ); ?>
 								</a>
+								<span class="spinner" id="simple-local-avatar-spinner"></span>
 							</p>
 							<?php
 						} else {
