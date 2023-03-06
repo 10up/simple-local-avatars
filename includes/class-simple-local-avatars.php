@@ -777,7 +777,7 @@ class Simple_Local_Avatars {
 		$this->remove_nonce = wp_create_nonce( 'remove_simple_local_avatar_nonce' );
 
 		wp_enqueue_script( 'simple-local-avatars', plugins_url( '', dirname( __FILE__ ) ) . '/dist/simple-local-avatars.js', array( 'jquery' ), SLA_VERSION, true );
-		wp_enqueue_style( 'simple-local-avatars-style', plugins_url( '', dirname( __FILE__ ) ) . '/dist/simple-local-avatars.css', array(), SLA_VERSION );
+		wp_enqueue_style( 'simple-local-avatars-style', plugins_url( '', dirname( __FILE__ ) ) . '/dist/simple-local-avatars-style.css', array(), SLA_VERSION );
 		wp_localize_script(
 			'simple-local-avatars',
 			'i10n_SimpleLocalAvatars',
@@ -1172,10 +1172,6 @@ class Simple_Local_Avatars {
 			$old_avatars = (array) get_user_meta( $user_id, $this->user_key, true );
 
 			if ( is_array( $old_avatars ) ) {
-				if ( ! function_exists( 'wp_delete_attachment' ) ) {
-					include_once ABSPATH . 'wp-admin/includes/image.php';
-				}
-				
 				// Delete attachment
 				if ( ! empty( $old_avatars['media_id'] ) ) {
 					wp_delete_attachment( $old_avatars['media_id'], true );

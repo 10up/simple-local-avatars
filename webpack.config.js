@@ -9,6 +9,6 @@ module.exports = {
 	},
     entry: {
         'simple-local-avatars': path.resolve( process.cwd(), 'assets/js', 'simple-local-avatars.js' ),
-		'simple-local-avatars-css': path.resolve( process.cwd(), 'assets/scss', 'simple-local-avatars.scss' ), 
+		'simple-local-avatars-style': path.resolve( process.cwd(), 'assets/scss', 'simple-local-avatars-style.scss' ), 
     }
 };
