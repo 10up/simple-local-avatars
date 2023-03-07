@@ -935,7 +935,7 @@ class Simple_Local_Avatars {
 								<div>
 									<?php esc_html_e( 'Delete or remove existing avatar to set a new one.', 'simple-local-avatars' ); ?> 
 								</div>
-								<a href="<?php echo esc_url( $remove_url ); ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-delete" data-alert="<?php echo esc_attr__( 'Are you sure to delete the image permanently?', 'simple-local-avatars' ); ?>">
+								<a href="<?php echo esc_url( $remove_url ); ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-delete" data-alert="<?php echo esc_attr__( 'Are you sure that you want to permanently delete the image?', 'simple-local-avatars' ); ?>">
 									<?php esc_html_e( 'Delete', 'simple-local-avatars' ); ?>
 								</a>
 								<a href="<?php echo esc_url( $remove_url ); ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-remove">
