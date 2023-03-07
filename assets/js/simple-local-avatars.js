@@ -129,7 +129,7 @@ jQuery(document).ready(function ($) {
 
 		if (avatar_working) return;
 
-		if($(this).data('alert') && !window.confirm($(this).data('alert'))) {
+		if ($(this).data('alert') && !window.confirm($(this).data('alert'))) {
 			return;
 		}
 
