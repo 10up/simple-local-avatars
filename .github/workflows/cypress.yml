@@ -44,9 +44,6 @@ jobs:
     - name: Composer (optional)
       run: composer install
       continue-on-error: true
-    - name: Build (optional)
-      run: npm run build
-      continue-on-error: true
     - name: Set the core version and plugins config 
       run: ./tests/bin/set-wp-config.js --core=${{ matrix.core.version }} --plugins=./${{ github.event.repository.name }}
     - name: Set up WP environment
