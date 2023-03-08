@@ -5,6 +5,8 @@ on:
     branches:
       - develop
 jobs:
+  build: 
+      uses: 10up/simple-local-avatars/.github/workflows/build-release-zip.yml@update/181 # TODO: Update this to develop branch before merge.
   cypress:
     name: ${{ matrix.core.name }}
     runs-on: ubuntu-latest
@@ -17,6 +19,25 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+    - name: Download build zip
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ github.event.repository.name }}
+        path: ${{ github.event.repository.name }}
+    - name: Display structure of downloaded files
+      run: ls -R
+      working-directory: ${{ github.event.repository.name }}
+    - name: Cache node_modules
+      id: cache-node-modules
+      uses: actions/cache@v3
+      env:
+        cache-name: cache-node-modules
+      with:
+        path: |
+          node_modules
+          ~/.cache
+          ~/.npm
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
     - name: Install dependencies
       run: npm install
     - name: Composer (optional)
@@ -25,8 +46,8 @@ jobs:
     - name: Build (optional)
       run: npm run build
       continue-on-error: true
-    - name: Set the core version
-      run: ./tests/bin/set-core-version.js ${{ matrix.core.version }}
+    - name: Set the core version and plugins config 
+      run: ./tests/bin/set-wp-config.js --core=${{ matrix.core.version }} --plugins=./${{ github.event.repository.name }}
     - name: Set up WP environment
       run: npm run env:start
     - name: Test
