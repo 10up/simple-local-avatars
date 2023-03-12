@@ -314,6 +314,7 @@ function avatar_lock(lock_or_unlock) {
 		avatar_working = true;
 		avatar_form_button.attr('disabled', 'disabled');
 		avatar_spinner.show();
+		jQuery(avatar_container).html( avatar_spinner );
 		if ( ! avatar_spinner.hasClass( 'is-active' ) ) {
 			avatar_spinner.addClass( 'is-active' );
 		}

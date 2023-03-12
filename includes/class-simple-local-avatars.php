@@ -890,6 +890,7 @@ class Simple_Local_Avatars {
 						echo wp_kses_post( get_simple_local_avatar( $profileuser->ID ) );
 						remove_filter( 'pre_option_avatar_rating', '__return_empty_string' );
 						?>
+						<span class="spinner" id="simple-local-avatar-spinner"></span>
 					</td>
 					<td>
 						<?php
@@ -927,7 +928,6 @@ class Simple_Local_Avatars {
 								<a href="<?php echo esc_url( $remove_url ); ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-remove" <?php echo empty( $profileuser->simple_local_avatar ) ? ' style="display:none;"' : ''; ?>>
 									<?php esc_html_e( 'Delete local avatar', 'simple-local-avatars' ); ?>
 								</a>
-								<span class="spinner" id="simple-local-avatar-spinner"></span>
 							</p>
 							<?php
 						} else {
