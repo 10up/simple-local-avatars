@@ -6,7 +6,7 @@ on:
       - develop
 jobs:
   build: 
-      uses: 10up/simple-local-avatars/.github/workflows/build-release-zip.yml@update/181 # TODO: Update this to develop branch before merge.
+      uses: 10up/simple-local-avatars/.github/workflows/build-release-zip.yml@develop
   cypress:
     needs: build
     name: ${{ matrix.core.name }}
