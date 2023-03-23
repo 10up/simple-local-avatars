@@ -926,7 +926,7 @@ class Simple_Local_Avatars {
 									<a href="#" class="button hide-if-no-js" id="simple-local-avatar-media"><?php esc_html_e( 'Choose from Media Library', 'simple-local-avatars' ); ?></a> &nbsp;
 								<?php endif; ?>
 								<a href="<?php echo esc_url( $remove_url ); ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-remove" <?php echo empty( $profileuser->simple_local_avatar ) ? ' style="display:none;"' : ''; ?>>
-									<?php esc_html_e( 'Delete local avatar', 'simple-local-avatars' ); ?>
+									<?php esc_html_e( 'Remove local avatar', 'simple-local-avatars' ); ?>
 								</a>
 							</p>
 							<?php
