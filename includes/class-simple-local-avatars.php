@@ -884,60 +884,64 @@ class Simple_Local_Avatars {
 			<table class="form-table">
 				<tr class="upload-avatar-row">
 					<th scope="row"><label for="simple-local-avatar"><?php esc_html_e( 'Upload Avatar', 'simple-local-avatars' ); ?></label></th>
-					<td style="width: 50px;" id="simple-local-avatar-photo">
-						<?php
-						add_filter( 'pre_option_avatar_rating', '__return_empty_string' );     // ignore ratings here
-						echo wp_kses_post( get_simple_local_avatar( $profileuser->ID ) );
-						remove_filter( 'pre_option_avatar_rating', '__return_empty_string' );
-						?>
-					</td>
-					<td>
-						<?php
-						$upload_rights = current_user_can( 'upload_files' );
-						if ( ! $upload_rights ) {
-							$upload_rights = empty( $this->options['caps'] );
-						}
-
-						if ( $upload_rights ) {
-							do_action( 'simple_local_avatar_notices' );
-							wp_nonce_field( 'simple_local_avatar_nonce', '_simple_local_avatar_nonce', false );
-							$remove_url = add_query_arg(
-								array(
-									'action'   => 'remove-simple-local-avatar',
-									'user_id'  => $profileuser->ID,
-									'_wpnonce' => $this->remove_nonce,
-								)
-							);
-							?>
-							<?php
-							// if user is author and above hide the choose file option
-							// force them to use the WP Media Selector
-							// At FE, show the file input field regardless of the caps.
-							if ( ! is_admin() || ! current_user_can( 'upload_files' ) ) {
+					<td colspan="2">
+						<div class="right-wrapper" style="display: flex; align-items: center;">
+							<div id="simple-local-avatar-photo" class="image-container" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+								<?php
+								add_filter( 'pre_option_avatar_rating', '__return_empty_string' );     // ignore ratings here
+								echo wp_kses_post( get_simple_local_avatar( $profileuser->ID ) );
+								remove_filter( 'pre_option_avatar_rating', '__return_empty_string' );
 								?>
-								<p style="display: inline-block; width: 26em;">
-									<span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br />
-									<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
-									<span class="spinner" id="simple-local-avatar-spinner"></span>
-								</p>
-							<?php } ?>
-							<p>
-								<?php if ( current_user_can( 'upload_files' ) && did_action( 'wp_enqueue_media' ) ) : ?>
-									<a href="#" class="button hide-if-no-js" id="simple-local-avatar-media"><?php esc_html_e( 'Choose from Media Library', 'simple-local-avatars' ); ?></a> &nbsp;
-								<?php endif; ?>
-								<a href="<?php echo esc_url( $remove_url ); ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-remove" <?php echo empty( $profileuser->simple_local_avatar ) ? ' style="display:none;"' : ''; ?>>
-									<?php esc_html_e( 'Delete local avatar', 'simple-local-avatars' ); ?>
-								</a>
-							</p>
-							<?php
-						} else {
-							if ( empty( $profileuser->simple_local_avatar ) ) {
-								echo '<span class="description">' . esc_html__( 'No local avatar is set. Set up your avatar at Gravatar.com.', 'simple-local-avatars' ) . '</span>';
-							} else {
-								echo '<span class="description">' . esc_html__( 'You do not have media management permissions. To change your local avatar, contact the blog administrator.', 'simple-local-avatars' ) . '</span>';
-							}
-						}
-						?>
+								<span class="spinner" id="simple-local-avatar-spinner"></span>
+							</div>
+							<div class="button-containet" style="padding-left: 20px;">
+								<?php
+								$upload_rights = current_user_can( 'upload_files' );
+								if ( ! $upload_rights ) {
+									$upload_rights = empty( $this->options['caps'] );
+								}
+
+								if ( $upload_rights ) {
+									do_action( 'simple_local_avatar_notices' );
+									wp_nonce_field( 'simple_local_avatar_nonce', '_simple_local_avatar_nonce', false );
+									$remove_url = add_query_arg(
+										array(
+											'action'   => 'remove-simple-local-avatar',
+											'user_id'  => $profileuser->ID,
+											'_wpnonce' => $this->remove_nonce,
+										)
+									);
+									?>
+									<?php
+									// if user is author and above hide the choose file option
+									// force them to use the WP Media Selector
+									// At FE, show the file input field regardless of the caps.
+									if ( ! is_admin() || ! current_user_can( 'upload_files' ) ) {
+										?>
+										<p style="display: inline-block; width: 26em;">
+											<span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br />
+											<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
+										</p>
+									<?php } ?>
+									<p style="width: 28em">
+										<?php if ( current_user_can( 'upload_files' ) && did_action( 'wp_enqueue_media' ) ) : ?>
+											<a href="#" class="button hide-if-no-js" id="simple-local-avatar-media"><?php esc_html_e( 'Choose from Media Library', 'simple-local-avatars' ); ?></a> &nbsp;
+										<?php endif; ?>
+										<a href="<?php echo esc_url( $remove_url ); ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-remove" <?php echo empty( $profileuser->simple_local_avatar ) ? ' style="display:none;"' : ''; ?>>
+											<?php esc_html_e( 'Remove local avatar', 'simple-local-avatars' ); ?>
+										</a>
+									</p>
+									<?php
+								} else {
+									if ( empty( $profileuser->simple_local_avatar ) ) {
+										echo '<span class="description">' . esc_html__( 'No local avatar is set. Set up your avatar at Gravatar.com.', 'simple-local-avatars' ) . '</span>';
+									} else {
+										echo '<span class="description">' . esc_html__( 'You do not have media management permissions. To change your local avatar, contact the blog administrator.', 'simple-local-avatars' ) . '</span>';
+									}
+								}
+								?>
+							</div>
+						</div>
 					</td>
 				</tr>
 				<tr class="ratings-row">

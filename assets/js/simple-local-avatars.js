@@ -307,10 +307,17 @@ function avatar_lock(lock_or_unlock) {
 		avatar_working = false;
 		avatar_form_button.removeAttr('disabled');
 		avatar_spinner.hide();
+		if ( avatar_spinner.hasClass( 'is-active' ) ) {
+			avatar_spinner.removeClass( 'is-active' );
+		}
 	} else {
 		avatar_working = true;
 		avatar_form_button.attr('disabled', 'disabled');
 		avatar_spinner.show();
+		jQuery(avatar_container).html( avatar_spinner );
+		if ( ! avatar_spinner.hasClass( 'is-active' ) ) {
+			avatar_spinner.addClass( 'is-active' );
+		}
 	}
 }
 
