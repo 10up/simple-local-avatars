@@ -41,7 +41,7 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 
 == Changelog ==
 
-## [2.7.5] - 2023-05-12 =
+= 2.7.5 - 2023-05-15 =
 * **Added:** Ajax loading animation during process of uploading and deleting local avatars (props [@lllopo](https://github.com/lllopo), [@BhargavBhandari90](https://github.com/BhargavBhandari90), [@faisal-alvi](https://github.com/faisal-alvi) via [#204](https://github.com/10up/simple-local-avatars/pull/204)).
 * **Changed:** Avatar removal button text (props [@jayedul](https://github.com/jayedul), [@jeffpaul](https://github.com/jeffpaul), [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi) via [#208](https://github.com/10up/simple-local-avatars/pull/208)).
 * **Changed:** WordPress "tested up to" version 6.2 (props [@jayedul](https://github.com/jayedul), [@faisal-alvi](https://github.com/faisal-alvi) via [#210](https://github.com/10up/simple-local-avatars/pull/210)).
