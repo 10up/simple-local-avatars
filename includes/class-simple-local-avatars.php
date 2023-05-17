@@ -526,13 +526,13 @@ class Simple_Local_Avatars {
 		 */
 		$this->avatar_ratings = array(
 			/* translators: Content suitability rating: https://en.wikipedia.org/wiki/Motion_Picture_Association_of_America_film_rating_system */
-			'G'  => __( 'G &#8212; Suitable for all audiences' ),
+			'G'  => __( 'G &#8212; Suitable for all audiences', 'simple-local-avatars' ),
 			/* translators: Content suitability rating: https://en.wikipedia.org/wiki/Motion_Picture_Association_of_America_film_rating_system */
-			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above' ),
+			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above', 'simple-local-avatars' ),
 			/* translators: Content suitability rating: https://en.wikipedia.org/wiki/Motion_Picture_Association_of_America_film_rating_system */
-			'R'  => __( 'R &#8212; Intended for adult audiences above 17' ),
+			'R'  => __( 'R &#8212; Intended for adult audiences above 17', 'simple-local-avatars' ),
 			/* translators: Content suitability rating: https://en.wikipedia.org/wiki/Motion_Picture_Association_of_America_film_rating_system */
-			'X'  => __( 'X &#8212; Even more mature than above' ),
+			'X'  => __( 'X &#8212; Even more mature than above', 'simple-local-avatars' ),
 		);
 	}
 
@@ -919,7 +919,7 @@ class Simple_Local_Avatars {
 									if ( ! is_admin() || ! current_user_can( 'upload_files' ) ) {
 										?>
 										<p style="display: inline-block; width: 26em;">
-											<span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br />
+											<span class="description"><?php esc_html_e( 'Choose an image from your computer:', 'simple-local-avatars' ); ?></span><br />
 											<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
 										</p>
 									<?php } ?>
@@ -945,10 +945,10 @@ class Simple_Local_Avatars {
 					</td>
 				</tr>
 				<tr class="ratings-row">
-					<th scope="row"><?php esc_html_e( 'Rating' ); ?></th>
+					<th scope="row"><?php esc_html_e( 'Rating', 'simple-local-avatars' ); ?></th>
 					<td colspan="2">
 						<fieldset id="simple-local-avatar-ratings" <?php disabled( empty( $profileuser->simple_local_avatar ) ); ?>>
-							<legend class="screen-reader-text"><span><?php esc_html_e( 'Rating' ); ?></span></legend>
+							<legend class="screen-reader-text"><span><?php esc_html_e( 'Rating', 'simple-local-avatars' ); ?></span></legend>
 							<?php
 							if ( empty( $profileuser->simple_local_avatar_rating ) || ! array_key_exists( $profileuser->simple_local_avatar_rating, $this->avatar_ratings ) ) {
 								$profileuser->simple_local_avatar_rating = 'G';
@@ -1448,7 +1448,7 @@ class Simple_Local_Avatars {
 		?>
 		<input type="hidden" name="simple-local-avatar-file-id" id="simple-local-avatar-file-id" value="<?php echo ! empty( $default_avatar_file_id ) ? esc_attr( $default_avatar_file_id ) : ''; ?>"/>
 		<input type="hidden" name="simple-local-avatar-file-url" id="simple-local-avatar-file-url" value="<?php echo ! empty( $default_avatar_file_url ) ? esc_url( $default_avatar_file_url ) : ''; ?>"/>
-		<input type="button" name="simple-local-avatar" id="simple-local-avatar-default" class="button-secondary" value="<?php esc_attr_e( 'Choose Default Avatar', 'simple-local-avatar' ); ?>"/>
+		<input type="button" name="simple-local-avatar" id="simple-local-avatar-default" class="button-secondary" value="<?php esc_attr_e( 'Choose Default Avatar', 'simple-local-avatars' ); ?>"/>
 		<?php
 		$defaults['simple_local_avatar'] = ob_get_clean();
 
