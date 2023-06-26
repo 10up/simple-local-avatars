@@ -337,7 +337,7 @@ class Simple_Local_Avatars {
 
 		// Fetch local avatar from meta and make sure it's properly set.
 		$local_avatars = get_user_meta( $user_id, $this->user_key, true );
-		if ( empty( $local_avatars['full'] ) ) {
+		if ( empty( $local_avatars['media_id'] ) ) {
 			return '';
 		}
 
@@ -371,12 +371,15 @@ class Simple_Local_Avatars {
 			if ( ! $avatar_full_path ) {
 				return '';
 			}
+
+			// Use dynamic full url in favour of host/domain change.
+			$local_avatars['full'] = wp_get_attachment_image_url( $local_avatars['media_id'], 'full' );
 		}
 
 		$size = (int) $size;
 
 		// Generate a new size.
-		if ( ! array_key_exists( $size, $local_avatars ) ) {
+		if ( ! array_key_exists( $size, $local_avatars ) || ! ( strpos( $local_avatars[ $size ], content_url() ) === 0 ) ) {
 			$local_avatars[ $size ] = $local_avatars['full']; // just in case of failure elsewhere
 
 			// allow automatic rescaling to be turned off
