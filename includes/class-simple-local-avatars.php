@@ -1436,9 +1436,6 @@ class Simple_Local_Avatars {
 	 * @return array Default options of avatar.
 	 */
 	public function add_avatar_default_field( $defaults ) {
-		if ( ! did_action( 'wp_enqueue_media' ) ) {
-			wp_enqueue_media();
-		}
 		$default_avatar_file_url = '';
 		$default_avatar_file_id  = get_option( 'simple_local_avatar_default', '' );
 		if ( ! empty( $default_avatar_file_id ) ) {
