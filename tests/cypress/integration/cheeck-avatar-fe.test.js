@@ -52,7 +52,7 @@ describe('Check avatar on a  post', () => {
 
         // Set the theme
         cy.visit('/wp-admin/themes.php');
-        cy.get('[data-slug="twentytwenty"] .button.activate').click();
+        cy.get('.theme[data-slug="twentytwenty"] .button.activate').click({ force: true });
 
         // Check the FE
         cy.visit('/test-simple-avatars-post/');
