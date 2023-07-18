@@ -202,13 +202,13 @@ class Simple_Local_Avatars {
 	 * @return boolean
 	 */
 	public function is_avatar_shared() {
+		if ( ! is_multisite() ) {
+			return false;
+		}
+
 		if (
-			is_multisite() // Are we on multisite.
-			&& ! isset( $this->options['shared'] ) // And our shared option doesn't exist.
-			|| (
-				isset( $this->options['shared'] ) // Or our shared option is set.
-				&& 1 === $this->options['shared']
-			)
+			! isset( $this->options['shared'] ) // Our shared option doesn't exist.
+			|| 1 === $this->options['shared']  // Or our shared option is set.
 		) {
 			return true;
 		}
