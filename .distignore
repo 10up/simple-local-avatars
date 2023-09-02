@@ -9,17 +9,7 @@
 /tests
 
 # Files to ignore
-/.babelrc
-/.distignore
-/.DS_Store
-/.editorconfig
-/.eslintignore
-/.eslintrc
-/.gitignore
-/.phpcs.xml.dist
-/.phpunit.result.cache
-/.prettierrc
-/.wp-env.json
+/.*
 /assets/js/simple-local-avatars.js
 /CHANGELOG.md
 /CODE_OF_CONDUCT.md

@@ -2,7 +2,7 @@
 
 > Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!
 
-[![Support Level](https://img.shields.io/badge/support-active-green.svg)](#support-level) ![PHPCompatibility](https://github.com/10up/simple-local-avatars/actions/workflows/php-compatibility.yml/badge.svg) [![Release Version](https://img.shields.io/github/release/10up/simple-local-avatars.svg)](https://github.com/10up/simple-local-avatars/releases/latest) ![WordPress tested up to version](https://img.shields.io/wordpress/plugin/tested/simple-local-avatars?label=WordPress) [![GPLv2 License](https://img.shields.io/github/license/10up/simple-local-avatars.svg)](https://github.com/10up/simple-local-avatars/blob/develop/LICENSE.md)
+[![Support Level](https://img.shields.io/badge/support-stable-blue.svg)](#support-level) ![PHPCompatibility](https://github.com/10up/simple-local-avatars/actions/workflows/php-compatibility.yml/badge.svg) [![Release Version](https://img.shields.io/github/release/10up/simple-local-avatars.svg)](https://github.com/10up/simple-local-avatars/releases/latest) ![WordPress tested up to version](https://img.shields.io/wordpress/plugin/tested/simple-local-avatars?label=WordPress) [![GPLv2 License](https://img.shields.io/github/license/10up/simple-local-avatars.svg)](https://github.com/10up/simple-local-avatars/blob/develop/LICENSE.md)
 
 ## Features
 
@@ -14,7 +14,7 @@ Just edit a user profile, and scroll down to the new "Avatar" field. The plug-in
 2. Has a simple, native interface
 3. Fully supports Gravatar and default avatars if no local avatar is set for the user - but also allows you turn off Gravatar
 4. Generates the requested avatar size on demand (and stores the new size for efficiency), so it looks great, just like Gravatar!
-5. Let's you decide whether lower privilege users (subscribers, contributors) can upload their own avatar
+5. Lets you decide whether lower privilege users (subscribers, contributors) can upload their own avatar
 6. Enables rating of local avatars, just like Gravatar
 
 ![Avatar upload field on a user profile page](.wordpress-org/screenshot-1.png "Screenshot of Simple Local Avatars section within a User Profile")
@@ -32,7 +32,7 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrei
 
 ## Support Level
 
-**Active:** 10up is actively working on this, and we expect to continue work for the foreseeable future including keeping tested up to the most recent version of WordPress.  Bug reports, feature requests, questions, and pull requests are welcome.
+**Stable:** 10up is not planning to develop any new features for this, but will still respond to bug reports and security concerns. We welcome PRs, but any that include new features should be small and easy to integrate and should not include breaking changes. We otherwise intend to keep this tested up to the most recent version of WordPress.
 
 ## Contributing
 

@@ -28,10 +28,9 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 			'X'  => __( 'X &#8212; Even more mature than above', 'simple-local-avatars' ),
 		) );
 
-		$user = (object) [
-			'ID'           => 1,
-			'display_name' => 'TEST_USER',
-		];
+		$user               = Mockery::mock( WP_User::class );
+		$user->ID           = 1;
+		$user->display_name = 'TEST_USER';
 
 		// Init $POST.
 		$_POST = array();
@@ -230,7 +229,39 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		       ->andReturn( '' );
 
 		$avatar_data = $this->instance->get_avatar_data( [ 'size' => 96, 'alt' => '' ], 1 );
-		$this->assertEquals( '', $avatar_data['alt'] );
+		$this->assertEquals( 'Avatar photo', $avatar_data['alt'] );
+	}
+
+	public function test_get_simple_local_avatar_alt_with_default_avatar_without_alt() {
+		WP_Mock::userFunction( 'get_user_meta' )
+		       ->with( 1, 'simple_local_avatar', true )
+		       ->andReturn( [] );
+
+		WP_Mock::userFunction( 'get_option' )
+		       ->with( 'avatar_default' )
+		       ->andReturn( 'mystery' );
+
+		$this->assertEquals( 'Avatar photo', $this->instance->get_simple_local_avatar_alt( 1 ) );
+	}
+
+	public function test_get_simple_local_avatar_alt_with_default_avatar_with_alt() {
+		WP_Mock::userFunction( 'get_user_meta' )
+		       ->with( 1, 'simple_local_avatar', true )
+		       ->andReturn( [] );
+
+		WP_Mock::userFunction( 'get_option' )
+		       ->with( 'avatar_default' )
+		       ->andReturn( 'simple_local_avatar' );
+
+		WP_Mock::userFunction( 'get_option' )
+		       ->with( 'simple_local_avatar_default', '' )
+		       ->andReturn( 101 );
+
+		WP_Mock::userFunction( 'get_post_meta' )
+		       ->with( 101, '_wp_attachment_image_alt', true )
+		       ->andReturn( 'Custom alt text' );
+
+		$this->assertEquals( 'Custom alt text', $this->instance->get_simple_local_avatar_alt( 1 ) );
 	}
 
 	public function test_admin_init() {
@@ -456,5 +487,22 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		       ->never();
 
 		$this->instance->avatar_delete( 1 );
+	}
+
+	public function test_get_user_id() {
+		$this->assertEquals( 1, $this->instance->get_user_id( '1' ) );
+		$this->assertEquals( 1, $this->instance->get_user_id( 'test@example.com' ) );
+
+		$user     = Mockery::mock( WP_User::class );
+		$user->ID = 1;
+		$this->assertEquals( 1, $this->instance->get_user_id( $user ) );
+
+		$post              = Mockery::mock( WP_Post::class );
+		$post->post_author = 1;
+		$this->assertEquals( 1, $this->instance->get_user_id( $post ) );
+
+		$comment          = Mockery::mock( WP_Comment::class );
+		$comment->user_id = '1';
+		$this->assertEquals( 1, $this->instance->get_user_id( $comment ) );
 	}
 }

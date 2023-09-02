@@ -68,12 +68,6 @@ class Simple_Local_Avatars {
 		$this->options        = (array) get_option( 'simple_local_avatars' );
 		$this->user_key       = 'simple_local_avatar';
 		$this->rating_key     = 'simple_local_avatar_rating';
-		$this->avatar_ratings = array(
-			'G'  => __( 'G &#8212; Suitable for all audiences', 'simple-local-avatars' ),
-			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above', 'simple-local-avatars' ),
-			'R'  => __( 'R &#8212; Intended for adult audiences above 17', 'simple-local-avatars' ),
-			'X'  => __( 'X &#8212; Even more mature than above', 'simple-local-avatars' ),
-		);
 
 		if (
 			! $this->is_avatar_shared() // Are we sharing avatars?
@@ -100,6 +94,7 @@ class Simple_Local_Avatars {
 	 */
 	public function add_hooks() {
 		global $pagenow;
+		global $wp_version;
 
 		add_filter( 'plugin_action_links_' . SLA_PLUGIN_BASENAME, array( $this, 'plugin_filter_action_links' ) );
 
@@ -107,6 +102,7 @@ class Simple_Local_Avatars {
 		add_filter( 'pre_option_simple_local_avatars', array( $this, 'pre_option_simple_local_avatars' ), 10, 1 );
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
+		add_action( 'init', array( $this, 'define_avatar_ratings' ) );
 
 		// Load the JS on BE & FE both, in order to support third party plugins like bbPress.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
@@ -133,7 +129,11 @@ class Simple_Local_Avatars {
 		add_action( 'wp_ajax_sla_clear_user_cache', array( $this, 'sla_clear_user_cache' ) );
 
 		add_filter( 'avatar_defaults', array( $this, 'add_avatar_default_field' ) );
-		add_action( 'wpmu_new_blog', array( $this, 'set_defaults' ) );
+		if ( version_compare( $wp_version, '5.1', '<' ) ) {
+			add_action( 'wpmu_new_blog', array( $this, 'set_defaults' ) );
+		} else {
+			add_action( 'wp_initialize_site', array( $this, 'set_defaults' ) );
+		}
 
 		if ( 'profile.php' === $pagenow ) {
 			add_filter( 'media_view_strings', function ( $strings ) {
@@ -141,6 +141,13 @@ class Simple_Local_Avatars {
 
 				return $strings;
 			}, 10, 1 );
+		}
+
+		// Fix: An error occurred cropping the image (https://github.com/10up/simple-local-avatars/issues/141).
+		if ( isset( $_POST['action'] ) && 'crop-image' === $_POST['action'] && is_admin() && wp_doing_ajax() ) {
+			add_action( 'plugins_loaded', function () {
+				remove_all_actions( 'setup_theme' );
+			} );
 		}
 	}
 
@@ -195,13 +202,13 @@ class Simple_Local_Avatars {
 	 * @return boolean
 	 */
 	public function is_avatar_shared() {
+		if ( ! is_multisite() ) {
+			return false;
+		}
+
 		if (
-			is_multisite() // Are we on multisite.
-			&& ! isset( $this->options['shared'] ) // And our shared option doesn't exist.
-			|| (
-				isset( $this->options['shared'] ) // Or our shared option is set.
-				&& 1 === $this->options['shared']
-			)
+			! isset( $this->options['shared'] ) // Our shared option doesn't exist.
+			|| 1 === $this->options['shared']  // Or our shared option is set.
 		) {
 			return true;
 		}
@@ -300,6 +307,8 @@ class Simple_Local_Avatars {
 			$user_id = (int) $id_or_email;
 		} elseif ( is_object( $id_or_email ) && ! empty( $id_or_email->user_id ) ) {
 			$user_id = (int) $id_or_email->user_id;
+		} elseif ( $id_or_email instanceof WP_User ) {
+			$user_id = $id_or_email->ID;
 		} elseif ( $id_or_email instanceof WP_Post && ! empty( $id_or_email->post_author ) ) {
 			$user_id = (int) $id_or_email->post_author;
 		} elseif ( is_string( $id_or_email ) ) {
@@ -426,17 +435,36 @@ class Simple_Local_Avatars {
 	public function get_simple_local_avatar_alt( $id_or_email ) {
 		$user_id = $this->get_user_id( $id_or_email );
 
+		/**
+		 * Filter the default avatar alt text.
+		 *
+		 * @param string $alt Default alt text.
+		 * @return string
+		 */
+		$default_alt = apply_filters( 'simple_local_avatars_default_alt', __( 'Avatar photo', 'simple-local-avatars' ) );
+
 		if ( empty( $user_id ) ) {
-			return '';
+			return $default_alt;
 		}
 
 		// Fetch local avatar from meta and make sure we have a media ID.
 		$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
 		if ( empty( $local_avatars['media_id'] ) ) {
-			return '';
+			$alt = '';
+			// If no avatar is set, check if we are using a default avatar with alt text.
+			if ( 'simple_local_avatar' === get_option( 'avatar_default' ) ) {
+				$default_avatar_id = get_option( 'simple_local_avatar_default', '' );
+				if ( ! empty( $default_avatar_id ) ) {
+					$alt = get_post_meta( $default_avatar_id, '_wp_attachment_image_alt', true );
+				}
+			}
+
+			return $alt ? $alt : $default_alt;
 		}
 
-		return esc_attr( get_post_meta( $local_avatars['media_id'], '_wp_attachment_image_alt', true ) );
+		$alt = get_post_meta( $local_avatars['media_id'], '_wp_attachment_image_alt', true );
+
+		return $alt ? $alt : $default_alt;
 	}
 
 	/**
@@ -478,9 +506,41 @@ class Simple_Local_Avatars {
 	}
 
 	/**
+	 * Define the ratings avatar ratings.
+	 *
+	 * The ratings need to be defined after the languages have been loaded so
+	 * they can be translated. This method exists to define the ratings
+	 * after that has been done.
+	 *
+	 * @since 2.7.3
+	 */
+	public function define_avatar_ratings() {
+		/*
+		 * Avatar ratings.
+		 *
+		 * The key should not be translated as it's used by WP Core in it's
+		 * english form (G, PG, etc).
+		 *
+		 * The values should be translated, these include the initial rating
+		 * name and the description for display to users.
+		 */
+		$this->avatar_ratings = array(
+			/* translators: Content suitability rating: https://en.wikipedia.org/wiki/Motion_Picture_Association_of_America_film_rating_system */
+			'G'  => __( 'G &#8212; Suitable for all audiences' ),
+			/* translators: Content suitability rating: https://en.wikipedia.org/wiki/Motion_Picture_Association_of_America_film_rating_system */
+			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above' ),
+			/* translators: Content suitability rating: https://en.wikipedia.org/wiki/Motion_Picture_Association_of_America_film_rating_system */
+			'R'  => __( 'R &#8212; Intended for adult audiences above 17' ),
+			/* translators: Content suitability rating: https://en.wikipedia.org/wiki/Motion_Picture_Association_of_America_film_rating_system */
+			'X'  => __( 'X &#8212; Even more mature than above' ),
+		);
+	}
+
+	/**
 	 * Register admin settings.
 	 */
 	public function admin_init() {
+		$this->define_avatar_ratings();
 		// upgrade pre 2.0 option
 		$old_ops = get_option( 'simple_local_avatars_caps' );
 		if ( $old_ops ) {
@@ -824,60 +884,64 @@ class Simple_Local_Avatars {
 			<table class="form-table">
 				<tr class="upload-avatar-row">
 					<th scope="row"><label for="simple-local-avatar"><?php esc_html_e( 'Upload Avatar', 'simple-local-avatars' ); ?></label></th>
-					<td style="width: 50px;" id="simple-local-avatar-photo">
-						<?php
-						add_filter( 'pre_option_avatar_rating', '__return_null' );     // ignore ratings here
-						echo wp_kses_post( get_simple_local_avatar( $profileuser->ID ) );
-						remove_filter( 'pre_option_avatar_rating', '__return_null' );
-						?>
-					</td>
-					<td>
-						<?php
-						$upload_rights = current_user_can( 'upload_files' );
-						if ( ! $upload_rights ) {
-							$upload_rights = empty( $this->options['caps'] );
-						}
-
-						if ( $upload_rights ) {
-							do_action( 'simple_local_avatar_notices' );
-							wp_nonce_field( 'simple_local_avatar_nonce', '_simple_local_avatar_nonce', false );
-							$remove_url = add_query_arg(
-								array(
-									'action'   => 'remove-simple-local-avatar',
-									'user_id'  => $profileuser->ID,
-									'_wpnonce' => $this->remove_nonce,
-								)
-							);
-							?>
-							<?php
-							// if user is author and above hide the choose file option
-							// force them to use the WP Media Selector
-							// At FE, show the file input field regardless of the caps.
-							if ( ! is_admin() || ! current_user_can( 'upload_files' ) ) {
+					<td colspan="2">
+						<div class="right-wrapper" style="display: flex; align-items: center;">
+							<div id="simple-local-avatar-photo" class="image-container" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+								<?php
+								add_filter( 'pre_option_avatar_rating', '__return_empty_string' );     // ignore ratings here
+								echo wp_kses_post( get_simple_local_avatar( $profileuser->ID ) );
+								remove_filter( 'pre_option_avatar_rating', '__return_empty_string' );
 								?>
-								<p style="display: inline-block; width: 26em;">
-									<span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br />
-									<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
-									<span class="spinner" id="simple-local-avatar-spinner"></span>
-								</p>
-							<?php } ?>
-							<p>
-								<?php if ( current_user_can( 'upload_files' ) && did_action( 'wp_enqueue_media' ) ) : ?>
-									<a href="#" class="button hide-if-no-js" id="simple-local-avatar-media"><?php esc_html_e( 'Choose from Media Library', 'simple-local-avatars' ); ?></a> &nbsp;
-								<?php endif; ?>
-								<a href="<?php echo esc_url( $remove_url ); ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-remove" <?php echo empty( $profileuser->simple_local_avatar ) ? ' style="display:none;"' : ''; ?>>
-									<?php esc_html_e( 'Delete local avatar', 'simple-local-avatars' ); ?>
-								</a>
-							</p>
-							<?php
-						} else {
-							if ( empty( $profileuser->simple_local_avatar ) ) {
-								echo '<span class="description">' . esc_html__( 'No local avatar is set. Set up your avatar at Gravatar.com.', 'simple-local-avatars' ) . '</span>';
-							} else {
-								echo '<span class="description">' . esc_html__( 'You do not have media management permissions. To change your local avatar, contact the blog administrator.', 'simple-local-avatars' ) . '</span>';
-							}
-						}
-						?>
+								<span class="spinner" id="simple-local-avatar-spinner"></span>
+							</div>
+							<div class="button-containet" style="padding-left: 20px;">
+								<?php
+								$upload_rights = current_user_can( 'upload_files' );
+								if ( ! $upload_rights ) {
+									$upload_rights = empty( $this->options['caps'] );
+								}
+
+								if ( $upload_rights ) {
+									do_action( 'simple_local_avatar_notices' );
+									wp_nonce_field( 'simple_local_avatar_nonce', '_simple_local_avatar_nonce', false );
+									$remove_url = add_query_arg(
+										array(
+											'action'   => 'remove-simple-local-avatar',
+											'user_id'  => $profileuser->ID,
+											'_wpnonce' => $this->remove_nonce,
+										)
+									);
+									?>
+									<?php
+									// if user is author and above hide the choose file option
+									// force them to use the WP Media Selector
+									// At FE, show the file input field regardless of the caps.
+									if ( ! is_admin() || ! current_user_can( 'upload_files' ) ) {
+										?>
+										<p style="display: inline-block; width: 26em;">
+											<span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br />
+											<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
+										</p>
+									<?php } ?>
+									<p style="width: 28em">
+										<?php if ( current_user_can( 'upload_files' ) && did_action( 'wp_enqueue_media' ) ) : ?>
+											<a href="#" class="button hide-if-no-js" id="simple-local-avatar-media"><?php esc_html_e( 'Choose from Media Library', 'simple-local-avatars' ); ?></a> &nbsp;
+										<?php endif; ?>
+										<a href="<?php echo esc_url( $remove_url ); ?>" class="button item-delete submitdelete deletion" id="simple-local-avatar-remove" <?php echo empty( $profileuser->simple_local_avatar ) ? ' style="display:none;"' : ''; ?>>
+											<?php esc_html_e( 'Remove local avatar', 'simple-local-avatars' ); ?>
+										</a>
+									</p>
+									<?php
+								} else {
+									if ( empty( $profileuser->simple_local_avatar ) ) {
+										echo '<span class="description">' . esc_html__( 'No local avatar is set. Set up your avatar at Gravatar.com.', 'simple-local-avatars' ) . '</span>';
+									} else {
+										echo '<span class="description">' . esc_html__( 'You do not have media management permissions. To change your local avatar, contact the blog administrator.', 'simple-local-avatars' ) . '</span>';
+									}
+								}
+								?>
+							</div>
+						</div>
 					</td>
 				</tr>
 				<tr class="ratings-row">
@@ -886,8 +950,6 @@ class Simple_Local_Avatars {
 						<fieldset id="simple-local-avatar-ratings" <?php disabled( empty( $profileuser->simple_local_avatar ) ); ?>>
 							<legend class="screen-reader-text"><span><?php esc_html_e( 'Rating' ); ?></span></legend>
 							<?php
-							$this->update_avatar_ratings();
-
 							if ( empty( $profileuser->simple_local_avatar_rating ) || ! array_key_exists( $profileuser->simple_local_avatar_rating, $this->avatar_ratings ) ) {
 								$profileuser->simple_local_avatar_rating = 'G';
 							}
@@ -925,7 +987,7 @@ class Simple_Local_Avatars {
 		$meta_value = array();
 
 		// set the new avatar
-		if ( is_int( $url_or_media_id + 0 ) ) {
+		if ( is_numeric( $url_or_media_id ) ) {
 			$meta_value['media_id'] = $url_or_media_id;
 			$url_or_media_id        = wp_get_attachment_url( $url_or_media_id );
 		}
@@ -934,6 +996,15 @@ class Simple_Local_Avatars {
 		$meta_value['blog_id'] = get_current_blog_id();
 
 		update_user_meta( $user_id, $this->user_key, $meta_value ); // save user information (overwriting old).
+
+		/**
+		 * Enable themes and other plugins to react to changes to a user's avatar.
+		 *
+		 * @since 2.6.0
+		 *
+		 * @param int $user_id Id of the user who's avatar was updated
+		 */
+		do_action( 'simple_local_avatar_updated' , $user_id );
 	}
 
 	/**
@@ -948,13 +1019,22 @@ class Simple_Local_Avatars {
 		}
 
 		// check for uploaded files
-		if ( ! empty( $_FILES['simple-local-avatar']['name'] ) ) :
+		if ( ! empty( $_FILES['simple-local-avatar']['name'] ) && 0 === $_FILES['simple-local-avatar']['error'] ) :
 
 			// need to be more secure since low privelege users can upload
-			if ( false !== strpos( $_FILES['simple-local-avatar']['name'], '.php' ) ) {
-				$this->avatar_upload_error = __( 'For security reasons, the extension ".php" cannot be in your file name.', 'simple-local-avatars' );
-				add_action( 'user_profile_update_errors', array( $this, 'user_profile_update_errors' ) );
+			$allowed_mime_types = wp_get_mime_types();
+			$file_mime_type     = strtolower( $_FILES['simple-local-avatar']['type'] );
 
+			if ( ! ( 0 === strpos( $file_mime_type, 'image/' ) ) || ! in_array( $file_mime_type, $allowed_mime_types, true ) ) {
+				$this->avatar_upload_error = __( 'Only images can be uploaded as an avatar', 'simple-local-avatars' );
+				add_action( 'user_profile_update_errors', array( $this, 'user_profile_update_errors' ) );
+				return;
+			}
+
+			$max_upload_size = $this->upload_size_limit( wp_max_upload_size() );
+			if ( $_FILES['simple-local-avatar']['size'] > $max_upload_size ) {
+				$this->avatar_upload_error = sprintf( __( 'Max allowed avatar size is %s', 'simple-local-avatars' ), size_format( $max_upload_size ) );
+				add_action( 'user_profile_update_errors', array( $this, 'user_profile_update_errors' ) );
 				return;
 			}
 
@@ -971,9 +1051,6 @@ class Simple_Local_Avatars {
 				include_once ABSPATH . 'wp-admin/includes/image.php';
 			}
 
-			// allow developers to override file size upload limit for avatars
-			add_filter( 'upload_size_limit', array( $this, 'upload_size_limit' ) );
-
 			$this->user_id_being_edited = $user_id; // make user_id known to unique_filename_callback function
 			$avatar_id                  = media_handle_upload(
 				'simple-local-avatar',
@@ -989,8 +1066,6 @@ class Simple_Local_Avatars {
 					'unique_filename_callback' => array( $this, 'unique_filename_callback' ),
 				)
 			);
-
-			remove_filter( 'upload_size_limit', array( $this, 'upload_size_limit' ) );
 
 			if ( is_wp_error( $avatar_id ) ) { // handle failures.
 				$this->avatar_upload_error = '<strong>' . __( 'There was an error uploading the avatar:', 'simple-local-avatars' ) . '</strong> ' . esc_html( $avatar_id->get_error_message() );
@@ -1035,6 +1110,15 @@ class Simple_Local_Avatars {
 			}
 
 			$this->avatar_delete( $user_id );    // delete old images if successful
+
+			/**
+			 * Enable themes and other plugins to react to avatar deletions.
+			 *
+			 * @since 2.6.0
+			 *
+			 * @param int $user_id Id of the user who's avatar was deleted.
+			 */
+			do_action( 'simple_local_avatar_deleted', $user_id );
 
 			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 				echo wp_kses_post( get_simple_local_avatar( $user_id ) );
@@ -1196,11 +1280,15 @@ class Simple_Local_Avatars {
 	/**
 	 * Set plugin defaults for a new site
 	 *
-	 * @param int $blog_id Blog ID.
+	 * @param int|WP_Site $blog_id Blog ID or object.
 	 */
 	public function set_defaults( $blog_id ) {
 		if ( 'enforce' === $this->get_network_mode() ) {
 			return;
+		}
+
+		if ( $blog_id instanceof WP_Site ) {
+			$blog_id = (int) $blog_id->blog_id;
 		}
 
 		switch_to_blog( $blog_id );
@@ -1247,20 +1335,6 @@ class Simple_Local_Avatars {
 		}
 
 		return $classes;
-	}
-
-	/**
-	 * Overwriting existing avatar_ratings so this can be called just before the rating strings would be used so that
-	 * translations will work correctly.
-	 * Default text-domain because the strings have already been translated
-	 */
-	private function update_avatar_ratings() {
-		$this->avatar_ratings = array(
-			'G'  => __( 'G &#8212; Suitable for all audiences' ),
-			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above' ),
-			'R'  => __( 'R &#8212; Intended for adult audiences above 17' ),
-			'X'  => __( 'X &#8212; Even more mature than above' ),
-		);
 	}
 
 	/**
@@ -1362,9 +1436,6 @@ class Simple_Local_Avatars {
 	 * @return array Default options of avatar.
 	 */
 	public function add_avatar_default_field( $defaults ) {
-		if ( ! did_action( 'wp_enqueue_media' ) ) {
-			wp_enqueue_media();
-		}
 		$default_avatar_file_url = '';
 		$default_avatar_file_id  = get_option( 'simple_local_avatar_default', '' );
 		if ( ! empty( $default_avatar_file_id ) ) {

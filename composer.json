@@ -35,5 +35,10 @@
     ],
     "phpcs:compat": "vendor/bin/phpcs simple-local-avatars.php includes --standard=PHPCompatibilityWP --extensions=php --runtime-set testVersion 7.4-"
   },
-  "minimum-stability": "dev"
+  "minimum-stability": "dev",
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  }
 }

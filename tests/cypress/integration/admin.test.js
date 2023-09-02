@@ -1,8 +1,10 @@
-import {deactivatePlugin} from "@10up/cypress-wp-utils/lib/commands/deactivate-plugin";
-
 describe('Admin can login and make sure plugin is activated', () => {
+    before(() => {
+        cy.login();
+    });
+
     it('Can activate plugin if it is deactivated', () => {
-        cy.activatePlugin('simple-local-avatars');
         cy.deactivatePlugin('simple-local-avatars');
+        cy.activatePlugin('simple-local-avatars');
     });
 });
