@@ -202,13 +202,13 @@ class Simple_Local_Avatars {
 	 * @return boolean
 	 */
 	public function is_avatar_shared() {
+		if ( ! is_multisite() ) {
+			return false;
+		}
+
 		if (
-			is_multisite() // Are we on multisite.
-			&& ! isset( $this->options['shared'] ) // And our shared option doesn't exist.
-			|| (
-				isset( $this->options['shared'] ) // Or our shared option is set.
-				&& 1 === $this->options['shared']
-			)
+			! isset( $this->options['shared'] ) // Our shared option doesn't exist.
+			|| 1 === $this->options['shared']  // Or our shared option is set.
 		) {
 			return true;
 		}
@@ -1439,9 +1439,6 @@ class Simple_Local_Avatars {
 	 * @return array Default options of avatar.
 	 */
 	public function add_avatar_default_field( $defaults ) {
-		if ( ! did_action( 'wp_enqueue_media' ) ) {
-			wp_enqueue_media();
-		}
 		$default_avatar_file_url = '';
 		$default_avatar_file_id  = get_option( 'simple_local_avatar_default', '' );
 		if ( ! empty( $default_avatar_file_id ) ) {
