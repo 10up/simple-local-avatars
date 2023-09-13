@@ -1,7 +1,7 @@
 import 'cypress-file-upload';
 
 describe('Check if admin can delete avatar', () => {
-    before(() => {
+    beforeEach(() => {
         cy.login();
     });
 
