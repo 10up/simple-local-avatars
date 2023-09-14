@@ -1,5 +1,5 @@
 describe('Check if a default avatar can be set', () => {
-    before(() => {
+    beforeEach(() => {
         cy.login();
     });
 
