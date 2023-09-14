@@ -1,5 +1,5 @@
 describe('Check if avatar cache can be cleared', () => {
-    before(() => {
+    beforeEach(() => {
         cy.login();
     });
 

@@ -1,7 +1,7 @@
 import 'cypress-file-upload';
 
 describe('Check if admin can upload, crop and select local avatar', () => {
-    before(() => {
+    beforeEach(() => {
         cy.login();
     });
 
