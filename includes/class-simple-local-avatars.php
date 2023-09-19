@@ -360,27 +360,25 @@ class Simple_Local_Avatars {
 		}
 
 		// handle "real" media
-		if ( ! empty( $local_avatars['media_id'] ) ) {
-			// If using shared avatars, make sure we validate the URL on the main site.
-			if ( $this->is_avatar_shared() ) {
-				$origin_blog_id = ! empty( $local_avatars['blog_id'] ) ? $local_avatars['blog_id'] : get_main_site_id();
-				switch_to_blog( $origin_blog_id );
-			}
-
-			$avatar_full_path = get_attached_file( $local_avatars['media_id'] );
-
-			if ( $this->is_avatar_shared() ) {
-				restore_current_blog();
-			}
-
-			// has the media been deleted?
-			if ( ! $avatar_full_path ) {
-				return '';
-			}
-
-			// Use dynamic full url in favour of host/domain change.
-			$local_avatars['full'] = wp_get_attachment_image_url( $local_avatars['media_id'], 'full' );
+		// If using shared avatars, make sure we validate the URL on the main site.
+		if ( $this->is_avatar_shared() ) {
+			$origin_blog_id = ! empty( $local_avatars['blog_id'] ) ? $local_avatars['blog_id'] : get_main_site_id();
+			switch_to_blog( $origin_blog_id );
 		}
+
+		$avatar_full_path = get_attached_file( $local_avatars['media_id'] );
+
+		if ( $this->is_avatar_shared() ) {
+			restore_current_blog();
+		}
+
+		// has the media been deleted?
+		if ( ! $avatar_full_path ) {
+			return '';
+		}
+
+		// Use dynamic full url in favour of host/domain change.
+		$local_avatars['full'] = wp_get_attachment_image_url( $local_avatars['media_id'], 'full' );
 
 		$size = (int) $size;
 
