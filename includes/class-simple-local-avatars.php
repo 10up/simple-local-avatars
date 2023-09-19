@@ -330,6 +330,7 @@ class Simple_Local_Avatars {
 	 */
 	public function get_simple_local_avatar_url( $id_or_email, $size ) {
 		$user_id = $this->get_user_id( $id_or_email );
+		$size = (int) $size;
 
 		if ( empty( $user_id ) ) {
 			return '';
@@ -380,48 +381,44 @@ class Simple_Local_Avatars {
 		// Use dynamic full url in favour of host/domain change.
 		$local_avatars['full'] = wp_get_attachment_image_url( $local_avatars['media_id'], 'full' );
 
-		$size = (int) $size;
-
 		// Generate a new size.
-		if ( ! array_key_exists( $size, $local_avatars ) || ! ( strpos( $local_avatars[ $size ], content_url() ) === 0 ) ) {
-			$local_avatars[ $size ] = $local_avatars['full']; // just in case of failure elsewhere
+		// Just in case of failure elsewhere, set the full size as default.
+		$local_avatars[ $size ] = $local_avatars['full'];
 
-			// allow automatic rescaling to be turned off
-			if ( apply_filters( 'simple_local_avatars_dynamic_resize', true ) ) :
+		// allow automatic rescaling to be turned off
+		if ( apply_filters( 'simple_local_avatars_dynamic_resize', true ) ) :
 
-				$upload_path = wp_upload_dir();
+			$upload_path = wp_upload_dir();
 
-				// get path for image by converting URL, unless its already been set, thanks to using media library approach
-				if ( ! isset( $avatar_full_path ) ) {
-					$avatar_full_path = str_replace( $upload_path['baseurl'], $upload_path['basedir'], $local_avatars['full'] );
-				}
+			// get path for image by converting URL, unless its already been set, thanks to using media library approach
+			if ( ! isset( $avatar_full_path ) ) {
+				$avatar_full_path = str_replace( $upload_path['baseurl'], $upload_path['basedir'], $local_avatars['full'] );
+			}
 
-				// generate the new size
-				$editor = wp_get_image_editor( $avatar_full_path );
-				if ( ! is_wp_error( $editor ) ) {
-					$resized = $editor->resize( $size, $size, true );
-					if ( ! is_wp_error( $resized ) ) {
-						$dest_file = $editor->generate_filename();
-						$saved     = $editor->save( $dest_file );
-						if ( ! is_wp_error( $saved ) ) {
-							// Transform the destination file path into URL.
-							$dest_file_url = '';
-							if ( false !== strpos( $dest_file, $upload_path['basedir'] ) ) {
-								$dest_file_url = str_replace( $upload_path['basedir'], $upload_path['baseurl'], $dest_file );
-							} else if ( is_multisite() && false !== strpos( $dest_file, ABSPATH . 'wp-content/uploads' ) ) {
-								$dest_file_url = str_replace( ABSPATH . 'wp-content/uploads', network_site_url( '/wp-content/uploads' ), $dest_file );
-							}
-
-							$local_avatars[ $size ] = $dest_file_url;
+			// generate the new size
+			$editor = wp_get_image_editor( $avatar_full_path );
+			if ( ! is_wp_error( $editor ) ) {
+				$resized = $editor->resize( $size, $size, true );
+				if ( ! is_wp_error( $resized ) ) {
+					$dest_file = $editor->generate_filename();
+					$saved     = $editor->save( $dest_file );
+					if ( ! is_wp_error( $saved ) ) {
+						// Transform the destination file path into URL.
+						$dest_file_url = '';
+						if ( false !== strpos( $dest_file, $upload_path['basedir'] ) ) {
+							$dest_file_url = str_replace( $upload_path['basedir'], $upload_path['baseurl'], $dest_file );
+						} else if ( is_multisite() && false !== strpos( $dest_file, ABSPATH . 'wp-content/uploads' ) ) {
+							$dest_file_url = str_replace( ABSPATH . 'wp-content/uploads', network_site_url( '/wp-content/uploads' ), $dest_file );
 						}
+
+						$local_avatars[ $size ] = $dest_file_url;
 					}
 				}
+			}
 
-				// save updated avatar sizes
-				update_user_meta( $user_id, $this->user_key, $local_avatars );
-
-			endif;
-		}
+			// save updated avatar sizes
+			update_user_meta( $user_id, $this->user_key, $local_avatars );
+		endif;
 
 		if ( strpos( $local_avatars[ $size ], 'http' ) !== 0 ) {
 			$local_avatars[ $size ] = home_url( $local_avatars[ $size ] );
