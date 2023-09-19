@@ -335,8 +335,14 @@ class Simple_Local_Avatars {
 			return '';
 		}
 
-		// Fetch local avatar from meta and make sure it's properly set.
 		$local_avatars = get_user_meta( $user_id, $this->user_key, true );
+
+		// Return avatar if exists.
+		if ( array_key_exists( $size, $local_avatars ) && ( strpos( $local_avatars[ $size ], content_url() ) === 0 ) ) {
+			return esc_url( $local_avatars[ $size ] );
+		}
+
+		// Fetch local avatar from meta and make sure it's properly set.
 		if ( empty( $local_avatars['media_id'] ) ) {
 			return '';
 		}
