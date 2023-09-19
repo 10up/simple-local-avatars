@@ -335,6 +335,8 @@ class Simple_Local_Avatars {
 			return '';
 		}
 
+
+
 		// Fetch local avatar from meta and make sure it's properly set.
 		$local_avatars = get_user_meta( $user_id, $this->user_key, true );
 		if ( empty( $local_avatars['media_id'] ) ) {
@@ -357,7 +359,7 @@ class Simple_Local_Avatars {
 		if ( ! empty( $local_avatars['media_id'] ) ) {
 			// If using shared avatars, make sure we validate the URL on the main site.
 			if ( $this->is_avatar_shared() ) {
-				$origin_blog_id = isset( $local_avatars['blog_id'] ) && ! empty( $local_avatars['blog_id'] ) ? $local_avatars['blog_id'] : get_main_site_id();
+				$origin_blog_id = ! empty( $local_avatars['blog_id'] ) ? $local_avatars['blog_id'] : get_main_site_id();
 				switch_to_blog( $origin_blog_id );
 			}
 
@@ -419,7 +421,7 @@ class Simple_Local_Avatars {
 			endif;
 		}
 
-		if ( 'http' !== substr( $local_avatars[ $size ], 0, 4 ) ) {
+		if ( strpos( $local_avatars[ $size ], 'http' ) !== 0 ) {
 			$local_avatars[ $size ] = home_url( $local_avatars[ $size ] );
 		}
 
