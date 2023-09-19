@@ -138,7 +138,7 @@ class SimpleLocalAvatarsNetworkTest extends \WP_Mock\Tools\TestCase {
 		] );
 		WP_Mock::userFunction( 'content_url', [
 			'args'   => [],
-			'return' => 'http://localhost/simple-local-avatar/wp-content',
+			'return' => 'http://example.com',
 			'times'  => 1,
 		] );
 		WP_Mock::userFunction( 'get_option' )
