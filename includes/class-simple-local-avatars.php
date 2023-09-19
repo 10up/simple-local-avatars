@@ -335,8 +335,6 @@ class Simple_Local_Avatars {
 			return '';
 		}
 
-
-
 		// Fetch local avatar from meta and make sure it's properly set.
 		$local_avatars = get_user_meta( $user_id, $this->user_key, true );
 		if ( empty( $local_avatars['media_id'] ) ) {
