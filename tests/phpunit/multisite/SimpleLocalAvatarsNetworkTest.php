@@ -141,6 +141,30 @@ class SimpleLocalAvatarsNetworkTest extends \WP_Mock\Tools\TestCase {
 			'return' => 'http://example.com',
 			'times'  => 1,
 		] );
+		WP_Mock::userFunction( 'wp_upload_dir', [
+			'args'   => [],
+			'return' => ['baseurl' => '', 'basedir' => ''],
+			'times'  => 1,
+		] );
+		WP_Mock::userFunction( 'wp_get_image_editor', [
+			'args'   => [ '/avatar.png' ],
+			'return' => false,
+			'times'  => 1,
+		] );
+		WP_Mock::userFunction( 'is_wp_error', [
+			'return' => true,
+			'times'  => 1,
+			] );
+		WP_Mock::userFunction( 'update_user_meta', [
+			'args'   => [ 1, 'simple_local_avatar', ['media_id' => 101, 'full' => '/avatar.png', 96 => '/avatar.png'] ],
+			'return' => true,
+			'times'  => 1,
+		] );
+		WP_Mock::userFunction( 'home_url', [
+			'args'   => [ '/avatar.png' ],
+			'return' => 'https://example.com/avatar-96x96.png',
+			'times'  => 1,
+		] );
 		WP_Mock::userFunction( 'get_option' )
 		       ->with( 'avatar_rating' )
 		       ->andReturn( false );
