@@ -339,7 +339,7 @@ class Simple_Local_Avatars {
 		$local_avatars = get_user_meta( $user_id, $this->user_key, true );
 
 		// Return avatar if exists.
-		if ( array_key_exists( $size, $local_avatars ) && ( strpos( $local_avatars[ $size ], content_url() ) === 0 ) ) {
+		if ( is_array( $local_avatars ) && array_key_exists( $size, $local_avatars ) && ( strpos( $local_avatars[ $size ], content_url() ) === 0 ) ) {
 			return esc_url( $local_avatars[ $size ] );
 		}
 
