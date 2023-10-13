@@ -41,20 +41,10 @@ describe("Check avatar on a  post", () => {
   });
 
   it("Does the avatar appear on a created post?", () => {
-    // Make a new post
-    cy.visit("/wp-admin/post-new.php");
-
     // Set the theme
     cy.visit("/wp-admin/themes.php");
-    cy.get("body").then(($body) => {
-      if (
-        0 !==
-        $body.find('.theme[data-slug="twentytwentyone"] .button.activate').length
-      ) {
-        cy.get('.theme[data-slug="twentytwentyone"] .button.activate').click({
-          force: true,
-        });
-      }
+    cy.get('.theme[data-slug="twentytwentyone"] .button.activate').click({
+      force: true,
     });
 
     cy.createPost({
