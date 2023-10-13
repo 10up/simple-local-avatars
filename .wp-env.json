@@ -1,5 +1,10 @@
 {
-  "plugins": ["."],
+  "plugins": [
+    "."
+  ],
+  "themes": [
+    "https://downloads.wordpress.org/theme/twentytwentyone.zip"
+  ],
   "env": {
     "tests": {
       "mappings": {
