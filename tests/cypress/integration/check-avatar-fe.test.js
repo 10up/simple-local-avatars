@@ -28,7 +28,7 @@ describe("Check avatar on a  post", () => {
     cy.visit("/wp-admin/profile.php");
 
     cy.get('input[name="simple_local_avatar_rating"][value="PG"]').check();
-    cy.get("#description").type("Admin bio");
+    cy.get("#description").clear().type("Admin bio");
     cy.get("#submit").click();
 
     cy.reload();
@@ -36,6 +36,8 @@ describe("Check avatar on a  post", () => {
     cy.get('input[name="simple_local_avatar_rating"][value="PG"]').should(
       "be.checked"
     );
+    cy.get('input[name="simple_local_avatar_rating"][value="G"]').check();
+    cy.get("#submit").click();
   });
 
   it("Does the avatar appear on a created post?", () => {
@@ -47,9 +49,9 @@ describe("Check avatar on a  post", () => {
     cy.get("body").then(($body) => {
       if (
         0 !==
-        $body.find('.theme[data-slug="twentytwenty"] .button.activate').length
+        $body.find('.theme[data-slug="twentytwentyone"] .button.activate').length
       ) {
-        cy.get('.theme[data-slug="twentytwenty"] .button.activate').click({
+        cy.get('.theme[data-slug="twentytwentyone"] .button.activate').click({
           force: true,
         });
       }
