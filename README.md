@@ -30,6 +30,12 @@ Use avatars in your theme using WordPress' built in `get_avatar()` function: [ht
 
 You can also use `get_simple_local_avatar()` (with the same arguments) to retreive local avatars a bit faster, but this will make your theme dependent on this plug-in.
 
+## Frequently Asked Questions
+
+### Does Simple Local Avatars collect personal data of website visitors?
+
+No.  Simple Local Avatars neither collects, stores, nor sends any PII data of visitors or avatar users on the host site or to 10up or other services.
+
 ## Support Level
 
 **Stable:** 10up is not planning to develop any new features for this, but will still respond to bug reports and security concerns. We welcome PRs, but any that include new features should be small and easy to integrate and should not include breaking changes. We otherwise intend to keep this tested up to the most recent version of WordPress.
