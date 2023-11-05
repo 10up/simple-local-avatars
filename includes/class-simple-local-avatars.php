@@ -386,7 +386,7 @@ class Simple_Local_Avatars {
 		$url = apply_filters( 'pre_simple_local_avatar_url', null, $user_id, $size, $local_avatars );
 
 		if ( is_string( $url ) ) {
-			return $url;
+			return esc_url( $url );
 		}
 
 		// handle "real" media
