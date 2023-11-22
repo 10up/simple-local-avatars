@@ -3,7 +3,7 @@ Contributors:      jakemgold, 10up, thinkoomph, jeffpaul, faisal03
 Donate link:       https://10up.com/plugins/simple-local-avatars-wordpress/
 Tags:              avatar, gravatar, user photos, users, profile
 Requires at least: 5.7
-Tested up to:      6.3
+Tested up to:      6.4
 Requires PHP:      7.4
 Stable tag:        2.7.6
 License:           GPLv2 or later
@@ -34,6 +34,12 @@ Just edit a user profile, and scroll down to the new "Avatar" field. The plug-in
 Use avatars in your theme using WordPress' built in `get_avatar()` function: [http://codex.wordpress.org/Function_Reference/get_avatar](http://codex.wordpress.org/Function_Reference/get_avatar "get_avatar function")
 
 You can also use `get_simple_local_avatar()` (with the same arguments) to retreive local avatars a bit faster, but this will make your theme dependent on this plug-in.
+
+== Frequently Asked Questions ==
+
+= Does Simple Local Avatars collect personal data of website visitors? =
+
+No.  Simple Local Avatars neither collects, stores, nor sends any PII data of visitors or avatar users on the host site or to 10up or other services.
 
 == Screenshots ==
 
