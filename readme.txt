@@ -3,7 +3,7 @@ Contributors:      jakemgold, 10up, thinkoomph, jeffpaul, faisal03
 Donate link:       https://10up.com/plugins/simple-local-avatars-wordpress/
 Tags:              avatar, gravatar, user photos, users, profile
 Requires at least: 5.7
-Tested up to:      6.3
+Tested up to:      6.4
 Requires PHP:      7.4
 Stable tag:        2.7.5
 License:           GPLv2 or later
