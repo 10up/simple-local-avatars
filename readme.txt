@@ -3,9 +3,9 @@ Contributors:      jakemgold, 10up, thinkoomph, jeffpaul, faisal03
 Donate link:       https://10up.com/plugins/simple-local-avatars-wordpress/
 Tags:              avatar, gravatar, user photos, users, profile
 Requires at least: 5.7
-Tested up to:      6.3
+Tested up to:      6.4
 Requires PHP:      7.4
-Stable tag:        2.7.5
+Stable tag:        2.7.6
 License:           GPLv2 or later
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,13 +35,40 @@ Use avatars in your theme using WordPress' built in `get_avatar()` function: [ht
 
 You can also use `get_simple_local_avatar()` (with the same arguments) to retreive local avatars a bit faster, but this will make your theme dependent on this plug-in.
 
+== Frequently Asked Questions ==
+
+= Does Simple Local Avatars collect personal data of website visitors? =
+
+No.  Simple Local Avatars neither collects, stores, nor sends any PII data of visitors or avatar users on the host site or to 10up or other services.
+
 == Screenshots ==
 
 1. Avatar upload field on a user profile page
 
 == Changelog ==
 
-## [2.7.5] - 2023-05-12 =
+= 2.7.6 - 2023-11-30 =
+* **Added:** Check for minimum required PHP version before loading the plugin (props [@kmgalanakis](https://github.com/kmgalanakis), [@faisal-alvi](https://github.com/faisal-alvi) via [#226](https://github.com/10up/simple-local-avatars/pull/226)).
+* **Added:** `pre_simple_local_avatar_url` filter to allow an avatar image to be short-circuited before Simple Local Avatars processes it (props [@johnbillion](https://github.com/johnbillion), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#237](https://github.com/10up/simple-local-avatars/pull/237)).
+* **Added:** Repo Automator GitHub Action (props [@iamdharmesh](https://github.com/iamdharmesh), [@faisal-alvi](https://github.com/faisal-alvi) via [#228](https://github.com/10up/simple-local-avatars/pull/228)).
+* **Added:** E2E test for checking the front end of avatars (props [@Firestorm980](https://github.com/Firestorm980), [@iamdharmesh](https://github.com/iamdharmesh) via [#219](https://github.com/10up/simple-local-avatars/pull/219)).
+* **Changed:** Bumped WordPress "tested up to" version 6.4 (props [@zamanq](https://github.com/zamanq), [@ankitguptaindia](https://github.com/ankitguptaindia), [@faisal-alvi](https://github.com/faisal-alvi), [@qasumitbagthariya](https://github.com/qasumitbagthariya) via [#230](https://github.com/10up/simple-local-avatars/pull/230), [#244](https://github.com/10up/simple-local-avatars/pull/244)).
+* **Changed:** Update the Dependency Review GitHub Action to leverage our org-wide config file to check for GPL-compatible licenses (props [@jeffpaul](https://github.com/jeffpaul), [@faisal-alvi](https://github.com/faisal-alvi) via [#215](https://github.com/10up/simple-local-avatars/pull/215)).
+* **Changed:** Documentation updates (props [@jeffpaul](https://github.com/jeffpaul), [@faisal-alvi](https://github.com/faisal-alvi) via [#242](https://github.com/10up/simple-local-avatars/pull/242)).
+* **Fixed:** Address conflicts with other plugins and loading the media API (props [@EHLOVader](https://github.com/EHLOVader), [@dkotter](https://github.com/dkotter) via [#218](https://github.com/10up/simple-local-avatars/pull/218)).
+* **Fixed:** Prevent PHP fatal error when switching from a multisite to single site installation (props [@ocean90](https://github.com/ocean90), [@ravinderk](https://github.com/ravinderk), [@faisal-alvi](https://github.com/faisal-alvi) via [#222](https://github.com/10up/simple-local-avatars/pull/222)).
+* **Fixed:** Local avatar urls remain old after domain/host change (props [@jayedul](https://github.com/jayedul), [@ravinderk](https://github.com/ravinderk), [@jeffpaul](https://github.com/jeffpaul), [@faisal-alvi](https://github.com/faisal-alvi) via [#216](https://github.com/10up/simple-local-avatars/pull/216)).
+* **Security:** Bump `word-wrap` from 1.2.3 to 1.2.4 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#223](https://github.com/10up/simple-local-avatars/pull/223)).
+* **Security:** Bump `tough-cookie` from 4.1.2 to 4.1.3 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#225](https://github.com/10up/simple-local-avatars/pull/225)).
+* **Security:** Bump `@cypress/request` from 2.88.10 to 3.0.0 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#225](https://github.com/10up/simple-local-avatars/pull/225), [#234](https://github.com/10up/simple-local-avatars/pull/234)).
+* **Security:** Bump `cypress` from 11.2.0 to 13.2.0 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi), [@iamdharmesh](https://github.com/iamdharmesh) via [#234](https://github.com/10up/simple-local-avatars/pull/234), [#236](https://github.com/10up/simple-local-avatars/pull/236)).
+* **Security:** Bump `postcss` from 8.4.21 to 8.4.31 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#238](https://github.com/10up/simple-local-avatars/pull/238)).
+* **Security:** Bump `@babel/traverse` from 7.20.12 to 7.23.2 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#240](https://github.com/10up/simple-local-avatars/pull/240)).
+* **Security:** Bump `@10up/cypress-wp-utils` version to 0.2.0 (props [@iamdharmesh](https://github.com/iamdharmesh), [@faisal-alvi](https://github.com/faisal-alvi) via [#236](https://github.com/10up/simple-local-avatars/pull/236)).
+* **Security:** Bump `@wordpress/env` version from 5.2.0 to 8.7.0 (props [@iamdharmesh](https://github.com/iamdharmesh), [@faisal-alvi](https://github.com/faisal-alvi) via [#236](https://github.com/10up/simple-local-avatars/pull/236)).
+* **Security:** Bump `cypress-mochawesome-reporter` version from 3.0.1 to 3.6.0 (props [@iamdharmesh](https://github.com/iamdharmesh), [@faisal-alvi](https://github.com/faisal-alvi) via [#236](https://github.com/10up/simple-local-avatars/pull/236)).
+
+= 2.7.5 - 2023-05-15 =
 * **Added:** Ajax loading animation during process of uploading and deleting local avatars (props [@lllopo](https://github.com/lllopo), [@BhargavBhandari90](https://github.com/BhargavBhandari90), [@faisal-alvi](https://github.com/faisal-alvi) via [#204](https://github.com/10up/simple-local-avatars/pull/204)).
 * **Changed:** Avatar removal button text (props [@jayedul](https://github.com/jayedul), [@jeffpaul](https://github.com/jeffpaul), [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi) via [#208](https://github.com/10up/simple-local-avatars/pull/208)).
 * **Changed:** WordPress "tested up to" version 6.2 (props [@jayedul](https://github.com/jayedul), [@faisal-alvi](https://github.com/faisal-alvi) via [#210](https://github.com/10up/simple-local-avatars/pull/210)).

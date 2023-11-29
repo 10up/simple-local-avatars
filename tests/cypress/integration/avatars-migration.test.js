@@ -1,5 +1,5 @@
 describe('Avatar migration', () => {
-    before(() => {
+    beforeEach(() => {
         cy.login();
     });
 
