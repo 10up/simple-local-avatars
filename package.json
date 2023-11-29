@@ -38,6 +38,7 @@
     "@wordpress/scripts": "^23.0.0",
     "cypress": "^13.2.0",
     "cypress-file-upload": "^5.0.8",
-    "cypress-mochawesome-reporter": "^3.6.0"
+    "cypress-mochawesome-reporter": "^3.6.0",
+    "mochawesome-json-to-md": "^0.7.2"
   }
 }
