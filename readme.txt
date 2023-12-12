@@ -47,6 +47,9 @@ No.  Simple Local Avatars neither collects, stores, nor sends any PII data of vi
 
 == Changelog ==
 
+= 2.7.7 - 2023-12-13 =
+* **Fixed:** Revert the Host/Domain support for local avatar URL (props [@faisal-alvi](https://github.com/faisal-alvi), [@jakejackson1](https://github.com/jakejackson1), [@leogermani](https://github.com/leogermani), [@dkotter](https://github.com/dkotter) via [#247](https://github.com/10up/simple-local-avatars/pull/247)).
+
 = 2.7.6 - 2023-11-30 =
 * **Added:** Check for minimum required PHP version before loading the plugin (props [@kmgalanakis](https://github.com/kmgalanakis), [@faisal-alvi](https://github.com/faisal-alvi) via [#226](https://github.com/10up/simple-local-avatars/pull/226)).
 * **Added:** `pre_simple_local_avatar_url` filter to allow an avatar image to be short-circuited before Simple Local Avatars processes it (props [@johnbillion](https://github.com/johnbillion), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#237](https://github.com/10up/simple-local-avatars/pull/237)).
