@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file, per [the Ke
 ### Fixed
 - Revert the Host/Domain support for local avatar URL (props [@faisal-alvi](https://github.com/faisal-alvi), [@jakejackson1](https://github.com/jakejackson1), [@leogermani](https://github.com/leogermani), [@dkotter](https://github.com/dkotter) via [#247](https://github.com/10up/simple-local-avatars/pull/247)).
 
+### Security
+- Bump `axios` from 0.25.0 to 1.6.2 and `@wordpress/scripts` from 23.7.2 to 26.18.0 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#250](https://github.com/10up/simple-local-avatars/pull/250)).
+
 ## [2.7.6] - 2023-11-30
 ### Added
 - Check for minimum required PHP version before loading the plugin (props [@kmgalanakis](https://github.com/kmgalanakis), [@faisal-alvi](https://github.com/faisal-alvi) via [#226](https://github.com/10up/simple-local-avatars/pull/226)).
