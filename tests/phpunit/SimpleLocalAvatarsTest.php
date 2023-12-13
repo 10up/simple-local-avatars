@@ -64,13 +64,6 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		       ->with( 101 )
 		       ->andReturn( '/avatar.png' );
 
-		WP_Mock::userFunction( 'wp_get_attachment_image_url' )
-		       ->with( 101, 'full' )
-		       ->andReturn( '/avatar.png' );
-
-		WP_Mock::userFunction( 'content_url' )
-		       ->andReturn( 'https://example.com/' );
-
 		WP_Mock::userFunction( 'admin_url' )
 		       ->with( 'options-discussion.php' )
 		       ->andReturn( 'wp-admin/options-discussion.php' );
@@ -203,18 +196,9 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		WP_Mock::userFunction( 'get_user_meta' )
 		       ->with( 2, 'simple_local_avatar', true )
 		       ->andReturn( [ 'media_id' => 102 ] );
-
 		WP_Mock::userFunction( 'get_attached_file' )
 		       ->with( 102 )
 		       ->andReturn( false );
-
-		WP_Mock::userFunction( 'wp_get_attachment_image_url' )
-		       ->with( 102, 'full' )
-		       ->andReturn( false );
-
-		WP_Mock::userFunction( 'content_url' )
-		       ->andReturn( 'http://example.com' );
-
 		$this->assertEquals( '', $this->instance->get_simple_local_avatar_url( 2, 96 ) );
 	}
 

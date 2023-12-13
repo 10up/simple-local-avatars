@@ -65,9 +65,9 @@ class Simple_Local_Avatars {
 	public function __construct() {
 		$this->add_hooks();
 
-		$this->options    = (array) get_option( 'simple_local_avatars' );
-		$this->user_key   = 'simple_local_avatar';
-		$this->rating_key = 'simple_local_avatar_rating';
+		$this->options        = (array) get_option( 'simple_local_avatars' );
+		$this->user_key       = 'simple_local_avatar';
+		$this->rating_key     = 'simple_local_avatar_rating';
 
 		if (
 			! $this->is_avatar_shared() // Are we sharing avatars?
@@ -136,26 +136,18 @@ class Simple_Local_Avatars {
 		}
 
 		if ( 'profile.php' === $pagenow ) {
-			add_filter(
-				'media_view_strings',
-				function ( $strings ) {
-					$strings['skipCropping'] = esc_html__( 'Default Crop', 'simple-local-avatars' );
+			add_filter( 'media_view_strings', function ( $strings ) {
+				$strings['skipCropping'] = esc_html__( 'Default Crop', 'simple-local-avatars' );
 
-					return $strings;
-				},
-				10,
-				1
-			);
+				return $strings;
+			}, 10, 1 );
 		}
 
 		// Fix: An error occurred cropping the image (https://github.com/10up/simple-local-avatars/issues/141).
 		if ( isset( $_POST['action'] ) && 'crop-image' === $_POST['action'] && is_admin() && wp_doing_ajax() ) {
-			add_action(
-				'plugins_loaded',
-				function () {
-					remove_all_actions( 'setup_theme' );
-				}
-			);
+			add_action( 'plugins_loaded', function () {
+				remove_all_actions( 'setup_theme' );
+			} );
 		}
 	}
 
@@ -338,21 +330,14 @@ class Simple_Local_Avatars {
 	 */
 	public function get_simple_local_avatar_url( $id_or_email, $size ) {
 		$user_id = $this->get_user_id( $id_or_email );
-		$size    = (int) $size;
 
 		if ( empty( $user_id ) ) {
 			return '';
 		}
 
-		$local_avatars = get_user_meta( $user_id, $this->user_key, true );
-
-		// Return avatar if exists.
-		if ( is_array( $local_avatars ) && array_key_exists( $size, $local_avatars ) && ( strpos( $local_avatars[ $size ], content_url() ) === 0 ) ) {
-			return esc_url( $local_avatars[ $size ] );
-		}
-
 		// Fetch local avatar from meta and make sure it's properly set.
-		if ( empty( $local_avatars['media_id'] ) ) {
+		$local_avatars = get_user_meta( $user_id, $this->user_key, true );
+		if ( empty( $local_avatars['full'] ) ) {
 			return '';
 		}
 
@@ -390,66 +375,69 @@ class Simple_Local_Avatars {
 		}
 
 		// handle "real" media
-		// If using shared avatars, make sure we validate the URL on the main site.
-		if ( $this->is_avatar_shared() ) {
-			$origin_blog_id = ! empty( $local_avatars['blog_id'] ) ? $local_avatars['blog_id'] : get_main_site_id();
-			switch_to_blog( $origin_blog_id );
+		if ( ! empty( $local_avatars['media_id'] ) ) {
+			// If using shared avatars, make sure we validate the URL on the main site.
+			if ( $this->is_avatar_shared() ) {
+				$origin_blog_id = isset( $local_avatars['blog_id'] ) && ! empty( $local_avatars['blog_id'] ) ? $local_avatars['blog_id'] : get_main_site_id();
+				switch_to_blog( $origin_blog_id );
+			}
+
+			$avatar_full_path = get_attached_file( $local_avatars['media_id'] );
+
+			if ( $this->is_avatar_shared() ) {
+				restore_current_blog();
+			}
+
+			// has the media been deleted?
+			if ( ! $avatar_full_path ) {
+				return '';
+			}
 		}
 
-		$avatar_full_path = get_attached_file( $local_avatars['media_id'] );
-
-		if ( $this->is_avatar_shared() ) {
-			restore_current_blog();
-		}
-
-		// has the media been deleted?
-		if ( ! $avatar_full_path ) {
-			return '';
-		}
-
-		// Use dynamic full url in favour of host/domain change.
-		$local_avatars['full'] = wp_get_attachment_image_url( $local_avatars['media_id'], 'full' );
+		$size = (int) $size;
 
 		// Generate a new size.
-		// Just in case of failure elsewhere, set the full size as default.
-		$local_avatars[ $size ] = $local_avatars['full'];
+		if ( ! array_key_exists( $size, $local_avatars ) ) {
+			$local_avatars[ $size ] = $local_avatars['full']; // just in case of failure elsewhere
 
-		// allow automatic rescaling to be turned off
-		if ( apply_filters( 'simple_local_avatars_dynamic_resize', true ) ) :
+			// allow automatic rescaling to be turned off
+			if ( apply_filters( 'simple_local_avatars_dynamic_resize', true ) ) :
 
-			$upload_path = wp_upload_dir();
+				$upload_path = wp_upload_dir();
 
-			// get path for image by converting URL, unless its already been set, thanks to using media library approach
-			if ( ! isset( $avatar_full_path ) ) {
-				$avatar_full_path = str_replace( $upload_path['baseurl'], $upload_path['basedir'], $local_avatars['full'] );
-			}
+				// get path for image by converting URL, unless its already been set, thanks to using media library approach
+				if ( ! isset( $avatar_full_path ) ) {
+					$avatar_full_path = str_replace( $upload_path['baseurl'], $upload_path['basedir'], $local_avatars['full'] );
+				}
 
-			// generate the new size
-			$editor = wp_get_image_editor( $avatar_full_path );
-			if ( ! is_wp_error( $editor ) ) {
-				$resized = $editor->resize( $size, $size, true );
-				if ( ! is_wp_error( $resized ) ) {
-					$dest_file = $editor->generate_filename();
-					$saved     = $editor->save( $dest_file );
-					if ( ! is_wp_error( $saved ) ) {
-						// Transform the destination file path into URL.
-						$dest_file_url = '';
-						if ( false !== strpos( $dest_file, $upload_path['basedir'] ) ) {
-							$dest_file_url = str_replace( $upload_path['basedir'], $upload_path['baseurl'], $dest_file );
-						} elseif ( is_multisite() && false !== strpos( $dest_file, ABSPATH . 'wp-content/uploads' ) ) {
-							$dest_file_url = str_replace( ABSPATH . 'wp-content/uploads', network_site_url( '/wp-content/uploads' ), $dest_file );
+				// generate the new size
+				$editor = wp_get_image_editor( $avatar_full_path );
+				if ( ! is_wp_error( $editor ) ) {
+					$resized = $editor->resize( $size, $size, true );
+					if ( ! is_wp_error( $resized ) ) {
+						$dest_file = $editor->generate_filename();
+						$saved     = $editor->save( $dest_file );
+						if ( ! is_wp_error( $saved ) ) {
+							// Transform the destination file path into URL.
+							$dest_file_url = '';
+							if ( false !== strpos( $dest_file, $upload_path['basedir'] ) ) {
+								$dest_file_url = str_replace( $upload_path['basedir'], $upload_path['baseurl'], $dest_file );
+							} else if ( is_multisite() && false !== strpos( $dest_file, ABSPATH . 'wp-content/uploads' ) ) {
+								$dest_file_url = str_replace( ABSPATH . 'wp-content/uploads', network_site_url( '/wp-content/uploads' ), $dest_file );
+							}
+
+							$local_avatars[ $size ] = $dest_file_url;
 						}
-
-						$local_avatars[ $size ] = $dest_file_url;
 					}
 				}
-			}
 
-			// save updated avatar sizes
-			update_user_meta( $user_id, $this->user_key, $local_avatars );
-		endif;
+				// save updated avatar sizes
+				update_user_meta( $user_id, $this->user_key, $local_avatars );
 
-		if ( strpos( $local_avatars[ $size ], 'http' ) !== 0 ) {
+			endif;
+		}
+
+		if ( 'http' !== substr( $local_avatars[ $size ], 0, 4 ) ) {
 			$local_avatars[ $size ] = home_url( $local_avatars[ $size ] );
 		}
 
@@ -1037,7 +1025,7 @@ class Simple_Local_Avatars {
 		 *
 		 * @param int $user_id Id of the user who's avatar was updated
 		 */
-		do_action( 'simple_local_avatar_updated', $user_id );
+		do_action( 'simple_local_avatar_updated' , $user_id );
 	}
 
 	/**
@@ -1444,9 +1432,9 @@ class Simple_Local_Avatars {
 				$file_name_data = pathinfo( get_attached_file( $media_id ) );
 			}
 
-			$file_dir_name = $file_name_data['dirname'];
-			$file_name     = $file_name_data['filename'];
-			$file_ext      = $file_name_data['extension'];
+			$file_dir_name  = $file_name_data['dirname'];
+			$file_name      = $file_name_data['filename'];
+			$file_ext       = $file_name_data['extension'];
 			foreach ( $local_avatars as $local_avatars_key => $local_avatar_value ) {
 				if ( ! in_array( $local_avatars_key, [ 'media_id', 'full' ], true ) ) {
 					$file_size_path = sprintf( '%1$s/%2$s-%3$sx%3$s.%4$s', $file_dir_name, $file_name, $local_avatars_key, $file_ext );
