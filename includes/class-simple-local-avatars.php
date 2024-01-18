@@ -1132,15 +1132,6 @@ class Simple_Local_Avatars {
 
 			$this->avatar_delete( $user_id );    // delete old images if successful
 
-			/**
-			 * Enable themes and other plugins to react to avatar deletions.
-			 *
-			 * @since 2.6.0
-			 *
-			 * @param int $user_id Id of the user who's avatar was deleted.
-			 */
-			do_action( 'simple_local_avatar_deleted', $user_id );
-
 			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 				echo wp_kses_post( get_simple_local_avatar( $user_id ) );
 			}
@@ -1204,6 +1195,15 @@ class Simple_Local_Avatars {
 
 		delete_user_meta( $user_id, $this->user_key );
 		delete_user_meta( $user_id, $this->rating_key );
+
+		/**
+		 * Enable themes and other plugins to react to avatar deletions.
+		 *
+		 * @since 2.6.0
+		 *
+		 * @param int $user_id Id of the user who's avatar was deleted.
+		 */
+		do_action( 'simple_local_avatar_deleted', $user_id );
 	}
 
 	/**
