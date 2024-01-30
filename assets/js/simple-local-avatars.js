@@ -129,7 +129,7 @@ jQuery(document).ready(function ($) {
 		if (avatar_working) return;
 
 		avatar_lock('lock');
-		$.get(ajaxurl, {
+		$.get(i10n_SimpleLocalAvatars.ajaxurl, {
 			action: 'remove_simple_local_avatar',
 			user_id: i10n_SimpleLocalAvatars.user_id,
 			_wpnonce: i10n_SimpleLocalAvatars.deleteNonce,
@@ -163,7 +163,7 @@ jQuery(document).ready(function ($) {
 
 	$( document.getElementById('simple-local-avatars-migrate-from-wp-user-avatar') ).on( 'click', function(event) {
 		event.preventDefault();
-		jQuery.post( ajaxurl, { action: 'migrate_from_wp_user_avatar', migrateFromWpUserAvatarNonce: i10n_SimpleLocalAvatars.migrateFromWpUserAvatarNonce } )
+		jQuery.post( i10n_SimpleLocalAvatars.ajaxurl, { action: 'migrate_from_wp_user_avatar', migrateFromWpUserAvatarNonce: i10n_SimpleLocalAvatars.migrateFromWpUserAvatarNonce } )
 			.always( function() {
 				$('.simple-local-avatars-migrate-from-wp-user-avatar-progress').empty();
 				$('.simple-local-avatars-migrate-from-wp-user-avatar-progress').text(i10n_SimpleLocalAvatars.migrateFromWpUserAvatarProgress);
@@ -224,7 +224,7 @@ jQuery(document).ready(function ($) {
 	function processStep( step, data ) {
 		data.step = step;
 		$.ajax( {
-			url: ajaxurl,
+			url: i10n_SimpleLocalAvatars.ajaxurl,
 			dataType: 'json',
 			data: data,
 			method: 'POST',
@@ -307,10 +307,17 @@ function avatar_lock(lock_or_unlock) {
 		avatar_working = false;
 		avatar_form_button.removeAttr('disabled');
 		avatar_spinner.hide();
+		if ( avatar_spinner.hasClass( 'is-active' ) ) {
+			avatar_spinner.removeClass( 'is-active' );
+		}
 	} else {
 		avatar_working = true;
 		avatar_form_button.attr('disabled', 'disabled');
 		avatar_spinner.show();
+		jQuery(avatar_container).html( avatar_spinner );
+		if ( ! avatar_spinner.hasClass( 'is-active' ) ) {
+			avatar_spinner.addClass( 'is-active' );
+		}
 	}
 }
 
@@ -364,6 +371,7 @@ function simple_local_avatar_calculate_image_select_options(attachment, controll
 		y1,
 		x2: xInit + x1,
 		y2: yInit + y1,
+		aspectRatio: `${xInit}:${yInit}`,
 	};
 }
 
@@ -398,7 +406,7 @@ function simple_local_avatar_set_image_from_url(url, attachmentId, width, height
 
 	avatar_lock('lock');
 	jQuery
-		.post(ajaxurl, {
+		.post(i10n_SimpleLocalAvatars.ajaxurl, {
 			action: 'assign_simple_local_avatar_media',
 			media_id: attachmentId,
 			user_id: i10n_SimpleLocalAvatars.user_id,
@@ -424,7 +432,7 @@ function simple_local_avatar_set_image_from_url(url, attachmentId, width, height
 function simple_local_avatar_set_image_from_attachment(attachment) {
 	avatar_lock('lock');
 	jQuery
-		.post(ajaxurl, {
+		.post(i10n_SimpleLocalAvatars.ajaxurl, {
 			action: 'assign_simple_local_avatar_media',
 			media_id: attachment.id,
 			user_id: i10n_SimpleLocalAvatars.user_id,

@@ -28,17 +28,19 @@ The `develop` branch is the development branch which means it contains the next 
 
 ## Release instructions
 
-1. Branch: Starting from `develop`, cut a release branch named `release/X.Y.Z` for your changes.
-1. Version bump: Bump the version number in `package.json`, `readme.txt`, and `simple-local-avatars.php` if it does not already reflect the version being released.
-1. Changelog: Add/update the changelog in both `CHANGELOG.md` and `readme.txt`.
-1. Props: update `CREDITS.md` with any new contributors, confirm maintainers are accurate.
-1. New files: Check to be sure any new files/paths that are unnecessary in the production version are included in `.distignore`.
-1. Readme updates: Make any other readme changes as necessary. `README.md` is geared toward GitHub and `readme.txt` contains WordPress.org-specific content. The two are slightly different.
-1. Merge: Make a non-fast-forward merge from your release branch to `develop` (or merge the pull request), then do the same for `develop` into `trunk` (`git checkout trunk && git merge --no-ff develop`). `trunk` contains the latest stable release.
-1. Test: Run through common tasks while on `trunk` to be sure it functions correctly.
-1. Push: Push your `trunk` branch to GitHub (e.g. `git push origin trunk`).
-1. Release: Create a [new release](https://github.com/10up/simple-local-avatars/releases/new), naming the tag and the release with the new version number, and targeting the `trunk` branch.  Paste the changelog from `CHANGELOG.md` into the body of the release and include a link to the [closed issues on the milestone](https://github.com/10up/simple-local-avatars/milestone/#?closed=1).
-1. SVN: Wait for the [GitHub Action](https://github.com/10up/simple-local-avatars/actions) to finish deploying to the WordPress.org repository.  If all goes well, users with SVN commit access for that plugin will receive an emailed diff of changes.
-1. Check WordPress.org: Ensure that the changes are live on https://wordpress.org/plugins/simple-local-avatars/. This may take a few minutes.
-1. Close the milestone: Edit the [milestone](https://github.com/10up/simple-local-avatars/milestone/#) with release date (in the `Due date (optional)` field) and link to GitHub release (in the `Description` field), then close the milestone.
-1. Punt incomplete items: If any open issues or PRs which were milestoned for `X.Y.Z` do not make it into the release, update their milestone to `X.Y.Z+1`, `X.Y+1.0`, `X+1.0.0` or `Future Release`.
+- [ ] Branch: Starting from `develop`, cut a release branch named `release/X.Y.Z` for your changes.
+- [ ] Version bump: Bump the version number in `package.json`, `package-lock.json`, `readme.txt`, and `simple-local-avatars.php` if it does not already reflect the version being released.  Update both the plugin "Version:" property and the plugin `SLA_VERSION` constant in `simple-local-avatars.php`.
+- [ ] Changelog: Add/update the changelog in both `CHANGELOG.md` and `readme.txt`. (Recommendation to use: https://github.com/10up/changelog-generator)
+- [ ] Props: update `CREDITS.md` with any new contributors, and confirm maintainers are accurate. (Recommendation to use: https://github.com/10up/credits-generator)
+- [ ] New files: Check to be sure any new files/paths that are unnecessary in the production version are included in [.distignore](https://github.com/10up/simple-local-avatars/blob/develop/.distignore).
+- [ ] Readme updates: Make any other readme changes as necessary. `README.md` is geared toward GitHub and `readme.txt` contains WordPress.org-specific content. The two are slightly different.
+- [ ] Make sure the release date is added in the `CHANGELOG.md`.
+- [ ] Merge: Make a non-fast-forward merge from your release branch to `develop` (or merge the pull request), then do the same for `develop` into `trunk`, ensuring you pull the most recent changes into `develop` first (`git checkout develop && git pull origin develop && git checkout trunk && git merge --no-ff develop`). `trunk` contains the latest stable release.
+- [ ] Push: Push your `trunk` branch to GitHub (e.g. `git push origin trunk`).
+- [ ] [Compare](https://github.com/10up/simple-local-avatars/compare/trunk...develop) `trunk` to `develop` to ensure no additional changes were missed. Visit https://github.com/10up/simple-local-avatars/compare/trunk...develop
+- [ ] Test the pre-release ZIP locally by [downloading](https://github.com/10up/simple-local-avatars/actions/workflows/build-release-zip.yml) it from the **Build release zip** action artifact to ensure the plugin doesn't break after release.
+- [ ] Release: Create a [new release](https://github.com/10up/simple-local-avatars/releases/new), naming the tag and the release with the new version number, and targeting the `trunk` branch.  Paste the changelog from `CHANGELOG.md` into the body of the release and include a link to the [closed issues on the milestone](https://github.com/10up/simple-local-avatars/milestone/#?closed=1).
+- [ ] SVN: Wait for the [GitHub Action](https://github.com/10up/simple-local-avatars/actions/workflows/push-deploy.yml) to finish deploying to the WordPress.org repository.  If all goes well, users with SVN commit access for that plugin will receive an emailed diff of changes.
+- [ ] Check WordPress.org: Ensure that the changes are live on https://wordpress.org/plugins/simple-local-avatars/. This may take a few minutes.
+- [ ] Close the milestone: Edit the [milestone](https://github.com/10up/simple-local-avatars/milestone/#) with the release date (in the `Due date (optional)` field) and link to the GitHub release (in the `Description` field), then close the milestone.
+- [ ] Punt incomplete items: If any open issues or PRs which were milestoned for `X.Y.Z` do not make it into the release, update their milestone to `X.Y.Z+1`, `X.Y+1.0`, `X+1.0.0` or `Future Release`.

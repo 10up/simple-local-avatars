@@ -4,7 +4,7 @@ class SimpleLocalAvatarsNetworkTest extends \WP_Mock\Tools\TestCase {
 	private $instance;
 
 	public function setUp(): void {
-		parent::setUp();
+		\WP_Mock::setUp();
 
 		$this->instance = Mockery::mock( 'Simple_Local_Avatars' )->makePartial();
 

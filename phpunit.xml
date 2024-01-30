@@ -1,23 +1,20 @@
-<phpunit
-	bootstrap="tests/phpunit/bootstrap.php"
-	backupGlobals="false"
-	processIsolation="false"
-	colors="false">
-	<testsuites>
-		<testsuite name="Simple Local Avatars">
-			<directory suffix="Test.php">./tests/phpunit</directory>
-			<exclude>tests/phpunit/multisite</exclude>
-		</testsuite>
-	</testsuites>
-	<filter>
-		<whitelist>
-			<directory suffix=".php">includes</directory>
-			<exclude></exclude>
-		</whitelist>
-	</filter>
-	<php>
-		<ini name="error_reporting" value="32767" />
-		<ini name="display_errors" value="1" />
-		<ini name="display_startup_errors" value="1" />
-	</php>
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="tests/phpunit/bootstrap.php" backupGlobals="false" processIsolation="false" colors="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage>
+    <include>
+      <directory suffix=".php">includes</directory>
+    </include>
+    <exclude/>
+  </coverage>
+  <testsuites>
+    <testsuite name="Simple Local Avatars">
+      <directory suffix="Test.php">./tests/phpunit</directory>
+      <exclude>tests/phpunit/multisite</exclude>
+    </testsuite>
+  </testsuites>
+  <php>
+    <ini name="error_reporting" value="32767"/>
+    <ini name="display_errors" value="1"/>
+    <ini name="display_startup_errors" value="1"/>
+  </php>
 </phpunit>

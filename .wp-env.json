@@ -1,0 +1,15 @@
+{
+  "plugins": [
+    "."
+  ],
+  "themes": [
+    "https://downloads.wordpress.org/theme/twentytwentyone.zip"
+  ],
+  "env": {
+    "tests": {
+      "mappings": {
+        "wp-cli.yml": "./tests/bin/wp-cli.yml"
+      }
+    }
+  }
+}

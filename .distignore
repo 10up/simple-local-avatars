@@ -1,3 +1,4 @@
+# Directories to ignore
 /.git
 /.github
 /.husky
@@ -7,14 +8,9 @@
 /node_modules
 /tests
 
-/.babelrc
-/.distignore
-/.editorconfig
-/.eslintignore
-/.eslintrc
-/.gitignore
-/.phpcs.xml.dist
-/.prettierrc
+# Files to ignore
+/.*
+/assets/js/simple-local-avatars.js
 /CHANGELOG.md
 /CODE_OF_CONDUCT.md
 /composer.json
@@ -25,13 +21,7 @@
 /LICENSE.md
 /package.json
 /package-lock.json
-/README.md
-/webpack.config.js
-
-/.DS_Store
-/.gitattributes
 /phpcs.xml
 /phpunit.xml
-/wpacceptance.json
-/assets/js/simple-local-avatars.js
-/.phpunit.result.cache
+/README.md
+/webpack.config.js

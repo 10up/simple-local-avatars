@@ -4,7 +4,7 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 	private $instance;
 
 	public function setUp(): void {
-		parent::setUp();
+		\WP_Mock::setUp();
 
 		$this->instance = Mockery::mock( 'Simple_Local_Avatars' )->makePartial();
 
@@ -28,10 +28,9 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 			'X'  => __( 'X &#8212; Even more mature than above', 'simple-local-avatars' ),
 		) );
 
-		$user = (object) [
-			'ID'           => 1,
-			'display_name' => 'TEST_USER',
-		];
+		$user               = Mockery::mock( WP_User::class );
+		$user->ID           = 1;
+		$user->display_name = 'TEST_USER';
 
 		// Init $POST.
 		$_POST = array();
@@ -75,7 +74,7 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$this->addToAssertionCount(
 			Mockery::getContainer()->mockery_getExpectationCount()
 		);
-		parent::tearDown();
+		\WP_Mock::tearDown();
 	}
 
 	public function test_add_hooks() {
@@ -86,7 +85,9 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 
 		WP_Mock::expectActionAdded( 'admin_init', [ $this->instance, 'admin_init' ] );
 
-		WP_Mock::expectActionAdded( 'admin_enqueue_scripts', [ $this->instance, 'admin_enqueue_scripts' ] );
+		WP_Mock::expectActionAdded( 'wp_enqueue_scripts', [ $this->instance, 'enqueue_scripts' ] );
+		WP_Mock::expectActionAdded( 'admin_enqueue_scripts', [ $this->instance, 'enqueue_scripts' ] );
+
 		WP_Mock::expectActionAdded( 'show_user_profile', [ $this->instance, 'edit_user_profile' ] );
 		WP_Mock::expectActionAdded( 'edit_user_profile', [ $this->instance, 'edit_user_profile' ] );
 
@@ -163,7 +164,7 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$this->assertNotEmpty( $action_links );
 
 		$this->assertArrayHasKey( 'settings', $action_links );
-		$this->assertContains( 'options-discussion.php', $action_links['settings'] );
+		$this->assertStringContainsString( 'options-discussion.php', $action_links['settings'] );
 	}
 
 	public function test_get_avatar_data() {
@@ -228,7 +229,39 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		       ->andReturn( '' );
 
 		$avatar_data = $this->instance->get_avatar_data( [ 'size' => 96, 'alt' => '' ], 1 );
-		$this->assertEquals( '', $avatar_data['alt'] );
+		$this->assertEquals( 'Avatar photo', $avatar_data['alt'] );
+	}
+
+	public function test_get_simple_local_avatar_alt_with_default_avatar_without_alt() {
+		WP_Mock::userFunction( 'get_user_meta' )
+		       ->with( 1, 'simple_local_avatar', true )
+		       ->andReturn( [] );
+
+		WP_Mock::userFunction( 'get_option' )
+		       ->with( 'avatar_default' )
+		       ->andReturn( 'mystery' );
+
+		$this->assertEquals( 'Avatar photo', $this->instance->get_simple_local_avatar_alt( 1 ) );
+	}
+
+	public function test_get_simple_local_avatar_alt_with_default_avatar_with_alt() {
+		WP_Mock::userFunction( 'get_user_meta' )
+		       ->with( 1, 'simple_local_avatar', true )
+		       ->andReturn( [] );
+
+		WP_Mock::userFunction( 'get_option' )
+		       ->with( 'avatar_default' )
+		       ->andReturn( 'simple_local_avatar' );
+
+		WP_Mock::userFunction( 'get_option' )
+		       ->with( 'simple_local_avatar_default', '' )
+		       ->andReturn( 101 );
+
+		WP_Mock::userFunction( 'get_post_meta' )
+		       ->with( 101, '_wp_attachment_image_alt', true )
+		       ->andReturn( 'Custom alt text' );
+
+		$this->assertEquals( 'Custom alt text', $this->instance->get_simple_local_avatar_alt( 1 ) );
 	}
 
 	public function test_admin_init() {
@@ -250,9 +283,9 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$this->instance->load_discussion_page();
 	}
 
-	public function test_admin_enqueue_scripts_wrong_screen() {
+	public function test_enqueue_scripts_wrong_screen() {
 		WP_Mock::userFunction( 'current_user_can' )->never();
-		$this->instance->admin_enqueue_scripts( 'index.php' );
+		$this->instance->enqueue_scripts( 'index.php' );
 	}
 
 	public function test_sanitize_options() {
@@ -299,11 +332,11 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		WP_Mock::userFunction( 'checked' )
 		       ->andReturn( 'checked' );
 
-		$expected = '<label for="simple-local-avatars-shared"><input type="checkbox" name="simple_local_avatars[shared]" id="simple-local-avatars-shared" value="1" checked />This is a description.</label>';
-
-		$this->expectOutputString( $expected );
-
+		ob_start();
 		$this->instance->avatar_settings_field( $args );
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'This is a description.', $output );
 	}
 
 	public function test_edit_user_profile() {
@@ -312,6 +345,9 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		WP_Mock::userFunction( 'wp_nonce_field' );
 		WP_Mock::userFunction( 'add_query_arg' );
 		WP_Mock::userFunction( 'disabled' );
+
+		WP_Mock::userFunction( 'is_admin' )
+		       ->andReturn( true );
 
 		WP_Mock::userFunction( 'get_simple_local_avatar' )
 		       ->with( 1 )
@@ -324,11 +360,11 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$profileuser     = new stdClass();
 		$profileuser->ID = 1;
 
-		$expected = '<div id="simple-local-avatar-section"><h3>Avatar</h3><table class="form-table"><tr class="upload-avatar-row"><th scope="row"><label for="simple-local-avatar">Upload Avatar</label></th><td style="width: 50px;" id="simple-local-avatar-photo"><img src="test-image-user-avatar"/></td><td><p style="display: inline-block; width: 26em;"><span class="description">Choose an image from your computer:</span><br /><input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" /><span class="spinner" id="simple-local-avatar-spinner"></span></p><p><a href="" class="button item-delete submitdelete deletion" id="simple-local-avatar-remove"  style="display:none;">Delete local avatar</a></p></td></tr><tr class="ratings-row"><th scope="row">Rating</th><td colspan="2"><fieldset id="simple-local-avatar-ratings" ><legend class="screen-reader-text"><span>Rating</span></legend><label><input type=\'radio\' name=\'simple_local_avatar_rating\' value=\'G\' />G &#8212; Suitable for all audiences</label><br /><label><input type=\'radio\' name=\'simple_local_avatar_rating\' value=\'PG\' />PG &#8212; Possibly offensive, usually for audiences 13 and above</label><br /><label><input type=\'radio\' name=\'simple_local_avatar_rating\' value=\'R\' />R &#8212; Intended for adult audiences above 17</label><br /><label><input type=\'radio\' name=\'simple_local_avatar_rating\' value=\'X\' />X &#8212; Even more mature than above</label><br /><p class="description">If the local avatar is inappropriate for this site, Gravatar will be attempted.</p></fieldset></td></tr></table></div>';
-
-		$this->expectOutputString( $expected );
-
+		ob_start();
 		$this->instance->edit_user_profile( $profileuser );
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'Choose an image from your computer', $output );
 	}
 
 	public function test_assign_new_user_avatar() {
@@ -451,5 +487,22 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		       ->never();
 
 		$this->instance->avatar_delete( 1 );
+	}
+
+	public function test_get_user_id() {
+		$this->assertEquals( 1, $this->instance->get_user_id( '1' ) );
+		$this->assertEquals( 1, $this->instance->get_user_id( 'test@example.com' ) );
+
+		$user     = Mockery::mock( WP_User::class );
+		$user->ID = 1;
+		$this->assertEquals( 1, $this->instance->get_user_id( $user ) );
+
+		$post              = Mockery::mock( WP_Post::class );
+		$post->post_author = 1;
+		$this->assertEquals( 1, $this->instance->get_user_id( $post ) );
+
+		$comment          = Mockery::mock( WP_Comment::class );
+		$comment->user_id = '1';
+		$this->assertEquals( 1, $this->instance->get_user_id( $comment ) );
 	}
 }

@@ -1,32 +1,44 @@
 {
-    "name": "simple-local-avatars",
-    "version": "2.4.0",
-    "description": "Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!",
-    "scripts": {
-        "build": "wp-scripts build",
-        "check-engines": "wp-scripts check-engines",
-        "check-licenses": "wp-scripts check-licenses",
-        "format": "wp-scripts format",
-        "lint:css": "wp-scripts lint-style",
-        "lint:js": "wp-scripts lint-js",
-        "lint:md:docs": "wp-scripts lint-md-docs",
-        "lint:md:js": "wp-scripts lint-md-js",
-        "lint:pkg-json": "wp-scripts lint-pkg-json",
-        "packages-update": "wp-scripts packages-update",
-        "start": "wp-scripts start",
-        "test:e2e": "wp-scripts test-e2e",
-        "test:unit": "wp-scripts test-unit-js"
-    },
-    "directories": {
-        "test": "tests"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git@github.com:10up/simple-local-avatars.git"
-    },
-    "author": "10up",
-    "license": "GNU General Public License v2.0",
-    "devDependencies": {
-        "@wordpress/scripts": "^23.0.0"
-    }
+  "name": "simple-local-avatars",
+  "version": "2.7.7",
+  "description": "Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!",
+  "license": "GPL-2.0-or-later",
+  "author": "10up <opensource@10up.com> (https://10up.com)",
+  "scripts": {
+    "build": "wp-scripts build",
+    "check-engines": "wp-scripts check-engines",
+    "check-licenses": "wp-scripts check-licenses",
+    "format": "wp-scripts format",
+    "lint:css": "wp-scripts lint-style",
+    "lint:js": "wp-scripts lint-js",
+    "lint:md:docs": "wp-scripts lint-md-docs",
+    "lint:md:js": "wp-scripts lint-md-js",
+    "lint:pkg-json": "wp-scripts lint-pkg-json",
+    "packages-update": "wp-scripts packages-update",
+    "start": "wp-scripts start",
+    "test:e2e": "wp-scripts test-e2e",
+    "test:unit": "wp-scripts test-unit-js",
+    "cypress:open": "cypress open --config-file tests/cypress/config.config.js",
+    "cypress:run": "cypress run --config-file tests/cypress/config.config.js",
+    "env": "wp-env",
+    "env:start": "wp-env start",
+    "env:stop": "wp-env stop",
+    "postenv:start": "./tests/bin/initialize.sh"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:10up/simple-local-avatars.git"
+  },
+  "devDependencies": {
+    "@10up/cypress-wp-utils": "^0.2.0",
+    "@wordpress/env": "^8.7.0",
+    "@wordpress/scripts": "^26.18.0",
+    "cypress": "^13.2.0",
+    "cypress-file-upload": "^5.0.8",
+    "cypress-mochawesome-reporter": "^3.6.0",
+    "mochawesome-json-to-md": "^0.7.2"
+  }
 }
