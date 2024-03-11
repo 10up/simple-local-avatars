@@ -347,7 +347,7 @@ class Simple_Local_Avatars {
 		$all_avatar_ratings = ! empty( $this->avatar_ratings ) && is_array( $this->avatar_ratings )
 			? $this->avatar_ratings
 			: array();
-		if ( ! empty( $avatar_rating ) && 'G' !== $avatar_rating && $site_rating && $all_avatar_ratings ) {
+		if ( ! empty( $avatar_rating ) && 'G' !== $avatar_rating && $site_rating ) {
 			$ratings              = array_keys( $all_avatar_ratings );
 			$site_rating_weight   = array_search( $site_rating, $ratings, true );
 			$avatar_rating_weight = array_search( $avatar_rating, $ratings, true );
