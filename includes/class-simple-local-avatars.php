@@ -342,10 +342,13 @@ class Simple_Local_Avatars {
 		}
 
 		// check rating
-		$avatar_rating = get_user_meta( $user_id, $this->rating_key, true );
-		$site_rating   = get_option( 'avatar_rating' );
+		$avatar_rating      = get_user_meta( $user_id, $this->rating_key, true );
+		$site_rating        = get_option( 'avatar_rating' );
+		$all_avatar_ratings = ! empty( $this->avatar_ratings ) && is_array( $this->avatar_ratings )
+			? $this->avatar_ratings
+			: array();
 		if ( ! empty( $avatar_rating ) && 'G' !== $avatar_rating && $site_rating ) {
-			$ratings              = array_keys( $this->avatar_ratings );
+			$ratings              = array_keys( $all_avatar_ratings );
 			$site_rating_weight   = array_search( $site_rating, $ratings, true );
 			$avatar_rating_weight = array_search( $avatar_rating, $ratings, true );
 			if ( false !== $avatar_rating_weight && $avatar_rating_weight > $site_rating_weight ) {
