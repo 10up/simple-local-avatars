@@ -1045,7 +1045,7 @@ class Simple_Local_Avatars {
 		// check for uploaded files
 		if ( ! empty( $_FILES['simple-local-avatar']['name'] ) && 0 === $_FILES['simple-local-avatar']['error'] ) :
 
-			// need to be more secure since low privelege users can upload
+			// need to be more secure since low privilege users can upload
 			$allowed_mime_types = wp_get_mime_types();
 			$file_mime_type     = strtolower( $_FILES['simple-local-avatar']['type'] );
 
