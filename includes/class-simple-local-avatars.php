@@ -913,7 +913,7 @@ class Simple_Local_Avatars {
 							<div id="simple-local-avatar-photo" class="image-container" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
 								<?php
 								add_filter( 'pre_option_avatar_rating', '__return_empty_string' );     // ignore ratings here
-								echo wp_kses_post( get_simple_local_avatar( $profileuser->ID ) );
+								echo get_simple_local_avatar( $profileuser->ID );
 								remove_filter( 'pre_option_avatar_rating', '__return_empty_string' );
 								?>
 								<span class="spinner" id="simple-local-avatar-spinner"></span>
@@ -1136,7 +1136,7 @@ class Simple_Local_Avatars {
 			$this->avatar_delete( $user_id );    // delete old images if successful
 
 			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-				echo wp_kses_post( get_simple_local_avatar( $user_id ) );
+				echo get_simple_local_avatar( $user_id );
 			}
 		}
 
@@ -1162,7 +1162,7 @@ class Simple_Local_Avatars {
 			$this->assign_new_user_avatar( $media_id, $user_id );
 		}
 
-		echo wp_kses_post( get_simple_local_avatar( $user_id ) );
+		echo get_simple_local_avatar( $user_id );
 
 		die;
 	}
