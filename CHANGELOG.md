@@ -11,19 +11,19 @@ All notable changes to this project will be documented in this file, per [the Ke
 - "Testing" section in the `CONTRIBUTING.md` file (props [@kmgalanakis](https://github.com/kmgalanakis), [@jeffpaul](https://github.com/jeffpaul) via [#274](https://github.com/10up/simple-local-avatars/pull/274)).
 
 ### Changed
-- Update CODEOWNERS of the plugin (props [@jeffpaul](https://github.com/jeffpaul), [@dkotter](https://github.com/dkotter) via [#253](https://github.com/10up/simple-local-avatars/pull/253)).
-- Move simple_local_avatar_deleted action to avatar_delete (props [@lllopo](https://github.com/lllopo), [@faisal-alvi](https://github.com/faisal-alvi), [@dkotter](https://github.com/dkotter) via [#255](https://github.com/10up/simple-local-avatars/pull/255)).
-- Clean up NPM dependencies and update node to `v20` (props [@Sidsector9](https://github.com/Sidsector9), [@dkotter](https://github.com/dkotter) via [#257](https://github.com/10up/simple-local-avatars/pull/257)).
-- Disabled auto sync pull requests with target branch (props [@iamdharmesh](https://github.com/iamdharmesh), [@jeffpaul](https://github.com/jeffpaul) via [#263](https://github.com/10up/simple-local-avatars/pull/263)).
-- Upgrade the download-artifact from v3 to v4 (props [@iamdharmesh](https://github.com/iamdharmesh), [@jeffpaul](https://github.com/jeffpaul) via [#265](https://github.com/10up/simple-local-avatars/pull/265)).
-- Replaced `lee-dohm/no-response` with `actions/stale` to help with closing `no-response/stale` issues (props [@jeffpaul](https://github.com/jeffpaul), [@dkotter](https://github.com/dkotter) via [#266](https://github.com/10up/simple-local-avatars/pull/266)).
 - Bumped WordPress "tested up to" version 6.5 (props [@sudip-md](https://github.com/sudip-md), [@dkotter](https://github.com/dkotter), [@jeffpaul](https://github.com/jeffpaul) via [#270](https://github.com/10up/simple-local-avatars/pull/270)).
+- Move `simple_local_avatar_deleted` action to `avatar_delete` (props [@lllopo](https://github.com/lllopo), [@faisal-alvi](https://github.com/faisal-alvi), [@dkotter](https://github.com/dkotter) via [#255](https://github.com/10up/simple-local-avatars/pull/255)).
+- Clean up NPM dependencies and update node to `v20` (props [@Sidsector9](https://github.com/Sidsector9), [@dkotter](https://github.com/dkotter) via [#257](https://github.com/10up/simple-local-avatars/pull/257)).
+- Update `CODEOWNERS` of the plugin (props [@jeffpaul](https://github.com/jeffpaul), [@dkotter](https://github.com/dkotter) via [#253](https://github.com/10up/simple-local-avatars/pull/253)).
+- Disabled auto sync pull requests with target branch (props [@iamdharmesh](https://github.com/iamdharmesh), [@jeffpaul](https://github.com/jeffpaul) via [#263](https://github.com/10up/simple-local-avatars/pull/263)).
+- Upgrade `download-artifact` from v3 to v4 (props [@iamdharmesh](https://github.com/iamdharmesh), [@jeffpaul](https://github.com/jeffpaul) via [#265](https://github.com/10up/simple-local-avatars/pull/265)).
+- Replaced `lee-dohm/no-response` with `actions/stale` to help with closing `no-response/stale` issues (props [@jeffpaul](https://github.com/jeffpaul), [@dkotter](https://github.com/dkotter) via [#266](https://github.com/10up/simple-local-avatars/pull/266)).
 
 ### Fixed
 - Broken default avatar when `Local Avatars Only` is unchecked (props [@faisal-alvi](https://github.com/faisal-alvi), [@ankitguptaindia](https://github.com/ankitguptaindia), [@qasumitbagthariya](https://github.com/qasumitbagthariya) via [#260](https://github.com/10up/simple-local-avatars/pull/260)).
+- Ensure high-quality avatar preview on profile edit screen (props [@ocean90](https://github.com/ocean90), [@dkotter](https://github.com/dkotter) via [#273](https://github.com/10up/simple-local-avatars/pull/273)).
 - Possible PHP warning (props [@BhargavBhandari90](https://github.com/BhargavBhandari90), [@dkotter](https://github.com/dkotter) via [#261](https://github.com/10up/simple-local-avatars/pull/261)).
 - Fixed typos (props [@szepeviktor](https://github.com/szepeviktor), [@dkotter](https://github.com/dkotter) via [#268](https://github.com/10up/simple-local-avatars/pull/268)).
-- Ensure high-quality avatar preview on profile edit screen (props [@ocean90](https://github.com/ocean90), [@dkotter](https://github.com/dkotter) via [#273](https://github.com/10up/simple-local-avatars/pull/273)).
 
 ## [2.7.7] - 2023-12-13
 ### Fixed
