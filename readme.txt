@@ -259,6 +259,9 @@ No.  Simple Local Avatars neither collects, stores, nor sends any PII data of vi
 
 == Upgrade Notice ==
 
+= 2.7.8 =
+**Note that this release bumps the minimum required version of WordPress from 5.7 to 6.3.**
+
 = 2.6.0 =
 **Note that this release bumps the minimum required version of WordPress from 4.6 to 5.7 and PHP from 5.6 to 7.4.**
 
