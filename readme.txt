@@ -45,7 +45,7 @@ No.  Simple Local Avatars neither collects, stores, nor sends any PII data of vi
 
 == Changelog ==
 
-= 2.7.8 - 2024-05-06 =
+= 2.7.8 - 2024-05-08 =
 **Note that this release bumps the minimum required version of WordPress from 5.7 to 6.3.**
 
 * **Added:** "Testing" section in the `CONTRIBUTING.md` file (props [@kmgalanakis](https://github.com/kmgalanakis), [@jeffpaul](https://github.com/jeffpaul) via [#274](https://github.com/10up/simple-local-avatars/pull/274)).
