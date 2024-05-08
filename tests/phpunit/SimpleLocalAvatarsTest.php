@@ -353,10 +353,6 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		       ->with( 1 )
 		       ->andReturn( '<img src="test-image-user-avatar"/>' );
 
-		WP_Mock::userFunction( 'wp_kses_post' )
-		       ->with( '<img src="test-image-user-avatar"/>' )
-		       ->andReturn( '<img src="test-image-user-avatar"/>' );
-
 		$profileuser     = new stdClass();
 		$profileuser->ID = 1;
 

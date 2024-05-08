@@ -275,7 +275,7 @@ class Simple_Local_Avatars {
 		}
 
 		// Local only mode
-		if ( ! $simple_local_avatar_url && ! empty( $this->options['only'] ) ) {
+		if ( ! $simple_local_avatar_url ) {
 			$args['url'] = $this->get_default_avatar_url( $args['size'] );
 		}
 
@@ -342,10 +342,13 @@ class Simple_Local_Avatars {
 		}
 
 		// check rating
-		$avatar_rating = get_user_meta( $user_id, $this->rating_key, true );
-		$site_rating   = get_option( 'avatar_rating' );
+		$avatar_rating      = get_user_meta( $user_id, $this->rating_key, true );
+		$site_rating        = get_option( 'avatar_rating' );
+		$all_avatar_ratings = ! empty( $this->avatar_ratings ) && is_array( $this->avatar_ratings )
+			? $this->avatar_ratings
+			: array();
 		if ( ! empty( $avatar_rating ) && 'G' !== $avatar_rating && $site_rating ) {
-			$ratings              = array_keys( $this->avatar_ratings );
+			$ratings              = array_keys( $all_avatar_ratings );
 			$site_rating_weight   = array_search( $site_rating, $ratings, true );
 			$avatar_rating_weight = array_search( $avatar_rating, $ratings, true );
 			if ( false !== $avatar_rating_weight && $avatar_rating_weight > $site_rating_weight ) {
@@ -910,7 +913,7 @@ class Simple_Local_Avatars {
 							<div id="simple-local-avatar-photo" class="image-container" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
 								<?php
 								add_filter( 'pre_option_avatar_rating', '__return_empty_string' );     // ignore ratings here
-								echo wp_kses_post( get_simple_local_avatar( $profileuser->ID ) );
+								echo get_simple_local_avatar( $profileuser->ID );
 								remove_filter( 'pre_option_avatar_rating', '__return_empty_string' );
 								?>
 								<span class="spinner" id="simple-local-avatar-spinner"></span>
@@ -1042,7 +1045,7 @@ class Simple_Local_Avatars {
 		// check for uploaded files
 		if ( ! empty( $_FILES['simple-local-avatar']['name'] ) && 0 === $_FILES['simple-local-avatar']['error'] ) :
 
-			// need to be more secure since low privelege users can upload
+			// need to be more secure since low privilege users can upload
 			$allowed_mime_types = wp_get_mime_types();
 			$file_mime_type     = strtolower( $_FILES['simple-local-avatar']['type'] );
 
@@ -1132,17 +1135,8 @@ class Simple_Local_Avatars {
 
 			$this->avatar_delete( $user_id );    // delete old images if successful
 
-			/**
-			 * Enable themes and other plugins to react to avatar deletions.
-			 *
-			 * @since 2.6.0
-			 *
-			 * @param int $user_id Id of the user who's avatar was deleted.
-			 */
-			do_action( 'simple_local_avatar_deleted', $user_id );
-
 			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-				echo wp_kses_post( get_simple_local_avatar( $user_id ) );
+				echo get_simple_local_avatar( $user_id );
 			}
 		}
 
@@ -1168,7 +1162,7 @@ class Simple_Local_Avatars {
 			$this->assign_new_user_avatar( $media_id, $user_id );
 		}
 
-		echo wp_kses_post( get_simple_local_avatar( $user_id ) );
+		echo get_simple_local_avatar( $user_id );
 
 		die;
 	}
@@ -1204,6 +1198,15 @@ class Simple_Local_Avatars {
 
 		delete_user_meta( $user_id, $this->user_key );
 		delete_user_meta( $user_id, $this->rating_key );
+
+		/**
+		 * Enable themes and other plugins to react to avatar deletions.
+		 *
+		 * @since 2.6.0
+		 *
+		 * @param int $user_id Id of the user who's avatar was deleted.
+		 */
+		do_action( 'simple_local_avatar_deleted', $user_id );
 	}
 
 	/**
