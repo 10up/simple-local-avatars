@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 
 ## [Unreleased] - TBD
 
-## [2.7.8] - 2024-05-06
+## [2.7.8] - 2024-05-08
 **Note that this release bumps the minimum required version of WordPress from 5.7 to 6.3.**
 
 ### Added
