@@ -275,8 +275,13 @@ class Simple_Local_Avatars {
 		}
 
 		// Local only mode
-		if ( ! $simple_local_avatar_url && ! empty( $this->options['only'] ) ) {
-			$args['url'] = $this->get_default_avatar_url( $args['size'] );
+		if ( ! $simple_local_avatar_url ) {
+			$default_url = $this->get_default_avatar_url( $args['size'] );
+			if ( ! empty( $this->options['only'] ) ) {
+				$args['url'] = $default_url;
+			} else {
+				$args['default'] = $default_url;
+			}
 		}
 
 		if ( ! empty( $args['url'] ) ) {
@@ -1470,6 +1475,7 @@ class Simple_Local_Avatars {
 		<input type="hidden" name="simple-local-avatar-file-id" id="simple-local-avatar-file-id" value="<?php echo ! empty( $default_avatar_file_id ) ? esc_attr( $default_avatar_file_id ) : ''; ?>"/>
 		<input type="hidden" name="simple-local-avatar-file-url" id="simple-local-avatar-file-url" value="<?php echo ! empty( $default_avatar_file_url ) ? esc_url( $default_avatar_file_url ) : ''; ?>"/>
 		<input type="button" name="simple-local-avatar" id="simple-local-avatar-default" class="button-secondary" value="<?php esc_attr_e( 'Choose Default Avatar', 'simple-local-avatar' ); ?>"/>
+		<p class="description"><?php esc_html_e( 'Please make sure the avatar is publicly available.', 'simple-local-avatar' ); ?></p>
 		<?php
 		$defaults['simple_local_avatar'] = ob_get_clean();
 
