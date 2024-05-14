@@ -45,8 +45,8 @@ No.  Simple Local Avatars neither collects, stores, nor sends any PII data of vi
 
 == Changelog ==
 
-= 2.7.9 - 2024-05-13 =
-* **Fixed:** Ensure default Gravatar avatars are shown correctly (props [@faisal-alvi](https://github.com/faisal-alvi), [@dkotter](https://github.com/dkotter) via [#278](https://github.com/10up/simple-local-avatars/pull/278)).
+= 2.7.9 - 2024-05-14 =
+* **Fixed:** Ensure default Gravatar avatars are shown correctly (props [@faisal-alvi](https://github.com/faisal-alvi), [@dkotter](https://github.com/dkotter), [@horrormoviesgr](https://profiles.wordpress.org/horrormoviesgr/), [@inpeaks](https://profiles.wordpress.org/inpeaks/), [@lillylark](https://profiles.wordpress.org/lillylark/), [@rafaucau](https://github.com/rafaucau), [@janrenn](https://profiles.wordpress.org/janrenn/) via [#278](https://github.com/10up/simple-local-avatars/pull/278)).
 
 = 2.7.8 - 2024-05-08 =
 **Note that this release bumps the minimum required version of WordPress from 5.7 to 6.3.**
