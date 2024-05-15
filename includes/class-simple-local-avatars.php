@@ -283,9 +283,6 @@ class Simple_Local_Avatars {
 				$args['url'] = $default_url;
 			} elseif ( 'simple_local_avatar' === $avatar_default ) {
 				$args['default'] = $default_url;
-			} else {
-				$args['url'] = $default_url;
-			}
 		}
 
 		if ( ! empty( $args['url'] ) ) {
