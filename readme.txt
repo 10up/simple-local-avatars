@@ -45,7 +45,7 @@ No.  Simple Local Avatars neither collects, stores, nor sends any PII data of vi
 
 == Changelog ==
 
-= 2.7.10 - 2024-05-23 =
+= 2.7.10 - 2024-05-24 =
 * **Fixed:** Fix Default Avatar Fallback (props [@amirhossein7](https://profiles.wordpress.org/amirhossein7/), [@faisal-alvi](https://github.com/faisal-alvi), [@dkotter](https://github.com/dkotter), [@qasumitbagthariya](https://github.com/qasumitbagthariya/) via [#281](https://github.com/10up/simple-local-avatars/pull/281)).
 * **Security:** Bump `express` from 4.18.2 to 4.19.2 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#269](https://github.com/10up/simple-local-avatars/pull/269)).
 * **Security:** Bump `follow-redirects` from 1.15.5 to 1.15.6 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#269](https://github.com/10up/simple-local-avatars/pull/269)).
