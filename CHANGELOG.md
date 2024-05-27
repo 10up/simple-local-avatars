@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 
 ## [Unreleased] - TBD
 
-## [2.7.10] - 2024-05-23
+## [2.7.10] - 2024-05-24
 ### Fixed
 - Fix Default Avatar Fallback (props [@amirhossein7](https://profiles.wordpress.org/amirhossein7/), [@faisal-alvi](https://github.com/faisal-alvi), [@dkotter](https://github.com/dkotter), [@qasumitbagthariya](https://github.com/qasumitbagthariya) via [#281](https://github.com/10up/simple-local-avatars/pull/281)).
 
