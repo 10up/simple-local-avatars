@@ -22,6 +22,10 @@ Pull requests represent a proposed solution to a specified problem. They should 
 
 For more on how 10up writes and manages code, check out our [10up Engineering Best Practices](https://10up.github.io/Engineering-Best-Practices/).
 
+### Testing
+
+Helping to test an open source project and provide feedback on success or failure of those tests is also a helpful contribution.  You can find details on the Critical Flows and Test Cases in [this project's GitHub Wiki](https://github.com/10up/simple-local-avatars/wiki) as well as details on our overall approach to [Critical Flows and Test Cases in our Open Source Best Practices](https://10up.github.io/Open-Source-Best-Practices/testing/#critial-flows).  Submitting the results of testing via our Critical Flows as a comment on a Pull Request of a specific feature or as an Issue when testing the entire project is the best approach for providing testing results.
+
 ## Workflow
 
 The `develop` branch is the development branch which means it contains the next version to be released. `stable` contains the current latest release and `trunk` contains the corresponding stable development version. Always work on the `develop` branch and open up PRs against `develop`.
@@ -39,6 +43,7 @@ The `develop` branch is the development branch which means it contains the next 
 - [ ] Push: Push your `trunk` branch to GitHub (e.g. `git push origin trunk`).
 - [ ] [Compare](https://github.com/10up/simple-local-avatars/compare/trunk...develop) `trunk` to `develop` to ensure no additional changes were missed. Visit https://github.com/10up/simple-local-avatars/compare/trunk...develop
 - [ ] Test the pre-release ZIP locally by [downloading](https://github.com/10up/simple-local-avatars/actions/workflows/build-release-zip.yml) it from the **Build release zip** action artifact to ensure the plugin doesn't break after release.
+- [ ] Either perform a regression testing utilizing the available [Critical Flows](https://10up.github.io/Open-Source-Best-Practices/testing/#critical-flows) and Test Cases or if [end-to-end tests](https://10up.github.io/Open-Source-Best-Practices/testing/#e2e-testing) cover a significant portion of those Critical Flows then run e2e tests.  Only proceed if everything tests successfully.
 - [ ] Release: Create a [new release](https://github.com/10up/simple-local-avatars/releases/new), naming the tag and the release with the new version number, and targeting the `trunk` branch.  Paste the changelog from `CHANGELOG.md` into the body of the release and include a link to the [closed issues on the milestone](https://github.com/10up/simple-local-avatars/milestone/#?closed=1).
 - [ ] SVN: Wait for the [GitHub Action](https://github.com/10up/simple-local-avatars/actions/workflows/push-deploy.yml) to finish deploying to the WordPress.org repository.  If all goes well, users with SVN commit access for that plugin will receive an emailed diff of changes.
 - [ ] Check WordPress.org: Ensure that the changes are live on https://wordpress.org/plugins/simple-local-avatars/. This may take a few minutes.

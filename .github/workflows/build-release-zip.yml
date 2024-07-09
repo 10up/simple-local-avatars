@@ -26,8 +26,7 @@ jobs:
       - name: Setup node version and npm cache
         uses: actions/setup-node@v3
         with:
-          node-version: 16
-          cache: 'npm'
+          node-version-file: '.nvmrc'
 
       - name: Install Node dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
