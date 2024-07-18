@@ -4,7 +4,18 @@ All notable changes to this project will be documented in this file, per [the Ke
 
 ## [Unreleased] - TBD
 
-## [2.7.10] - 2024-05-23
+## [2.7.11] - 2024-07-18
+**Note that this release bumps the minimum required version of WordPress from 6.3 to 6.4.**
+
+### Changed
+- Bumped WordPress "tested up to" version 6.6 and minimum version to 6.4 (props [@sudip-md](https://github.com/sudip-md), [@ankitguptaindia](https://github.com/ankitguptaindia), [@jeffpaul](https://github.com/jeffpaul) via [#289](https://github.com/10up/simple-local-avatars/pull/289), [#290](https://github.com/10up/simple-local-avatars/pull/290)).
+
+### Security
+- Add nonce check when saving the default avatar ID (props [@faisal-alvi](https://github.com/faisal-alvi), [@aaemnnosttv](https://github.com/aaemnnosttv), [@rafiem](https://github.com/rafiem), [@dkotter](https://github.com/dkotter) via [GHSA-46pw-6m35-9m7x](https://github.com/10up/simple-local-avatars/security/advisories/GHSA-46pw-6m35-9m7x)).
+- Bump `braces` from 3.0.2 to 3.0.3, `pac-resolver` from 7.0.0 to 7.0.1, `socks` from 2.7.1 to 2.8.3 and removes `ip` (props [@dependabot](https://github.com/apps/dependabot), [@Sidsector9](https://github.com/Sidsector9) via [#286](https://github.com/10up/simple-local-avatars/pull/286)).
+- Bump `ws` from 7.5.9 to 7.5.10 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#287](https://github.com/10up/simple-local-avatars/pull/287)).
+
+## [2.7.10] - 2024-05-24
 ### Fixed
 - Fix Default Avatar Fallback (props [@amirhossein7](https://profiles.wordpress.org/amirhossein7/), [@faisal-alvi](https://github.com/faisal-alvi), [@dkotter](https://github.com/dkotter), [@qasumitbagthariya](https://github.com/qasumitbagthariya) via [#281](https://github.com/10up/simple-local-avatars/pull/281)).
 
@@ -325,6 +336,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 - Initial release
 
 [Unreleased]: https://github.com/10up/simple-local-avatars/compare/trunk...develop
+[2.7.11]: https://github.com/10up/simple-local-avatars/compare/2.7.10...2.7.11
 [2.7.10]: https://github.com/10up/simple-local-avatars/compare/2.7.9...2.7.10
 [2.7.9]: https://github.com/10up/simple-local-avatars/compare/2.7.8...2.7.9
 [2.7.8]: https://github.com/10up/simple-local-avatars/compare/2.7.7...2.7.8
