@@ -1491,10 +1491,15 @@ class Simple_Local_Avatars {
 	private function save_default_avatar_file_id() {
 		global $pagenow;
 
+		// Check if nonce is set.
+		if ( ! isset( $_POST['simple-local-avatar-file-wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['simple-local-avatar-file-wpnonce'] ) ), 'simple_local_avatar_default' ) ) {
+			return;
+		}
+
 		$file_id = filter_input( INPUT_POST, 'simple-local-avatar-file-id', FILTER_SANITIZE_NUMBER_INT );
 
 		// check for uploaded files
-		if ( 'options.php' === $pagenow && check_admin_referer( 'simple_local_avatar_default', 'simple-local-avatar-file-wpnonce' ) && ! empty( $file_id ) ) {
+		if ( 'options.php' === $pagenow && ! empty( $file_id ) ) {
 			update_option( 'simple_local_avatar_default', $file_id );
 		}
 	}
