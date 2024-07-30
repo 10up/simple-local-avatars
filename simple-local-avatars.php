@@ -15,7 +15,7 @@
  * @package           SimpleLocalAvatars
  */
 
- if ( ! is_readable( __DIR__ . '/10up-lib/wp-compat-validation-tool/src/Validator.php' ) ) {
+if ( ! is_readable( __DIR__ . '/10up-lib/wp-compat-validation-tool/src/Validator.php' ) ) {
 	return;
 }
 
@@ -74,7 +74,7 @@ function simple_local_avatars_uninstall() {
 	$simple_local_avatars = new Simple_Local_Avatars();
 	$users                = get_users(
 		array(
-			'meta_key' => 'simple_local_avatar',
+			'meta_key' => 'simple_local_avatar', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 			'fields'   => 'ids',
 		)
 	);
