@@ -65,9 +65,9 @@ class Simple_Local_Avatars {
 	public function __construct() {
 		$this->add_hooks();
 
-		$this->options        = (array) get_option( 'simple_local_avatars' );
-		$this->user_key       = 'simple_local_avatar';
-		$this->rating_key     = 'simple_local_avatar_rating';
+		$this->options    = (array) get_option( 'simple_local_avatars' );
+		$this->user_key   = 'simple_local_avatar';
+		$this->rating_key = 'simple_local_avatar_rating';
 
 		if (
 			! $this->is_avatar_shared() // Are we sharing avatars?
@@ -432,7 +432,7 @@ class Simple_Local_Avatars {
 							$dest_file_url = '';
 							if ( false !== strpos( $dest_file, $upload_path['basedir'] ) ) {
 								$dest_file_url = str_replace( $upload_path['basedir'], $upload_path['baseurl'], $dest_file );
-							} else if ( is_multisite() && false !== strpos( $dest_file, ABSPATH . 'wp-content/uploads' ) ) {
+							} elseif ( is_multisite() && false !== strpos( $dest_file, ABSPATH . 'wp-content/uploads' ) ) {
 								$dest_file_url = str_replace( ABSPATH . 'wp-content/uploads', network_site_url( '/wp-content/uploads' ), $dest_file );
 							}
 
@@ -1035,7 +1035,7 @@ class Simple_Local_Avatars {
 		 *
 		 * @param int $user_id Id of the user who's avatar was updated
 		 */
-		do_action( 'simple_local_avatar_updated' , $user_id );
+		do_action( 'simple_local_avatar_updated', $user_id );
 	}
 
 	/**
@@ -1443,9 +1443,9 @@ class Simple_Local_Avatars {
 				$file_name_data = pathinfo( get_attached_file( $media_id ) );
 			}
 
-			$file_dir_name  = $file_name_data['dirname'];
-			$file_name      = $file_name_data['filename'];
-			$file_ext       = $file_name_data['extension'];
+			$file_dir_name = $file_name_data['dirname'];
+			$file_name     = $file_name_data['filename'];
+			$file_ext      = $file_name_data['extension'];
 			foreach ( $local_avatars as $local_avatars_key => $local_avatar_value ) {
 				if ( ! in_array( $local_avatars_key, [ 'media_id', 'full' ], true ) ) {
 					$file_size_path = sprintf( '%1$s/%2$s-%3$sx%3$s.%4$s', $file_dir_name, $file_name, $local_avatars_key, $file_ext );
