@@ -702,7 +702,7 @@ class Simple_Local_Avatars {
 					$this->avatar_settings_field(
 						array(
 							'key'  => 'only',
-							'desc' => __( 'Only allow local avatars (still uses Gravatar for default avatars)	', 'simple-local-avatars' ),
+							'desc' => __( 'Only allow local avatars (still uses Gravatar for default avatars)', 'simple-local-avatars' ),
 						)
 					);
 					?>
