@@ -1478,8 +1478,8 @@ class Simple_Local_Avatars {
 		<input type="hidden" name="simple-local-avatar-file-id" id="simple-local-avatar-file-id" value="<?php echo ! empty( $default_avatar_file_id ) ? esc_attr( $default_avatar_file_id ) : ''; ?>"/>
 		<input type="hidden" name="simple-local-avatar-file-url" id="simple-local-avatar-file-url" value="<?php echo ! empty( $default_avatar_file_url ) ? esc_url( $default_avatar_file_url ) : ''; ?>"/>
 		<?php wp_nonce_field( 'simple_local_avatar_default', 'simple-local-avatar-file-wpnonce' ); ?>
-		<input type="button" name="simple-local-avatar" id="simple-local-avatar-default" class="button-secondary" value="<?php esc_attr_e( 'Choose Default Avatar', 'simple-local-avatar' ); ?>"/>
-		<p class="description" style="margin-left: 23px;"><?php esc_html_e( 'Note that this avatar needs to be publicly available or a broken image will be shown.', 'simple-local-avatar' ); ?></p>
+		<input type="button" name="simple-local-avatar" id="simple-local-avatar-default" class="button-secondary" value="<?php esc_attr_e( 'Choose Default Avatar', 'simple-local-avatars' ); ?>"/>
+		<p class="description" style="margin-left: 23px;"><?php esc_html_e( 'Note that this avatar needs to be publicly available or a broken image will be shown.', 'simple-local-avatars' ); ?></p>
 		<?php
 		$defaults['simple_local_avatar'] = ob_get_clean();
 
