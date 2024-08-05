@@ -1064,6 +1064,7 @@ class Simple_Local_Avatars {
 
 			$max_upload_size = $this->upload_size_limit( wp_max_upload_size() );
 			if ( $_FILES['simple-local-avatar']['size'] > $max_upload_size ) {
+				// translators: %s: Formatted size.
 				$this->avatar_upload_error = sprintf( __( 'Max allowed avatar size is %s', 'simple-local-avatars' ), size_format( $max_upload_size ) );
 				add_action( 'user_profile_update_errors', array( $this, 'user_profile_update_errors' ) );
 				return;
