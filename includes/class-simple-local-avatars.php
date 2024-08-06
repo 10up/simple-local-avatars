@@ -65,9 +65,9 @@ class Simple_Local_Avatars {
 	public function __construct() {
 		$this->add_hooks();
 
-		$this->options        = (array) get_option( 'simple_local_avatars' );
-		$this->user_key       = 'simple_local_avatar';
-		$this->rating_key     = 'simple_local_avatar_rating';
+		$this->options    = (array) get_option( 'simple_local_avatars' );
+		$this->user_key   = 'simple_local_avatar';
+		$this->rating_key = 'simple_local_avatar_rating';
 
 		if (
 			! $this->is_avatar_shared() // Are we sharing avatars?
@@ -432,7 +432,7 @@ class Simple_Local_Avatars {
 							$dest_file_url = '';
 							if ( false !== strpos( $dest_file, $upload_path['basedir'] ) ) {
 								$dest_file_url = str_replace( $upload_path['basedir'], $upload_path['baseurl'], $dest_file );
-							} else if ( is_multisite() && false !== strpos( $dest_file, ABSPATH . 'wp-content/uploads' ) ) {
+							} elseif ( is_multisite() && false !== strpos( $dest_file, ABSPATH . 'wp-content/uploads' ) ) {
 								$dest_file_url = str_replace( ABSPATH . 'wp-content/uploads', network_site_url( '/wp-content/uploads' ), $dest_file );
 							}
 
@@ -557,13 +557,13 @@ class Simple_Local_Avatars {
 		 */
 		$this->avatar_ratings = array(
 			/* translators: Content suitability rating: https://en.wikipedia.org/wiki/Motion_Picture_Association_of_America_film_rating_system */
-			'G'  => __( 'G &#8212; Suitable for all audiences' ),
+			'G'  => __( 'G &#8212; Suitable for all audiences', 'simple-local-avatars' ),
 			/* translators: Content suitability rating: https://en.wikipedia.org/wiki/Motion_Picture_Association_of_America_film_rating_system */
-			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above' ),
+			'PG' => __( 'PG &#8212; Possibly offensive, usually for audiences 13 and above', 'simple-local-avatars' ),
 			/* translators: Content suitability rating: https://en.wikipedia.org/wiki/Motion_Picture_Association_of_America_film_rating_system */
-			'R'  => __( 'R &#8212; Intended for adult audiences above 17' ),
+			'R'  => __( 'R &#8212; Intended for adult audiences above 17', 'simple-local-avatars' ),
 			/* translators: Content suitability rating: https://en.wikipedia.org/wiki/Motion_Picture_Association_of_America_film_rating_system */
-			'X'  => __( 'X &#8212; Even more mature than above' ),
+			'X'  => __( 'X &#8212; Even more mature than above', 'simple-local-avatars' ),
 		);
 	}
 
@@ -702,7 +702,7 @@ class Simple_Local_Avatars {
 					$this->avatar_settings_field(
 						array(
 							'key'  => 'only',
-							'desc' => __( 'Only allow local avatars (still uses Gravatar for default avatars)	', 'simple-local-avatars' ),
+							'desc' => __( 'Only allow local avatars (still uses Gravatar for default avatars)', 'simple-local-avatars' ),
 						)
 					);
 					?>
@@ -950,7 +950,7 @@ class Simple_Local_Avatars {
 									if ( ! is_admin() || ! current_user_can( 'upload_files' ) ) {
 										?>
 										<p style="display: inline-block; width: 26em;">
-											<span class="description"><?php esc_html_e( 'Choose an image from your computer:' ); ?></span><br />
+											<span class="description"><?php esc_html_e( 'Choose an image from your computer:', 'simple-local-avatars' ); ?></span><br />
 											<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
 										</p>
 									<?php } ?>
@@ -976,10 +976,10 @@ class Simple_Local_Avatars {
 					</td>
 				</tr>
 				<tr class="ratings-row">
-					<th scope="row"><?php esc_html_e( 'Rating' ); ?></th>
+					<th scope="row"><?php esc_html_e( 'Rating', 'simple-local-avatars' ); ?></th>
 					<td colspan="2">
 						<fieldset id="simple-local-avatar-ratings" <?php disabled( empty( $profileuser->simple_local_avatar ) ); ?>>
-							<legend class="screen-reader-text"><span><?php esc_html_e( 'Rating' ); ?></span></legend>
+							<legend class="screen-reader-text"><span><?php esc_html_e( 'Rating', 'simple-local-avatars' ); ?></span></legend>
 							<?php
 							if ( empty( $profileuser->simple_local_avatar_rating ) || ! array_key_exists( $profileuser->simple_local_avatar_rating, $this->avatar_ratings ) ) {
 								$profileuser->simple_local_avatar_rating = 'G';
@@ -1035,7 +1035,7 @@ class Simple_Local_Avatars {
 		 *
 		 * @param int $user_id Id of the user who's avatar was updated
 		 */
-		do_action( 'simple_local_avatar_updated' , $user_id );
+		do_action( 'simple_local_avatar_updated', $user_id );
 	}
 
 	/**
@@ -1064,6 +1064,7 @@ class Simple_Local_Avatars {
 
 			$max_upload_size = $this->upload_size_limit( wp_max_upload_size() );
 			if ( $_FILES['simple-local-avatar']['size'] > $max_upload_size ) {
+				// translators: %s: Formatted size.
 				$this->avatar_upload_error = sprintf( __( 'Max allowed avatar size is %s', 'simple-local-avatars' ), size_format( $max_upload_size ) );
 				add_action( 'user_profile_update_errors', array( $this, 'user_profile_update_errors' ) );
 				return;
@@ -1442,9 +1443,9 @@ class Simple_Local_Avatars {
 				$file_name_data = pathinfo( get_attached_file( $media_id ) );
 			}
 
-			$file_dir_name  = $file_name_data['dirname'];
-			$file_name      = $file_name_data['filename'];
-			$file_ext       = $file_name_data['extension'];
+			$file_dir_name = $file_name_data['dirname'];
+			$file_name     = $file_name_data['filename'];
+			$file_ext      = $file_name_data['extension'];
 			foreach ( $local_avatars as $local_avatars_key => $local_avatar_value ) {
 				if ( ! in_array( $local_avatars_key, [ 'media_id', 'full' ], true ) ) {
 					$file_size_path = sprintf( '%1$s/%2$s-%3$sx%3$s.%4$s', $file_dir_name, $file_name, $local_avatars_key, $file_ext );
@@ -1477,8 +1478,8 @@ class Simple_Local_Avatars {
 		<input type="hidden" name="simple-local-avatar-file-id" id="simple-local-avatar-file-id" value="<?php echo ! empty( $default_avatar_file_id ) ? esc_attr( $default_avatar_file_id ) : ''; ?>"/>
 		<input type="hidden" name="simple-local-avatar-file-url" id="simple-local-avatar-file-url" value="<?php echo ! empty( $default_avatar_file_url ) ? esc_url( $default_avatar_file_url ) : ''; ?>"/>
 		<?php wp_nonce_field( 'simple_local_avatar_default', 'simple-local-avatar-file-wpnonce' ); ?>
-		<input type="button" name="simple-local-avatar" id="simple-local-avatar-default" class="button-secondary" value="<?php esc_attr_e( 'Choose Default Avatar', 'simple-local-avatar' ); ?>"/>
-		<p class="description" style="margin-left: 23px;"><?php esc_html_e( 'Note that this avatar needs to be publicly available or a broken image will be shown.', 'simple-local-avatar' ); ?></p>
+		<input type="button" name="simple-local-avatar" id="simple-local-avatar-default" class="button-secondary" value="<?php esc_attr_e( 'Choose Default Avatar', 'simple-local-avatars' ); ?>"/>
+		<p class="description" style="margin-left: 23px;"><?php esc_html_e( 'Note that this avatar needs to be publicly available or a broken image will be shown.', 'simple-local-avatars' ); ?></p>
 		<?php
 		$defaults['simple_local_avatar'] = ob_get_clean();
 
