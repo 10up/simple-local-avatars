@@ -1,44 +1,63 @@
 {
-  "name": "10up/simple-local-avatars",
-  "description": "Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!",
-  "type": "wordpress-plugin",
-  "keywords": [
-    "wordpress",
-    "10up"
-  ],
-  "homepage": "https://github.com/10up/simple-local-avatars",
-  "license": ["GPL-2.0-or-later"],
-  "authors": [
-    {
-      "name": "10up",
-      "homepage": "https://10up.com/"
-    }
-  ],
-  "support": {
-    "issues": "https://github.com/10up/simple-local-avatars/issues",
-    "source": "https://github.com/10up/simple-local-avatars"
-  },
-  "require": {
-    "php": ">=7.4"
-  },
-  "require-dev": {
-    "10up/phpcs-composer": "dev-master",
-    "10up/wp_mock": "0.4.2",
-    "yoast/phpunit-polyfills": "^1.0"
-  },
-  "scripts": {
-    "lint": [
-      "phpcs . --runtime-set testVersion 7.4-"
-    ],
-    "lint-fix": [
-      "phpcbf ."
-    ],
-    "phpcs:compat": "vendor/bin/phpcs simple-local-avatars.php includes --standard=PHPCompatibilityWP --extensions=php --runtime-set testVersion 7.4-"
-  },
-  "minimum-stability": "dev",
-  "config": {
-    "allow-plugins": {
-      "dealerdirect/phpcodesniffer-composer-installer": true
-    }
-  }
+	"name": "10up/simple-local-avatars",
+	"description": "Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!",
+	"type": "wordpress-plugin",
+	"keywords": [
+		"wordpress",
+		"10up"
+	],
+	"homepage": "https://github.com/10up/simple-local-avatars",
+	"license": ["GPL-2.0-or-later"],
+	"authors": [
+		{
+			"name": "10up",
+			"homepage": "https://10up.com/"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/10up/simple-local-avatars/issues",
+		"source": "https://github.com/10up/simple-local-avatars"
+	},
+	"require": {
+		"php": ">=7.4",
+		"10up/wp-compat-validation-tool": "dev-trunk"
+	},
+	"require-dev": {
+		"10up/phpcs-composer": "dev-master",
+		"10up/wp_mock": "0.4.2",
+		"yoast/phpunit-polyfills": "^1.0"
+	},
+	"scripts": {
+		"lint": [
+			"phpcs . --runtime-set testVersion 7.4-"
+		],
+		"lint-fix": [
+			"phpcbf ."
+		],
+		"phpcs:compat": "vendor/bin/phpcs simple-local-avatars.php includes --standard=PHPCompatibilityWP --extensions=php --runtime-set testVersion 7.4-",
+		"post-install-cmd": [
+			"./10up-lib/wp-compat-validation-tool/replace-namespace.sh SimpleLocalAvatarsValidator"
+		],
+		"post-update-cmd": [
+			"./10up-lib/wp-compat-validation-tool/replace-namespace.sh SimpleLocalAvatarsValidator"
+		]
+	},
+	"minimum-stability": "dev",
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"composer/installers": true
+		}
+	},
+	"repositories": [
+		{
+			"type": "git",
+			"url": "https://github.com/10up/wp-compat-validation-tool.git"
+		}
+	],
+	"extra": {
+		"installer-paths": {
+			"./{$name}/": ["10up/wp-compat-validation-tool"]
+		}
+	}
 }
