@@ -1,14 +1,16 @@
 name: Plugin asset/readme update
+
 on:
   push:
     branches:
       - trunk
+
 jobs:
   trunk:
     name: Push to trunk
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Composer dependencies
         run: composer install --no-dev
       - name: Install node
@@ -19,6 +21,7 @@ jobs:
         run: |
           npm install
           npm run build
+
       - name: WordPress.org plugin asset/readme update
         uses: 10up/action-wordpress-plugin-asset-update@stable
         env:
