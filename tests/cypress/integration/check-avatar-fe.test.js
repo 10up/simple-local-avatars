@@ -31,8 +31,6 @@ describe("Check avatar on a  post", () => {
     cy.get("#description").clear().type("Admin bio");
     cy.get("#submit").click();
 
-    cy.reload();
-
     cy.get('input[name="simple_local_avatar_rating"][value="PG"]').should(
       "be.checked"
     );
