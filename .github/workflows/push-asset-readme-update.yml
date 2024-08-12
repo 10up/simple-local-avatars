@@ -10,6 +10,7 @@ jobs:
     name: Push to trunk
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
         uses: actions/checkout@v4
       - name: Install Composer dependencies
         run: composer install --no-dev
