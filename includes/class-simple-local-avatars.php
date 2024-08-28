@@ -327,6 +327,20 @@ class Simple_Local_Avatars {
 	}
 
 	/**
+	 * Get the local avatar user meta.
+	 *
+	 * @param int $user_id User ID.
+	 * @return array Array with avatar data.
+	 */
+	public static function get_user_local_avatar( $user ) {
+		$local_avatars = get_user_meta( $user_id, $this->user_key, true );
+		if ( ! is_array( $local_avatars ) || empty( $local_avatars ) ) {
+			return [];
+		}
+		return $local_avatars;
+	}
+
+	/**
 	 * Get local avatar url.
 	 *
 	 * @since 2.2.0
@@ -343,7 +357,7 @@ class Simple_Local_Avatars {
 		}
 
 		// Fetch local avatar from meta and make sure it's properly set.
-		$local_avatars = get_user_meta( $user_id, $this->user_key, true );
+		$local_avatars = self::get_user_local_avatar( $user_id );
 		if ( empty( $local_avatars['full'] ) ) {
 			return '';
 		}
@@ -1181,7 +1195,7 @@ class Simple_Local_Avatars {
 	 * @param int $user_id User ID.
 	 */
 	public function avatar_delete( $user_id ) {
-		$old_avatars = (array) get_user_meta( $user_id, $this->user_key, true );
+		$old_avatars = self::get_user_local_avatar( $user_id );
 
 		if ( empty( $old_avatars ) ) {
 			return;
