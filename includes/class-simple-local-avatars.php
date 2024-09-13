@@ -358,7 +358,7 @@ class Simple_Local_Avatars {
 
 		// Fetch local avatar from meta and make sure it's properly set.
 		$local_avatars = $this->get_user_local_avatar( $user_id );
-		if ( empty( $local_avatars['full'] ) ) {
+		if ( ! isset( $local_avatars['full'] ) ||empty( $local_avatars['full'] ) ) {
 			return '';
 		}
 
