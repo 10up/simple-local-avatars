@@ -494,7 +494,7 @@ class Simple_Local_Avatars {
 
 		// Fetch local avatar from meta and make sure we have a media ID.
 		$local_avatars = $this->get_user_local_avatar( $user_id );
-		if ( empty( $local_avatars['media_id'] ) ) {
+		if ( ! isset( $local_avatars['media_id'] ) || empty( $local_avatars['media_id'] ) ) {
 			$alt = '';
 			// If no avatar is set, check if we are using a default avatar with alt text.
 			if ( 'simple_local_avatar' === get_option( 'avatar_default' ) ) {
