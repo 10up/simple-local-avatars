@@ -327,6 +327,20 @@ class Simple_Local_Avatars {
 	}
 
 	/**
+	 * Get the local avatar user meta.
+	 *
+	 * @param int $user_id User ID.
+	 * @return array Array with avatar data.
+	 */
+	public function get_user_local_avatar( $user_id ) {
+		$local_avatars = get_user_meta( $user_id, $this->user_key, true );
+		if ( ! is_array( $local_avatars ) || empty( $local_avatars ) ) {
+			return [];
+		}
+		return $local_avatars;
+	}
+
+	/**
 	 * Get local avatar url.
 	 *
 	 * @since 2.2.0
@@ -343,8 +357,8 @@ class Simple_Local_Avatars {
 		}
 
 		// Fetch local avatar from meta and make sure it's properly set.
-		$local_avatars = get_user_meta( $user_id, $this->user_key, true );
-		if ( empty( $local_avatars['full'] ) ) {
+		$local_avatars = $this->get_user_local_avatar( $user_id );
+		if ( ! isset( $local_avatars['full'] ) || empty( $local_avatars['full'] ) ) {
 			return '';
 		}
 
@@ -479,8 +493,8 @@ class Simple_Local_Avatars {
 		}
 
 		// Fetch local avatar from meta and make sure we have a media ID.
-		$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
-		if ( empty( $local_avatars['media_id'] ) ) {
+		$local_avatars = $this->get_user_local_avatar( $user_id );
+		if ( ! isset( $local_avatars['media_id'] ) || empty( $local_avatars['media_id'] ) ) {
 			$alt = '';
 			// If no avatar is set, check if we are using a default avatar with alt text.
 			if ( 'simple_local_avatar' === get_option( 'avatar_default' ) ) {
@@ -1111,7 +1125,7 @@ class Simple_Local_Avatars {
 		endif;
 
 		// Handle ratings
-		if ( isset( $avatar_id ) || get_user_meta( $user_id, $this->user_key, true ) ) {
+		if ( isset( $avatar_id ) || ! empty( $this->get_user_local_avatar( $user_id ) ) ) {
 			if ( empty( $_POST['simple_local_avatar_rating'] ) || ! array_key_exists( $_POST['simple_local_avatar_rating'], $this->avatar_ratings ) ) {
 				$_POST['simple_local_avatar_rating'] = key( $this->avatar_ratings );
 			}
@@ -1181,7 +1195,7 @@ class Simple_Local_Avatars {
 	 * @param int $user_id User ID.
 	 */
 	public function avatar_delete( $user_id ) {
-		$old_avatars = (array) get_user_meta( $user_id, $this->user_key, true );
+		$old_avatars = $this->get_user_local_avatar( $user_id );
 
 		if ( empty( $old_avatars ) ) {
 			return;
@@ -1272,7 +1286,7 @@ class Simple_Local_Avatars {
 	 * @param object $user User object
 	 */
 	public function get_avatar_rest( $user ) {
-		$local_avatar = get_user_meta( $user['id'], $this->user_key, true );
+		$local_avatar = $this->get_user_local_avatar( $user['id'] );
 		if ( empty( $local_avatar ) ) {
 			return;
 		}
@@ -1397,7 +1411,7 @@ class Simple_Local_Avatars {
 		if ( ! empty( $users ) ) {
 			foreach ( $users as $user ) {
 				$user_id       = $user->ID;
-				$local_avatars = get_user_meta( $user_id, 'simple_local_avatar', true );
+				$local_avatars = $this->get_user_local_avatar( $user_id );
 				$media_id      = isset( $local_avatars['media_id'] ) ? $local_avatars['media_id'] : '';
 				$this->clear_user_avatar_cache( $local_avatars, $user_id, $media_id );
 			}
