@@ -1,6 +1,6 @@
 {
   "name": "simple-local-avatars",
-  "version": "2.8.1",
+  "version": "2.8.2",
   "description": "Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!",
   "license": "GPL-2.0-or-later",
   "author": "10up <opensource@10up.com> (https://10up.com)",

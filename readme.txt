@@ -3,7 +3,7 @@ Contributors:      jakemgold, 10up, thinkoomph, jeffpaul, faisal03
 Donate link:       https://10up.com/plugins/simple-local-avatars-wordpress/
 Tags:              avatar, gravatar, user photos, users, profile
 Tested up to:      6.7
-Stable tag:        2.8.1
+Stable tag:        2.8.2
 License:           GPL-2.0-or-later
 License URI:       https://spdx.org/licenses/GPL-2.0-or-later.html
 
@@ -44,6 +44,9 @@ No.  Simple Local Avatars neither collects, stores, nor sends any PII data of vi
 1. Avatar upload field on a user profile page
 
 == Changelog ==
+
+= 2.8.2 - 2024-11-12 =
+* **Fixed:** Ensure dependencies are (actually) included properly in the release (props [@dkotter](https://github.com/dkotter) via [#316](https://github.com/10up/simple-local-avatars/pull/316)).
 
 = 2.8.1 - 2024-11-12 =
 * **Fixed:** Ensure dependencies are included properly in the release (props [@dkotter](https://github.com/dkotter) via [#315](https://github.com/10up/simple-local-avatars/pull/315)).

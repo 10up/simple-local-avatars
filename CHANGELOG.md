@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file, per [the Ke
 
 ## [Unreleased] - TBD
 
+## [2.8.2] - 2024-11-12
+### Fixed
+- Ensure dependencies are (actually) included properly in the release (props [@dkotter](https://github.com/dkotter) via [#316](https://github.com/10up/simple-local-avatars/pull/316)).
+
 ## [2.8.1] - 2024-11-12
 ### Fixed
 - Ensure dependencies are included properly in the release (props [@dkotter](https://github.com/dkotter) via [#315](https://github.com/10up/simple-local-avatars/pull/315)).
