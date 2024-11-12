@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file, per [the Ke
 
 ## [Unreleased] - TBD
 
+## [2.8.1] - 2024-11-12
+### Fixed
+- Ensure dependencies are included properly in the release (props [@dkotter](https://github.com/dkotter) via [#315](https://github.com/10up/simple-local-avatars/pull/315)).
+
 ## [2.8.0] - 2024-11-12
 **Note that this release bumps the minimum required version of WordPress from 6.4 to 6.5.**
 
@@ -362,6 +366,8 @@ All notable changes to this project will be documented in this file, per [the Ke
 - Initial release
 
 [Unreleased]: https://github.com/10up/simple-local-avatars/compare/trunk...develop
+[2.8.1]: https://github.com/10up/simple-local-avatars/compare/2.8.0...2.8.1
+[2.8.0]: https://github.com/10up/simple-local-avatars/compare/2.7.11...2.8.0
 [2.7.11]: https://github.com/10up/simple-local-avatars/compare/2.7.10...2.7.11
 [2.7.10]: https://github.com/10up/simple-local-avatars/compare/2.7.9...2.7.10
 [2.7.9]: https://github.com/10up/simple-local-avatars/compare/2.7.8...2.7.9
