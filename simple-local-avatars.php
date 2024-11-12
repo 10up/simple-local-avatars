@@ -3,8 +3,8 @@
  * Plugin Name:       Simple Local Avatars
  * Plugin URI:        https://10up.com/plugins/simple-local-avatars-wordpress/
  * Description:       Adds an avatar upload field to user profiles. Generates requested sizes on demand, just like Gravatar! Simple and lightweight.
- * Version:           2.7.11
- * Requires at least: 6.4
+ * Version:           2.8.0
+ * Requires at least: 6.5
  * Requires PHP:      7.4
  * Author:            10up
  * Author URI:        https://10up.com
@@ -15,50 +15,18 @@
  * @package           SimpleLocalAvatars
  */
 
-/**
- * Get the minimum version of PHP required by this plugin.
- *
- * @since 2.7.6
- *
- * @return string Minimum version required.
- */
-function minimum_php_requirement() {
-	return '7.4';
+if ( ! is_readable( __DIR__ . '/10up-lib/wp-compat-validation-tool/src/Validator.php' ) ) {
+	return;
 }
 
-/**
- * Whether PHP installation meets the minimum requirements
- *
- * @since 2.7.6
- *
- * @return bool True if meets minimum requirements, false otherwise.
- */
-function site_meets_php_requirements() {
-	return version_compare( phpversion(), minimum_php_requirement(), '>=' );
-}
+require_once '10up-lib/wp-compat-validation-tool/src/Validator.php';
 
-// Try to load the plugin files, ensuring our PHP version is met first.
-if ( ! site_meets_php_requirements() ) {
-	add_action(
-		'admin_notices',
-		function() {
-			?>
-			<div class="notice notice-error">
-				<p>
-					<?php
-					echo wp_kses_post(
-						sprintf(
-						/* translators: %s: Minimum required PHP version */
-							__( 'Simple Local Avatars requires PHP version %s or later. Please upgrade PHP or disable the plugin.', 'simple-local-avatars' ),
-							esc_html( minimum_php_requirement() )
-						)
-					);
-					?>
-				</p>
-			</div>
-			<?php
-		}
-	);
+$compat_checker = new \SimpleLocalAvatarsValidator\Validator();
+$compat_checker
+	->set_plugin_name( 'Simple Local Avatars' )
+	->set_php_min_required_version( '7.4' );
+
+if ( ! $compat_checker->is_plugin_compatible() ) {
 	return;
 }
 
@@ -67,7 +35,7 @@ define( 'SLA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 require_once dirname( __FILE__ ) . '/includes/class-simple-local-avatars.php';
 
 // Global constants.
-define( 'SLA_VERSION', '2.7.11' );
+define( 'SLA_VERSION', '2.8.0' );
 define( 'SLA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 if ( ! defined( 'SLA_IS_NETWORK' ) ) {
@@ -106,7 +74,7 @@ function simple_local_avatars_uninstall() {
 	$simple_local_avatars = new Simple_Local_Avatars();
 	$users                = get_users(
 		array(
-			'meta_key' => 'simple_local_avatar',
+			'meta_key' => 'simple_local_avatar', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 			'fields'   => 'ids',
 		)
 	);

@@ -4,6 +4,32 @@ All notable changes to this project will be documented in this file, per [the Ke
 
 ## [Unreleased] - TBD
 
+## [2.8.0] - 2024-11-12
+**Note that this release bumps the minimum required version of WordPress from 6.4 to 6.5.**
+
+### Added
+- Support for the WordPress.org plugin preview (props [@faisal-alvi](https://github.com/faisal-alvi), [@jeffpaul](https://github.com/jeffpaul) via [#297](https://github.com/10up/simple-local-avatars/pull/297)).
+
+### Changed
+- Update PHP compatibility check to use `10up/wp-compat-validation-tool` (props [@Sidsector9](https://github.com/Sidsector9), [@jeffpaul](https://github.com/jeffpaul), [@faisal-alvi](https://github.com/faisal-alvi) via [#291](https://github.com/10up/simple-local-avatars/pull/291)).
+- Bump Wordpress "tested up to" version 6.7 (props [@sudip-md](https://github.com/sudip-md), [@jeffpaul](https://github.com/jeffpaul), [@dkotter](https://github.com/dkotter) via [#310](https://github.com/10up/simple-local-avatars/pull/310), [#312](https://github.com/10up/simple-local-avatars/pull/312)).
+- Bump WordPress minimum supported version to 6.5 (props [@sudip-md](https://github.com/sudip-md), [@jeffpaul](https://github.com/jeffpaul), [@dkotter](https://github.com/dkotter) via [#310](https://github.com/10up/simple-local-avatars/pull/310), [#312](https://github.com/10up/simple-local-avatars/pull/312)).
+
+### Fixed
+- Ensure all strings are properly translated (props [@pedro-mendonca](https://github.com/pedro-mendonca), [@dkotter](https://github.com/dkotter) via [#295](https://github.com/10up/simple-local-avatars/pull/295)).
+- Properly handle malformed `simple_local_avatar` user data (props [@adekbadek](https://github.com/adekbadek), [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi) via [#302](https://github.com/10up/simple-local-avatars/pull/302)).
+
+### Security
+- Run a user capability check before we clear the avatar cache (props [@dkotter](https://github.com/dkotter), [@truonghuuphuc](https://github.com/truonghuuphuc), [@Sidsector9](https://github.com/Sidsector9) via [#309](https://github.com/10up/simple-local-avatars/pull/309)).
+- Ensure REST API requests to set an avatar only allow existing attachment IDs to be used (props [@dkotter](https://github.com/dkotter), Justus Böhme, [@faisal-alvi](https://github.com/faisal-alvi) via [GHSA-wfjh-m788-w2c5](https://github.com/10up/simple-local-avatars/security/advisories/GHSA-wfjh-m788-w2c5)).
+- Bump `axios` from 1.6.7 to 1.7.4 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#298](https://github.com/10up/simple-local-avatars/pull/298)).
+- Bump `webpack` from 5.90.0 to 5.94.0 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#303](https://github.com/10up/simple-local-avatars/pull/303)).
+- Bump `ws` from 7.5.10 to 8.18.0 and `@wordpress/scripts` from 27.1.0 to 30.4.0 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#305](https://github.com/10up/simple-local-avatars/pull/305), [#311](https://github.com/10up/simple-local-avatars/pull/311)).
+- Bump `body-parser` from 1.20.2 to 1.20.3, `express` from 4.19.2 to 4.21.0, `send` from 0.18.0 to 0.19.0 and `serve-static` from 1.15.0 to 1.16.2 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#306](https://github.com/10up/simple-local-avatars/pull/306)).
+
+### Developer
+- Update repo badges, add WordPress Playground badge, add plugin banner image (props [@faisal-alvi](https://github.com/faisal-alvi), [@thrijith](https://github.com/thrijith), [@jeffpaul](https://github.com/jeffpaul) via [#297](https://github.com/10up/simple-local-avatars/pull/297), [#300](https://github.com/10up/simple-local-avatars/pull/300), [#304](https://github.com/10up/simple-local-avatars/pull/304), [#307](https://github.com/10up/simple-local-avatars/pull/307)).
+
 ## [2.7.11] - 2024-07-18
 **Note that this release bumps the minimum required version of WordPress from 6.3 to 6.4.**
 
