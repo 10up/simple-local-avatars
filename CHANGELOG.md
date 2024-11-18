@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file, per [the Ke
 
 ## [Unreleased] - TBD
 
+## [2.8.3] - 2024-11-18
+### Changed
+- Only allow images that were uploaded by the same user be used when setting the avatar via a REST request (props [@dkotter](https://github.com/dkotter), [@justus12337](https://github.com/justus12337), [@faisal-alvi](https://github.com/faisal-alvi) via [#317](https://github.com/10up/simple-local-avatars/pull/317)).
+
+### Fixed
+- Only allow image files to be set as the avatar in REST requests (props [@dkotter](https://github.com/dkotter), [@justus12337](https://github.com/justus12337), [@faisal-alvi](https://github.com/faisal-alvi) via [#317](https://github.com/10up/simple-local-avatars/pull/317)).
+
+### Security
+- Bump `@10up/cypress-wp-utils` from 0.2.0 to 0.4.0, `@sentry/node` from 6.19.7 to 8.38.0, `@wordpress/env` from 9.2.0 to 10.11.0, `cypress` from 13.2.0 to 13.15.2, `cypress-mochawesome-reporter` from 3.6.0 to 3.8.2, `puppeteer-core` from 23.3.0 to 23.8.0 (props [@dkotter](https://github.com/dkotter) via [#319](https://github.com/10up/simple-local-avatars/pull/319)).
+
 ## [2.8.2] - 2024-11-12
 ### Fixed
 - Ensure dependencies are (actually) included properly in the release (props [@dkotter](https://github.com/dkotter) via [#316](https://github.com/10up/simple-local-avatars/pull/316)).
@@ -29,7 +39,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 
 ### Security
 - Run a user capability check before we clear the avatar cache (props [@dkotter](https://github.com/dkotter), [@truonghuuphuc](https://github.com/truonghuuphuc), [@Sidsector9](https://github.com/Sidsector9) via [#309](https://github.com/10up/simple-local-avatars/pull/309)).
-- Ensure REST API requests to set an avatar only allow existing attachment IDs to be used (props [@dkotter](https://github.com/dkotter), Justus Böhme, [@faisal-alvi](https://github.com/faisal-alvi) via [GHSA-wfjh-m788-w2c5](https://github.com/10up/simple-local-avatars/security/advisories/GHSA-wfjh-m788-w2c5)).
+- Ensure REST API requests to set an avatar only allow existing attachment IDs to be used (props [@dkotter](https://github.com/dkotter), [@justus12337](https://github.com/justus12337), [@faisal-alvi](https://github.com/faisal-alvi) via [GHSA-wfjh-m788-w2c5](https://github.com/10up/simple-local-avatars/security/advisories/GHSA-wfjh-m788-w2c5)).
 - Bump `axios` from 1.6.7 to 1.7.4 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#298](https://github.com/10up/simple-local-avatars/pull/298)).
 - Bump `webpack` from 5.90.0 to 5.94.0 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#303](https://github.com/10up/simple-local-avatars/pull/303)).
 - Bump `ws` from 7.5.10 to 8.18.0 and `@wordpress/scripts` from 27.1.0 to 30.4.0 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#305](https://github.com/10up/simple-local-avatars/pull/305), [#311](https://github.com/10up/simple-local-avatars/pull/311)).
@@ -370,6 +380,8 @@ All notable changes to this project will be documented in this file, per [the Ke
 - Initial release
 
 [Unreleased]: https://github.com/10up/simple-local-avatars/compare/trunk...develop
+[2.8.3]: https://github.com/10up/simple-local-avatars/compare/2.8.2...2.8.3
+[2.8.2]: https://github.com/10up/simple-local-avatars/compare/2.8.1...2.8.2
 [2.8.1]: https://github.com/10up/simple-local-avatars/compare/2.8.0...2.8.1
 [2.8.0]: https://github.com/10up/simple-local-avatars/compare/2.7.11...2.8.0
 [2.7.11]: https://github.com/10up/simple-local-avatars/compare/2.7.10...2.7.11

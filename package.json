@@ -1,6 +1,6 @@
 {
   "name": "simple-local-avatars",
-  "version": "2.8.2",
+  "version": "2.8.3",
   "description": "Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!",
   "license": "GPL-2.0-or-later",
   "author": "10up <opensource@10up.com> (https://10up.com)",
@@ -33,12 +33,12 @@
     "url": "git@github.com:10up/simple-local-avatars.git"
   },
   "devDependencies": {
-    "@10up/cypress-wp-utils": "^0.2.0",
-    "@wordpress/env": "^9.2.0",
+    "@10up/cypress-wp-utils": "^0.4.0",
+    "@wordpress/env": "^10.11.0",
     "@wordpress/scripts": "^30.4.0",
-    "cypress": "^13.2.0",
+    "cypress": "^13.15.2",
     "cypress-file-upload": "^5.0.8",
-    "cypress-mochawesome-reporter": "^3.6.0",
+    "cypress-mochawesome-reporter": "^3.8.2",
     "mochawesome-json-to-md": "^0.7.2"
   }
 }

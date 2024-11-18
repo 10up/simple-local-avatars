@@ -1324,9 +1324,20 @@ class Simple_Local_Avatars {
 			return new \WP_Error( 'invalid_media_id', esc_html__( 'Request did not contain a valid media_id field.', 'simple-local-avatars' ) );
 		}
 
+		$attachment = get_post( (int) $input['media_id'] );
+
 		// Ensure this media_id is a valid attachment.
-		if ( ! wp_get_attachment_url( (int) $input['media_id'] ) ) {
+		if (
+			! $attachment ||
+			'attachment' !== $attachment->post_type ||
+			! wp_attachment_is_image( $attachment )
+		) {
 			return new \WP_Error( 'invalid_media_id', esc_html__( 'Media ID did not match a valid attachment.', 'simple-local-avatars' ) );
+		}
+
+		// Ensure this attachment is associated with this user.
+		if ( (int) $attachment->post_author !== (int) $user->ID ) {
+			return new \WP_Error( 'invalid_media_id', esc_html__( 'This attachment was not uploaded by this user.', 'simple-local-avatars' ) );
 		}
 
 		$this->assign_new_user_avatar( (int) $input['media_id'], $user->ID );
