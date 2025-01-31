@@ -438,7 +438,7 @@ class Simple_Local_Avatars {
 				$editor = wp_get_image_editor( $avatar_full_path );
 				if ( ! is_wp_error( $editor ) ) {
 					$image_size = $editor->get_size();
-					if ( $image_size['width'] !== $size || $image_size['height'] !== $size ) {
+					if ( ! $image_size || $image_size['width'] !== $size || $image_size['height'] !== $size ) {
 						$resized = $editor->resize( $size, $size, true );
 						if ( ! is_wp_error( $resized ) ) {
 							$dest_file = $editor->generate_filename();
