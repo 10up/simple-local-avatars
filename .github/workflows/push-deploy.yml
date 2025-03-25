@@ -1,4 +1,5 @@
 name: Deploy to WordPress.org
+
 on:
   release:
     types: [published]
@@ -7,12 +8,13 @@ jobs:
   tag:
     name: New release
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
     - name: Setup node version and npm cache
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
       with:
         node-version-file: '.nvmrc'
 
@@ -27,7 +29,7 @@ jobs:
 
     - name: WordPress Plugin Deploy
       id: deploy
-      uses: 10up/action-wordpress-plugin-deploy@stable
+      uses: 10up/action-wordpress-plugin-deploy@54bd289b8525fd23a5c365ec369185f2966529c2 # v2.3.0
       with:
         generate-zip: true
       env:
@@ -35,7 +37,7 @@ jobs:
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
 
     - name: Upload release asset
-      uses: actions/upload-release-asset@v1
+      uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5 # v1.0.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
