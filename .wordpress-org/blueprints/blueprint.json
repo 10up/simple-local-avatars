@@ -1,22 +1,20 @@
 {
 	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
-	"landingPage": "\/wp-admin\/options-discussion.php",
+	"landingPage": "\/wp-admin\/options-discussion.php#show_avatars",
 	"preferredVersions": {
 		"php": "7.4",
 		"wp": "latest"
 	},
-	"phpExtensionBundles": ["kitchen-sink"],
 	"features": {
 		"networking": true
 	},
 	"steps": [
 		{
 			"step": "login",
-			"username": "admin",
-			"password": "password"
+			"username": "admin"
 		},
 		{
-			"step": "importFile",
+			"step": "importWxr",
 			"file": {
 				"resource": "url",
 				"url": "https:\/\/raw.githubusercontent.com\/10up\/simple-local-avatars\/073f1979d6addeb3eecd7fb8cf56efe9bcfa7007\/.wordpress-org\/blueprints\/demo-data.xml"
@@ -24,7 +22,7 @@
 		},
 		{
 			"step": "installPlugin",
-			"pluginZipFile": {
+			"pluginData": {
 				"resource": "wordpress.org\/plugins",
 				"slug": "simple-local-avatars"
 			},
