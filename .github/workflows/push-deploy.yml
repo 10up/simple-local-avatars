@@ -4,14 +4,15 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: read
+  packages: read
+  id-token: write
+
 jobs:
   tag:
     name: New release
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: read
-      id-token: write
 
     steps:
     - name: Checkout code

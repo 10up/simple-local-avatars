@@ -1,5 +1,3 @@
-permissions:
-  contents: read
 name: Build release zip
 
 on:
@@ -8,6 +6,9 @@ on:
   push:
    branches:
     - trunk
+
+permissions:
+  contents: read
 
 jobs:
   build:
