@@ -9,6 +9,9 @@ on:
     branches:
       - develop
 
+permissions:
+  contents: read
+
 jobs:
   php_compatibility:
     name: PHP minimum 7.4

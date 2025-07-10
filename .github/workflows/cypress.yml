@@ -4,6 +4,11 @@ on:
   pull_request:
     branches:
       - develop
+
+permissions:
+  contents: read
+  actions: write
+
 jobs:
   build:
       uses: 10up/simple-local-avatars/.github/workflows/build-release-zip.yml@develop
