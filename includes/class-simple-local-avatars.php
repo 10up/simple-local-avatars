@@ -437,20 +437,23 @@ class Simple_Local_Avatars {
 				// generate the new size
 				$editor = wp_get_image_editor( $avatar_full_path );
 				if ( ! is_wp_error( $editor ) ) {
-					$resized = $editor->resize( $size, $size, true );
-					if ( ! is_wp_error( $resized ) ) {
-						$dest_file = $editor->generate_filename();
-						$saved     = $editor->save( $dest_file );
-						if ( ! is_wp_error( $saved ) ) {
-							// Transform the destination file path into URL.
-							$dest_file_url = '';
-							if ( false !== strpos( $dest_file, $upload_path['basedir'] ) ) {
-								$dest_file_url = str_replace( $upload_path['basedir'], $upload_path['baseurl'], $dest_file );
-							} elseif ( is_multisite() && false !== strpos( $dest_file, ABSPATH . 'wp-content/uploads' ) ) {
-								$dest_file_url = str_replace( ABSPATH . 'wp-content/uploads', network_site_url( '/wp-content/uploads' ), $dest_file );
-							}
+					$image_size = $editor->get_size();
+					if ( ! is_array( $image_size ) || $image_size['width'] !== $size || $image_size['height'] !== $size ) {
+						$resized = $editor->resize( $size, $size, true );
+						if ( ! is_wp_error( $resized ) ) {
+							$dest_file = $editor->generate_filename();
+							$saved     = $editor->save( $dest_file );
+							if ( ! is_wp_error( $saved ) ) {
+								// Transform the destination file path into URL.
+								$dest_file_url = '';
+								if ( false !== strpos( $dest_file, $upload_path['basedir'] ) ) {
+									$dest_file_url = str_replace( $upload_path['basedir'], $upload_path['baseurl'], $dest_file );
+								} elseif ( is_multisite() && false !== strpos( $dest_file, ABSPATH . 'wp-content/uploads' ) ) {
+									$dest_file_url = str_replace( ABSPATH . 'wp-content/uploads', network_site_url( '/wp-content/uploads' ), $dest_file );
+								}
 
-							$local_avatars[ $size ] = $dest_file_url;
+								$local_avatars[ $size ] = $dest_file_url;
+							}
 						}
 					}
 				}
