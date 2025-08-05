@@ -1661,6 +1661,11 @@ class Simple_Local_Avatars {
 	 * @return void
 	 */
 	public function ajax_migrate_from_wp_user_avatar() {
+		// Check if user has the required capability.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'simple-local-avatars' ) );
+		}
+
 		// Bail early if nonce is not available.
 		if ( empty( sanitize_text_field( $_POST['migrateFromWpUserAvatarNonce'] ) ) ) {
 			die;
