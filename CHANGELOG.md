@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 
 ## [2.8.5] - 2025-08-06
 ### Security
-- Run a user capability check before migrating WP User Avatars. Thank you Håkon Harnes at Wordfense for responsibly disclosing this issue. (props [@jeffpaul](https://github.com/jeffpaul), [@peterwilsoncc](https://github.com/peterwilsoncc), [@faisal-alvi](https://github.com/faisal-alvi) via [GHSA-fmhf-27jv-qf37](https://github.com/10up/simple-local-avatars/security/advisories/GHSA-fmhf-27jv-qf37))
+- Run a user capability check before migrating WP User Avatars. Thank you Håkon Harnes at [Wordfense](https://www.wordfence.com/) for responsibly disclosing this issue. (props [@jeffpaul](https://github.com/jeffpaul), [@peterwilsoncc](https://github.com/peterwilsoncc), [@faisal-alvi](https://github.com/faisal-alvi) via [GHSA-fmhf-27jv-qf37](https://github.com/10up/simple-local-avatars/security/advisories/GHSA-fmhf-27jv-qf37))
 
 ## [2.8.4] - 2025-07-14
 **Note that this release bumps the minimum required version of WordPress from 6.5 to 6.6.**
