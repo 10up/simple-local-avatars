@@ -46,7 +46,7 @@ No.  Simple Local Avatars neither collects, stores, nor sends any PII data of vi
 == Changelog ==
 
 = 2.8.5 - 2025-08-06 =
-* **Security:** Run a user capability check before migrating WP User Avatars. Thank you Håkon Harnes at [Wordfense](https://www.wordfence.com/) for responsibly disclosing this issue. (props [@jeffpaul](https://github.com/jeffpaul), [@peterwilsoncc](https://github.com/peterwilsoncc), [@faisal-alvi](https://github.com/faisal-alvi) via [GHSA-fmhf-27jv-qf37](https://github.com/10up/simple-local-avatars/security/advisories/GHSA-fmhf-27jv-qf37))
+* **Security:** Run a user capability check before migrating WP User Avatars. Thank you Håkon Harnes at [Wordfence](https://www.wordfence.com/) for responsibly disclosing this issue. (props [@jeffpaul](https://github.com/jeffpaul), [@peterwilsoncc](https://github.com/peterwilsoncc), [@faisal-alvi](https://github.com/faisal-alvi) via [GHSA-fmhf-27jv-qf37](https://github.com/10up/simple-local-avatars/security/advisories/GHSA-fmhf-27jv-qf37))
 
 = 2.8.4 - 2025-07-14 =
 * **Changed:** Don't resize image if the full version already has the expected height/width (props [@ocean90](https://github.com/ocean90), [@jeffpaul](https://github.com/jeffpaul), [@faisal-alvi](https://github.com/faisal-alvi) via [#324](https://github.com/10up/simple-local-avatars/pull/324)).
@@ -98,3 +98,4 @@ Upgraded to take advantage of *WordPress 3.5 and newer*. Does not support older 
 
 = 1.3.1 =
 Like WordPress 3.2, now *REQUIRES* PHP 5.2 or newer.
+
