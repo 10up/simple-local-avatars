@@ -3,7 +3,7 @@ Contributors:      jakemgold, 10up, thinkoomph, jeffpaul, faisal03
 Donate link:       https://10up.com/plugins/simple-local-avatars-wordpress/
 Tags:              avatar, gravatar, user photos, users, profile
 Tested up to:      6.8
-Stable tag:        2.8.4
+Stable tag:        2.8.5
 License:           GPL-2.0-or-later
 License URI:       https://spdx.org/licenses/GPL-2.0-or-later.html
 
@@ -45,6 +45,9 @@ No.  Simple Local Avatars neither collects, stores, nor sends any PII data of vi
 
 == Changelog ==
 
+= 2.8.5 - 2025-08-06 =
+* **Security:** Run a user capability check before migrating WP User Avatars. Thank you Håkon Harnes at [Wordfense](https://www.wordfence.com/) for responsibly disclosing this issue. (props [@jeffpaul](https://github.com/jeffpaul), [@peterwilsoncc](https://github.com/peterwilsoncc), [@faisal-alvi](https://github.com/faisal-alvi) via [GHSA-fmhf-27jv-qf37](https://github.com/10up/simple-local-avatars/security/advisories/GHSA-fmhf-27jv-qf37))
+
 = 2.8.4 - 2025-07-14 =
 * **Changed:** Don't resize image if the full version already has the expected height/width (props [@ocean90](https://github.com/ocean90), [@jeffpaul](https://github.com/jeffpaul), [@faisal-alvi](https://github.com/faisal-alvi) via [#324](https://github.com/10up/simple-local-avatars/pull/324)).
 * **Changed:** Bump WordPress "tested up to" version 6.8 (props [@qasumitbagthariya](https://github.com/qasumitbagthariya), [@dkotter](https://github.com/dkotter), [@jeffpaul](https://github.com/jeffpaul) via [#332](https://github.com/10up/simple-local-avatars/pull/332), [#334](https://github.com/10up/simple-local-avatars/pull/334)).
@@ -65,25 +68,12 @@ No.  Simple Local Avatars neither collects, stores, nor sends any PII data of vi
 = 2.8.1 - 2024-11-12 =
 * **Fixed:** Ensure dependencies are included properly in the release (props [@dkotter](https://github.com/dkotter) via [#315](https://github.com/10up/simple-local-avatars/pull/315)).
 
-= 2.8.0 - 2024-11-12 =
-**Note that this release bumps the minimum required version of WordPress from 6.4 to 6.5.**
-
-* **Added:** Support for the WordPress.org plugin preview (props [@faisal-alvi](https://github.com/faisal-alvi), [@jeffpaul](https://github.com/jeffpaul) via [#297](https://github.com/10up/simple-local-avatars/pull/297)).
-* **Changed:** Update PHP compatibility check to use `10up/wp-compat-validation-tool` (props [@Sidsector9](https://github.com/Sidsector9), [@jeffpaul](https://github.com/jeffpaul), [@faisal-alvi](https://github.com/faisal-alvi) via [#291](https://github.com/10up/simple-local-avatars/pull/291)).
-* **Changed:** Bump Wordpress "tested up to" version 6.7 (props [@sudip-md](https://github.com/sudip-md), [@jeffpaul](https://github.com/jeffpaul), [@dkotter](https://github.com/dkotter) via [#310](https://github.com/10up/simple-local-avatars/pull/310), [#312](https://github.com/10up/simple-local-avatars/pull/312)).
-* **Changed:** Bump WordPress minimum supported version to 6.5 (props [@sudip-md](https://github.com/sudip-md), [@jeffpaul](https://github.com/jeffpaul), [@dkotter](https://github.com/dkotter) via [#310](https://github.com/10up/simple-local-avatars/pull/310), [#312](https://github.com/10up/simple-local-avatars/pull/312)).
-* **Fixed:** Ensure all strings are properly translated (props [@pedro-mendonca](https://github.com/pedro-mendonca), [@dkotter](https://github.com/dkotter) via [#295](https://github.com/10up/simple-local-avatars/pull/295)).
-* **Fixed:** Properly handle malformed `simple_local_avatar` user data (props [@adekbadek](https://github.com/adekbadek), [@dkotter](https://github.com/dkotter), [@faisal-alvi](https://github.com/faisal-alvi) via [#302](https://github.com/10up/simple-local-avatars/pull/302)).
-* **Security:** Run a user capability check before we clear the avatar cache (props [@dkotter](https://github.com/dkotter), [@truonghuuphuc](https://github.com/truonghuuphuc), [@Sidsector9](https://github.com/Sidsector9) via [#309](https://github.com/10up/simple-local-avatars/pull/309)).
-* **Security:** Ensure REST API requests to set an avatar only allow existing attachment IDs to be used (props [@dkotter](https://github.com/dkotter), [@justus12337](https://github.com/justus12337), [@faisal-alvi](https://github.com/faisal-alvi) via [GHSA-wfjh-m788-w2c5](https://github.com/10up/simple-local-avatars/security/advisories/GHSA-wfjh-m788-w2c5)).
-* **Security:** Bump `axios` from 1.6.7 to 1.7.4 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#298](https://github.com/10up/simple-local-avatars/pull/298)).
-* **Security:** Bump `webpack` from 5.90.0 to 5.94.0 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#303](https://github.com/10up/simple-local-avatars/pull/303)).
-* **Security:** Bump `ws` from 7.5.10 to 8.18.0 and `@wordpress/scripts` from 27.1.0 to 30.4.0 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#305](https://github.com/10up/simple-local-avatars/pull/305), [#311](https://github.com/10up/simple-local-avatars/pull/311)).
-* **Security:** Bump `body-parser` from 1.20.2 to 1.20.3, `express` from 4.19.2 to 4.21.0, `send` from 0.18.0 to 0.19.0 and `serve-static` from 1.15.0 to 1.16.2 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#306](https://github.com/10up/simple-local-avatars/pull/306)).
-
 [View historical changelog details here](https://github.com/10up/simple-local-avatars/blob/develop/CHANGELOG.md).
 
 == Upgrade Notice ==
+
+= 2.8.5 =
+**Security release: Fixes an issue migrating WP User Avatars**
 
 = 2.8.4 =
 **Note that this release bumps the minimum required version of WordPress from 6.5 to 6.6.**
