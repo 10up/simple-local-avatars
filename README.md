@@ -38,6 +38,10 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrie
 
 No.  Simple Local Avatars neither collects, stores, nor sends any PII data of visitors or avatar users on the host site or to 10up or other services.
 
+### Where do I report security bugs found in this plugin?
+
+Please report security bugs found in the source code of the Simple Local Avatars plugin through the [Patchstack Vulnerability Disclosure  Program](https://patchstack.com/database/vdp/9e5fbad0-dfe4-4c2d-bf43-c5d71f99bb7d).  The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
+
 ## Support Level
 
 **Stable:** 10up is not planning to develop any new features for this, but will still respond to bug reports and security concerns. We welcome PRs, but any that include new features should be small and easy to integrate and should not include breaking changes. We otherwise intend to keep this tested up to the most recent version of WordPress.
