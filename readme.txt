@@ -39,6 +39,10 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrie
 
 No.  Simple Local Avatars neither collects, stores, nor sends any PII data of visitors or avatar users on the host site or to 10up or other services.
 
+= Where do I report security bugs found in this plugin? =
+
+Please report security bugs found in the source code of the Simple Local Avatars plugin through the [Patchstack Vulnerability Disclosure  Program](https://patchstack.com/database/vdp/9e5fbad0-dfe4-4c2d-bf43-c5d71f99bb7d).  The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
+
 == Screenshots ==
 
 1. Avatar upload field on a user profile page
@@ -98,4 +102,5 @@ Upgraded to take advantage of *WordPress 3.5 and newer*. Does not support older 
 
 = 1.3.1 =
 Like WordPress 3.2, now *REQUIRES* PHP 5.2 or newer.
+
 
