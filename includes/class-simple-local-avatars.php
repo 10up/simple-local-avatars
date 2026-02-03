@@ -1700,7 +1700,7 @@ class Simple_Local_Avatars {
 		}
 
 		// Bail early if nonce is invalid.
-		if ( ! wp_verify_nonce( sanitize_text_field( $_POST['migrateFromWpUserAvatarNonce'] ), 'migrate_from_wp_user_avatar_nonce' ) ) {
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['migrateFromWpUserAvatarNonce'] ) ), 'migrate_from_wp_user_avatar_nonce' ) ) {
 			die();
 		}
 
