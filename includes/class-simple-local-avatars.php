@@ -1093,8 +1093,9 @@ class Simple_Local_Avatars {
 
 			// need to be more secure since low privilege users can upload
 			$allowed_mime_types = wp_get_mime_types();
-			$file_mime_type     = strtolower( $_FILES['simple-local-avatar']['type'] );
 
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- validated in following lines.
+			$file_mime_type = strtolower( $_FILES['simple-local-avatar']['type'] );
 			if ( ! ( 0 === strpos( $file_mime_type, 'image/' ) ) || ! in_array( $file_mime_type, $allowed_mime_types, true ) ) {
 				$this->avatar_upload_error = __( 'Only images can be uploaded as an avatar', 'simple-local-avatars' );
 				add_action( 'user_profile_update_errors', array( $this, 'user_profile_update_errors' ) );
