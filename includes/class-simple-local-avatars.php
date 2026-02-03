@@ -1695,7 +1695,7 @@ class Simple_Local_Avatars {
 		}
 
 		// Bail early if nonce is not available.
-		if ( empty( sanitize_text_field( $_POST['migrateFromWpUserAvatarNonce'] ) ) ) {
+		if ( empty( $_POST['migrateFromWpUserAvatarNonce'] ) ) {
 			die;
 		}
 
