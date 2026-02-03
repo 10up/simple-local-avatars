@@ -8,6 +8,13 @@
 			</property>
 		</properties>
 	</rule>
+	<rule ref="WordPress.Security.ValidatedSanitizedInput">
+		<properties>
+			<property name="customSanitizingFunctions" type="array">
+				<element value="wp_verify_nonce"/> <!-- Character by character comparison, sanitization may "fix" a mismatch. -->
+			</property>
+		</properties>
+	</rule>
 	<file>.</file>
 	<exclude-pattern>dist/</exclude-pattern>
 	<exclude-pattern>vendor/</exclude-pattern>
