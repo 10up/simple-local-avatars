@@ -75,6 +75,7 @@ class Simple_Local_Avatars {
 				( // And either an ajax request not in the network admin.
 					defined( 'DOING_AJAX' ) && DOING_AJAX
 					&& isset( $_SERVER['HTTP_REFERER'] )
+					// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- this validates rather than sanitizes
 					&& ! preg_match( '#^' . preg_quote( network_admin_url(), '#' ) . '#i', wp_unslash( $_SERVER['HTTP_REFERER'] ) )
 				)
 				||
