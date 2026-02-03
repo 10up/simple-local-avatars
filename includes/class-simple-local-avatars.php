@@ -145,26 +145,26 @@ class Simple_Local_Avatars {
 			}, 10, 1 );
 		}
 
-		/*
-		 * Fix: An error occurred cropping the image
-		 *
-		 * @see https://github.com/10up/simple-local-avatars/issues/141
-		 * @see wp_ajax_crop_image() in wp-admin/includes/ajax-actions.php
-		 *
-		 * During a WordPress Core crop-image ajax request, bypass the theme_setup hook.
-		 */
-		if (
-			isset( $_POST['action'] )
-			&& 'crop-image' === $_POST['action']
-			&& isset( $_POST['id'] )
-			&& is_admin()
-			&& wp_doing_ajax()
-			&& check_ajax_referer( 'image_editor-' . absint( $_POST['id'] ), 'nonce', false )
-		) {
-			add_action( 'plugins_loaded', function () {
+		add_action( 'plugins_loaded', function () {
+			/*
+			* Fix: An error occurred cropping the image
+			*
+			* @see https://github.com/10up/simple-local-avatars/issues/141
+			* @see wp_ajax_crop_image() in wp-admin/includes/ajax-actions.php
+			*
+			* During a WordPress Core crop-image ajax request, bypass the theme_setup hook.
+			*/
+			if (
+				isset( $_POST['action'] )
+				&& 'crop-image' === $_POST['action']
+				&& isset( $_POST['id'] )
+				&& is_admin()
+				&& wp_doing_ajax()
+				&& check_ajax_referer( 'image_editor-' . absint( $_POST['id'] ), 'nonce', false )
+			) {
 				remove_all_actions( 'setup_theme' );
-			} );
-		}
+			}
+		} );
 	}
 
 	/**
