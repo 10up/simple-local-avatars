@@ -1148,11 +1148,13 @@ class Simple_Local_Avatars {
 
 		// Handle ratings
 		if ( isset( $avatar_id ) || ! empty( $this->get_user_local_avatar( $user_id ) ) ) {
-			if ( empty( $_POST['simple_local_avatar_rating'] ) || ! array_key_exists( $_POST['simple_local_avatar_rating'], $this->avatar_ratings ) ) {
-				$_POST['simple_local_avatar_rating'] = key( $this->avatar_ratings );
+			$passed_avatar_rating = isset( $_POST['simple_local_avatar_rating'] ) ? sanitize_text_field( wp_unslash( $_POST['simple_local_avatar_rating'] ) ) : '';
+			if ( empty( $passed_avatar_rating ) || ! in_array( $passed_avatar_rating, array_keys( $this->avatar_ratings ), true ) ) {
+				$passed_avatar_rating                = key( $this->avatar_ratings );
+				$_POST['simple_local_avatar_rating'] = wp_slash( $passed_avatar_rating ); // May be access later in execution.
 			}
 
-			update_user_meta( $user_id, $this->rating_key, $_POST['simple_local_avatar_rating'] );
+			update_user_meta( $user_id, $this->rating_key, wp_slash( $passed_avatar_rating ) );
 		}
 	}
 
