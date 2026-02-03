@@ -1172,7 +1172,7 @@ class Simple_Local_Avatars {
 	 * Runs when a user clicks the Remove button for the avatar
 	 */
 	public function action_remove_simple_local_avatar() {
-		if ( ! empty( $_GET['user_id'] ) && ! empty( $_GET['_wpnonce'] ) && wp_verify_nonce( $_GET['_wpnonce'], 'remove_simple_local_avatar_nonce' ) ) {
+		if ( ! empty( $_GET['user_id'] ) && ! empty( $_GET['_wpnonce'] ) && wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'remove_simple_local_avatar_nonce' ) ) {
 			$user_id = (int) $_GET['user_id'];
 
 			if ( ! current_user_can( 'edit_user', $user_id ) ) {
