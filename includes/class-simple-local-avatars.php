@@ -1587,6 +1587,11 @@ class Simple_Local_Avatars {
 			return;
 		}
 
+		// Ensure user has proper capability.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		$file_id = filter_input( INPUT_POST, 'simple-local-avatar-file-id', FILTER_SANITIZE_NUMBER_INT );
 
 		// check for uploaded files
