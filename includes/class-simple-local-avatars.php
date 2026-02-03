@@ -1081,7 +1081,7 @@ class Simple_Local_Avatars {
 	 */
 	public function edit_user_profile_update( $user_id ) {
 		// check nonces
-		if ( empty( $_POST['_simple_local_avatar_nonce'] ) || ! wp_verify_nonce( $_POST['_simple_local_avatar_nonce'], 'simple_local_avatar_nonce' ) ) {
+		if ( empty( $_POST['_simple_local_avatar_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['_simple_local_avatar_nonce'] ), 'simple_local_avatar_nonce' ) ) {
 			return;
 		}
 
