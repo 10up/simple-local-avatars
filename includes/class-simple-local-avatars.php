@@ -1196,7 +1196,14 @@ class Simple_Local_Avatars {
 	 */
 	public function ajax_assign_simple_local_avatar_media() {
 		// check required information and permissions
-		if ( empty( $_POST['user_id'] ) || empty( $_POST['media_id'] ) || ! current_user_can( 'upload_files' ) || ! current_user_can( 'edit_user', $_POST['user_id'] ) || empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'assign_simple_local_avatar_nonce' ) ) {
+		if (
+			empty( $_POST['user_id'] )
+			|| empty( $_POST['media_id'] )
+			|| ! current_user_can( 'upload_files' )
+			|| ! current_user_can( 'edit_user', absint( wp_unslash( $_POST['user_id'] ) ) )
+			|| empty( $_POST['_wpnonce'] )
+			|| ! wp_verify_nonce( wp_unslash( $_POST['_wpnonce'] ), 'assign_simple_local_avatar_nonce' )
+		) {
 			die;
 		}
 
