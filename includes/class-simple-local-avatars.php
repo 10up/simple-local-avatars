@@ -74,7 +74,8 @@ class Simple_Local_Avatars {
 			&& (
 				( // And either an ajax request not in the network admin.
 					defined( 'DOING_AJAX' ) && DOING_AJAX
-					&& isset( $_SERVER['HTTP_REFERER'] ) && ! preg_match( '#^' . network_admin_url() . '#i', $_SERVER['HTTP_REFERER'] )
+					&& isset( $_SERVER['HTTP_REFERER'] )
+					&& ! preg_match( '#^' . preg_quote( network_admin_url(), '#' ) . '#i', $_SERVER['HTTP_REFERER'] )
 				)
 				||
 				( // Or normal request not in the network admin.
