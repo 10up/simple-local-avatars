@@ -790,15 +790,18 @@ class Simple_Local_Avatars {
 		$sanitized = array();
 
 		foreach ( $options as $option_name ) {
-			if ( ! isset( $_POST['simple_local_avatars'][ $option_name ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			// phpcs:ignore WordPress.Security.NonceVerification -- checked by wp-admin/network/settings.php
+			if ( ! isset( $_POST['simple_local_avatars'][ $option_name ] ) ) {
 				continue;
 			}
 
 			switch ( $option_name ) {
 				case 'mode':
-					update_site_option( 'simple_local_avatars_mode', sanitize_text_field( $_POST['simple_local_avatars'][ $option_name ] ) );
+					// phpcs:ignore WordPress.Security.NonceVerification -- checked by wp-admin/network/settings.php
+					update_site_option( 'simple_local_avatars_mode', sanitize_text_field( wp_unslash( $_POST['simple_local_avatars'][ $option_name ] ) ) );
 					break;
 				default:
+					// phpcs:ignore WordPress.Security.NonceVerification -- checked by wp-admin/network/settings.php
 					$sanitized[ $option_name ] = empty( $_POST['simple_local_avatars'][ $option_name ] ) ? 0 : 1;
 			}
 		}
