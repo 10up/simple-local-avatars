@@ -402,6 +402,10 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 		$_POST['simple_local_avatar_rating'] = '';
 		$_POST['_simple_local_avatar_nonce'] = 'not empty';
 
+		WP_Mock::passthruFunction( 'wp_unslash' );
+		WP_Mock::passthruFunction( 'wp_slash' );
+		WP_Mock::passthruFunction( 'sanitize_text_field' );
+
 		WP_Mock::userFunction( 'wp_verify_nonce' )
 		       ->with( $_POST['_simple_local_avatar_nonce'], 'simple_local_avatar_nonce' )
 		       ->andReturn( true );
@@ -416,6 +420,8 @@ class SimpleLocalAvatarsTest extends \WP_Mock\Tools\TestCase {
 	public function test_action_remove_simple_local_avatar() {
 		$_GET['user_id']  = 1;
 		$_GET['_wpnonce'] = 1;
+
+		WP_Mock::passthruFunction( 'wp_unslash' );
 
 		WP_Mock::userFunction( 'wp_verify_nonce' )
 		       ->with( $_GET['_wpnonce'], 'remove_simple_local_avatar_nonce' )
