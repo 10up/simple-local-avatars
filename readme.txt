@@ -22,6 +22,10 @@ Just edit a user profile, and scroll down to the new "Avatar" field. The plug-in
 5. Lets you decide whether lower privilege users (subscribers, contributors) can upload their own avatar.
 6. Enables rating of local avatars, just like Gravatar.
 
+== Support Level ==
+
+Simple Local Avatars' support level is marked as `stable`.  10up is not planning to develop any new features for this, but will still respond to bug reports and security concerns.  We welcome PRs, but any that include new features should be small and easy to integrate and should not include breaking changes.  We otherwise intend to keep this tested up to the most recent version of WordPress.
+
 == Installation ==
 
 1. Install easily with the WordPress plugin control panel or manually download the plugin and upload the extracted folder to the `/wp-content/plugins/` directory
