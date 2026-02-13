@@ -1,5 +1,5 @@
 === Simple Local Avatars ===
-Contributors:      jakemgold, 10up, thinkoomph, jeffpaul, faisal03
+Contributors:      jakemgold, 10up, thinkoomph, jeffpaul, faisal03, dkotter
 Donate link:       https://10up.com/plugins/simple-local-avatars-wordpress/
 Tags:              avatar, gravatar, user photos, users, profile
 Tested up to:      6.9
