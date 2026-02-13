@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file, per [the Ke
 
 ## [Unreleased] - TBD
 
+## [2.8.6] - 2026-02-17
+### Changed
+- Bump WordPress "tested up to" version 6.9 (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@dkotter](https://github.com/dkotter) via [#352](https://github.com/10up/simple-local-avatars/pull/352)).
+- Consider `get_avatar()` wrapper function `get_simple_local_avatar()` escaped (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@dkotter](https://github.com/dkotter) via [#358](https://github.com/10up/simple-local-avatars/pull/358)).
+- Consider `wp_verify_nonce()` as auto-sanitized (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@dkotter](https://github.com/dkotter) via [#358](https://github.com/10up/simple-local-avatars/pull/358)).
+
+### Fixed
+- Ensure form data is unslashed as required (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@dkotter](https://github.com/dkotter) via [#358](https://github.com/10up/simple-local-avatars/pull/358)).
+
+### Security
+- (Hardening) Ensure user has `manage_option` cap before saving default avatar (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@dkotter](https://github.com/dkotter) via [#358](https://github.com/10up/simple-local-avatars/pull/358)).
+
+### Developer
+- Ensure our final release asset gets attached properly to the release (props [@dkotter](https://github.com/dkotter), [@jeffpaul](https://github.com/jeffpaul) via [#340](https://github.com/10up/simple-local-avatars/pull/340)).
+- Add Patchstack security-reporting FAQ (props [@jeffpaul](https://github.com/jeffpaul) via [#355](https://github.com/10up/simple-local-avatars/pull/355)).
+- Update dependencies via `npm audit fix` (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@dkotter](https://github.com/dkotter) via [#354](https://github.com/10up/simple-local-avatars/pull/354)).
+- Bump `on-headers` from 1.0.2 to 1.1.0 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#341](https://github.com/10up/simple-local-avatars/pull/341)).
+- Bump `compression` from 1.7.5 to 1.8.1 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#341](https://github.com/10up/simple-local-avatars/pull/341)).
+- Bump `form-data` from 4.0.1 to 4.0.4 (props [@dependabot](https://github.com/apps/dependabot), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#346](https://github.com/10up/simple-local-avatars/pull/346)).
+- Bump `tmp` from 0.2.3 to 0.2.5 (props [@dependabot](https://github.com/apps/dependabot), [@Sidsector9](hhttps://github.com/Sidsector9) via [#347](https://github.com/10up/simple-local-avatars/pull/347)).
+- Bump `@wordpress/env` from 10.11.0 to 10.28.0 (props [@dependabot](https://github.com/apps/dependabot), [@Sidsector9](hhttps://github.com/Sidsector9) via [#347](https://github.com/10up/simple-local-avatars/pull/347)).
+- Bump `playwright` from 1.48.2 to 1.56.1 (props [@dependabot](https://github.com/apps/dependabot), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#350](https://github.com/10up/simple-local-avatars/pull/350)).
+- Bump `lodash` from 4.17.21 to 4.17.23 (props [@dependabot](https://github.com/apps/dependabot), [@dkotter](https://github.com/dkotter) via [#356](https://github.com/10up/simple-local-avatars/pull/356)).
+- Bump `lodash-es` from 4.17.22 to 4.17.23 (props [@dependabot](https://github.com/apps/dependabot), [@dkotter](https://github.com/dkotter) via [#357](https://github.com/10up/simple-local-avatars/pull/357)).
+
 ## [2.8.5] - 2025-08-06
 ### Security
 - Run a user capability check before migrating WP User Avatars. Thank you Håkon Harnes at [Wordfence](https://www.wordfence.com/) for responsibly disclosing this issue. (props [@jeffpaul](https://github.com/jeffpaul), [@peterwilsoncc](https://github.com/peterwilsoncc), [@faisal-alvi](https://github.com/faisal-alvi) via [GHSA-fmhf-27jv-qf37](https://github.com/10up/simple-local-avatars/security/advisories/GHSA-fmhf-27jv-qf37))
@@ -403,6 +428,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 - Initial release
 
 [Unreleased]: https://github.com/10up/simple-local-avatars/compare/trunk...develop
+[2.8.6]: https://github.com/10up/simple-local-avatars/compare/2.8.5...2.8.6
 [2.8.5]: https://github.com/10up/simple-local-avatars/compare/2.8.4...2.8.5
 [2.8.4]: https://github.com/10up/simple-local-avatars/compare/2.8.3...2.8.4
 [2.8.3]: https://github.com/10up/simple-local-avatars/compare/2.8.2...2.8.3

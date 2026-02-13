@@ -49,10 +49,31 @@ Please report security bugs found in the source code of the Simple Local Avatars
 
 == Changelog ==
 
+= 2.8.6 - 2026-02-17 =
+
+* **Changed:** Bump WordPress "tested up to" version 6.9 (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@dkotter](https://github.com/dkotter) via [#352](https://github.com/10up/simple-local-avatars/pull/352)).
+* **Changed:** Consider `get_avatar()` wrapper function `get_simple_local_avatar()` escaped (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@dkotter](https://github.com/dkotter) via [#358](https://github.com/10up/simple-local-avatars/pull/358)).
+* **Changed:** Consider `wp_verify_nonce()` as auto-sanitized (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@dkotter](https://github.com/dkotter) via [#358](https://github.com/10up/simple-local-avatars/pull/358)).
+* **Fixed:** Ensure form data is unslashed as required (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@dkotter](https://github.com/dkotter) via [#358](https://github.com/10up/simple-local-avatars/pull/358)).
+* **Security:** (Hardening) Ensure user has `manage_option` cap before saving default avatar (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@dkotter](https://github.com/dkotter) via [#358](https://github.com/10up/simple-local-avatars/pull/358)).
+* **Developer:** Ensure our final release asset gets attached properly to the release (props [@dkotter](https://github.com/dkotter), [@jeffpaul](https://github.com/jeffpaul) via [#340](https://github.com/10up/simple-local-avatars/pull/340)).
+* **Developer:** Add Patchstack security-reporting FAQ (props [@jeffpaul](https://github.com/jeffpaul) via [#355](https://github.com/10up/simple-local-avatars/pull/355)).
+* **Developer:** Update dependencies via `npm audit fix` (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@dkotter](https://github.com/dkotter) via [#354](https://github.com/10up/simple-local-avatars/pull/354)).
+* **Developer:** Bump `on-headers` from 1.0.2 to 1.1.0 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#341](https://github.com/10up/simple-local-avatars/pull/341)).
+* **Developer:** Bump `compression` from 1.7.5 to 1.8.1 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#341](https://github.com/10up/simple-local-avatars/pull/341)).
+* **Developer:** Bump `form-data` from 4.0.1 to 4.0.4 (props [@dependabot](https://github.com/apps/dependabot), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#346](https://github.com/10up/simple-local-avatars/pull/346)).
+* **Developer:** Bump `tmp` from 0.2.3 to 0.2.5 (props [@dependabot](https://github.com/apps/dependabot), [@Sidsector9](hhttps://github.com/Sidsector9) via [#347](https://github.com/10up/simple-local-avatars/pull/347)).
+* **Developer:** Bump `@wordpress/env` from 10.11.0 to 10.28.0 (props [@dependabot](https://github.com/apps/dependabot), [@Sidsector9](hhttps://github.com/Sidsector9) via [#347](https://github.com/10up/simple-local-avatars/pull/347)).
+* **Developer:** Bump `playwright` from 1.48.2 to 1.56.1 (props [@dependabot](https://github.com/apps/dependabot), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#350](https://github.com/10up/simple-local-avatars/pull/350)).
+* **Developer:** Bump `lodash` from 4.17.21 to 4.17.23 (props [@dependabot](https://github.com/apps/dependabot), [@dkotter](https://github.com/dkotter) via [#356](https://github.com/10up/simple-local-avatars/pull/356)).
+* **Developer:** Bump `lodash-es` from 4.17.22 to 4.17.23 (props [@dependabot](https://github.com/apps/dependabot), [@dkotter](https://github.com/dkotter) via [#357](https://github.com/10up/simple-local-avatars/pull/357)).
+
 = 2.8.5 - 2025-08-06 =
+
 * **Security:** Run a user capability check before migrating WP User Avatars. Thank you Håkon Harnes at [Wordfence](https://www.wordfence.com/) for responsibly disclosing this issue. (props [@jeffpaul](https://github.com/jeffpaul), [@peterwilsoncc](https://github.com/peterwilsoncc), [@faisal-alvi](https://github.com/faisal-alvi) via [GHSA-fmhf-27jv-qf37](https://github.com/10up/simple-local-avatars/security/advisories/GHSA-fmhf-27jv-qf37))
 
 = 2.8.4 - 2025-07-14 =
+
 * **Changed:** Don't resize image if the full version already has the expected height/width (props [@ocean90](https://github.com/ocean90), [@jeffpaul](https://github.com/jeffpaul), [@faisal-alvi](https://github.com/faisal-alvi) via [#324](https://github.com/10up/simple-local-avatars/pull/324)).
 * **Changed:** Bump WordPress "tested up to" version 6.8 (props [@qasumitbagthariya](https://github.com/qasumitbagthariya), [@dkotter](https://github.com/dkotter), [@jeffpaul](https://github.com/jeffpaul) via [#332](https://github.com/10up/simple-local-avatars/pull/332), [#334](https://github.com/10up/simple-local-avatars/pull/334)).
 * **Changed:** Bump WordPress minimum from 6.5 to 6.6 (props [@qasumitbagthariya](https://github.com/qasumitbagthariya), [@dkotter](https://github.com/dkotter), [@jeffpaul](https://github.com/jeffpaul) via [#332](https://github.com/10up/simple-local-avatars/pull/332), [#334](https://github.com/10up/simple-local-avatars/pull/334)).
@@ -60,17 +81,6 @@ Please report security bugs found in the source code of the Simple Local Avatars
 * **Security:** Bump `axios` from 1.7.7 to 1.8.4 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#330](https://github.com/10up/simple-local-avatars/pull/330)).
 * **Security:** Bump `tar-fs` from 3.0.6 to 3.0.9 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#331](https://github.com/10up/simple-local-avatars/pull/331), [#336](https://github.com/10up/simple-local-avatars/pull/336)).
 * **Security:** Bump `http-proxy-middleware` from 2.0.7 to 2.0.9 (props [@dependabot](https://github.com/apps/dependabot), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#335](https://github.com/10up/simple-local-avatars/pull/335)).
-
-= 2.8.3 - 2024-11-18 =
-* **Changed:** Only allow images that were uploaded by the same user be used when setting the avatar via a REST request (props [@dkotter](https://github.com/dkotter), [@justus12337](https://github.com/justus12337), [@faisal-alvi](https://github.com/faisal-alvi) via [#317](https://github.com/10up/simple-local-avatars/pull/317)).
-* **Fixed:** Only allow image files to be set as the avatar in REST requests (props [@dkotter](https://github.com/dkotter), [@justus12337](https://github.com/justus12337), [@faisal-alvi](https://github.com/faisal-alvi) via [#317](https://github.com/10up/simple-local-avatars/pull/317)).
-* **Security:** Bump `@10up/cypress-wp-utils` from 0.2.0 to 0.4.0, `@sentry/node` from 6.19.7 to 8.38.0, `@wordpress/env` from 9.2.0 to 10.11.0, `cypress` from 13.2.0 to 13.15.2, `cypress-mochawesome-reporter` from 3.6.0 to 3.8.2, `puppeteer-core` from 23.3.0 to 23.8.0 (props [@dkotter](https://github.com/dkotter) via [#319](https://github.com/10up/simple-local-avatars/pull/319)).
-
-= 2.8.2 - 2024-11-12 =
-* **Fixed:** Ensure dependencies are (actually) included properly in the release (props [@dkotter](https://github.com/dkotter) via [#316](https://github.com/10up/simple-local-avatars/pull/316)).
-
-= 2.8.1 - 2024-11-12 =
-* **Fixed:** Ensure dependencies are included properly in the release (props [@dkotter](https://github.com/dkotter) via [#315](https://github.com/10up/simple-local-avatars/pull/315)).
 
 [View historical changelog details here](https://github.com/10up/simple-local-avatars/blob/develop/CHANGELOG.md).
 
