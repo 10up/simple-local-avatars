@@ -74,7 +74,9 @@ class Simple_Local_Avatars {
 			&& (
 				( // And either an ajax request not in the network admin.
 					defined( 'DOING_AJAX' ) && DOING_AJAX
-					&& isset( $_SERVER['HTTP_REFERER'] ) && ! preg_match( '#^' . network_admin_url() . '#i', $_SERVER['HTTP_REFERER'] )
+					&& isset( $_SERVER['HTTP_REFERER'] )
+					// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- this validates rather than sanitizes
+					&& ! preg_match( '#^' . preg_quote( network_admin_url(), '#' ) . '#i', wp_unslash( $_SERVER['HTTP_REFERER'] ) )
 				)
 				||
 				( // Or normal request not in the network admin.
@@ -143,12 +145,29 @@ class Simple_Local_Avatars {
 			}, 10, 1 );
 		}
 
-		// Fix: An error occurred cropping the image (https://github.com/10up/simple-local-avatars/issues/141).
-		if ( isset( $_POST['action'] ) && 'crop-image' === $_POST['action'] && is_admin() && wp_doing_ajax() ) {
-			add_action( 'plugins_loaded', function () {
-				remove_all_actions( 'setup_theme' );
-			} );
-		}
+		add_action(
+			'plugins_loaded',
+			function () {
+				/*
+				* Fix: An error occurred cropping the image
+				*
+				* @see https://github.com/10up/simple-local-avatars/issues/141
+				* @see wp_ajax_crop_image() in wp-admin/includes/ajax-actions.php
+				*
+				* During a WordPress Core crop-image ajax request, bypass the theme_setup hook.
+				*/
+				if (
+					isset( $_POST['action'] )
+					&& 'crop-image' === $_POST['action']
+					&& isset( $_POST['id'] )
+					&& is_admin()
+					&& wp_doing_ajax()
+					&& check_ajax_referer( 'image_editor-' . absint( $_POST['id'] ), 'nonce', false )
+				) {
+					remove_all_actions( 'setup_theme' );
+				}
+			}
+		);
 	}
 
 	/**
@@ -774,15 +793,18 @@ class Simple_Local_Avatars {
 		$sanitized = array();
 
 		foreach ( $options as $option_name ) {
-			if ( ! isset( $_POST['simple_local_avatars'][ $option_name ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			// phpcs:ignore WordPress.Security.NonceVerification -- checked by wp-admin/network/settings.php
+			if ( ! isset( $_POST['simple_local_avatars'][ $option_name ] ) ) {
 				continue;
 			}
 
 			switch ( $option_name ) {
 				case 'mode':
-					update_site_option( 'simple_local_avatars_mode', sanitize_text_field( $_POST['simple_local_avatars'][ $option_name ] ) );
+					// phpcs:ignore WordPress.Security.NonceVerification -- checked by wp-admin/network/settings.php
+					update_site_option( 'simple_local_avatars_mode', sanitize_text_field( wp_unslash( $_POST['simple_local_avatars'][ $option_name ] ) ) );
 					break;
 				default:
+					// phpcs:ignore WordPress.Security.NonceVerification -- checked by wp-admin/network/settings.php
 					$sanitized[ $option_name ] = empty( $_POST['simple_local_avatars'][ $option_name ] ) ? 0 : 1;
 			}
 		}
@@ -1062,7 +1084,7 @@ class Simple_Local_Avatars {
 	 */
 	public function edit_user_profile_update( $user_id ) {
 		// check nonces
-		if ( empty( $_POST['_simple_local_avatar_nonce'] ) || ! wp_verify_nonce( $_POST['_simple_local_avatar_nonce'], 'simple_local_avatar_nonce' ) ) {
+		if ( empty( $_POST['_simple_local_avatar_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['_simple_local_avatar_nonce'] ), 'simple_local_avatar_nonce' ) ) {
 			return;
 		}
 
@@ -1071,8 +1093,9 @@ class Simple_Local_Avatars {
 
 			// need to be more secure since low privilege users can upload
 			$allowed_mime_types = wp_get_mime_types();
-			$file_mime_type     = strtolower( $_FILES['simple-local-avatar']['type'] );
 
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- validated in following lines.
+			$file_mime_type = strtolower( $_FILES['simple-local-avatar']['type'] );
 			if ( ! ( 0 === strpos( $file_mime_type, 'image/' ) ) || ! in_array( $file_mime_type, $allowed_mime_types, true ) ) {
 				$this->avatar_upload_error = __( 'Only images can be uploaded as an avatar', 'simple-local-avatars' );
 				add_action( 'user_profile_update_errors', array( $this, 'user_profile_update_errors' ) );
@@ -1129,11 +1152,13 @@ class Simple_Local_Avatars {
 
 		// Handle ratings
 		if ( isset( $avatar_id ) || ! empty( $this->get_user_local_avatar( $user_id ) ) ) {
-			if ( empty( $_POST['simple_local_avatar_rating'] ) || ! array_key_exists( $_POST['simple_local_avatar_rating'], $this->avatar_ratings ) ) {
-				$_POST['simple_local_avatar_rating'] = key( $this->avatar_ratings );
+			$passed_avatar_rating = isset( $_POST['simple_local_avatar_rating'] ) ? sanitize_text_field( wp_unslash( $_POST['simple_local_avatar_rating'] ) ) : '';
+			if ( empty( $passed_avatar_rating ) || ! in_array( $passed_avatar_rating, array_keys( $this->avatar_ratings ), true ) ) {
+				$passed_avatar_rating                = key( $this->avatar_ratings );
+				$_POST['simple_local_avatar_rating'] = wp_slash( $passed_avatar_rating ); // May be access later in execution.
 			}
 
-			update_user_meta( $user_id, $this->rating_key, $_POST['simple_local_avatar_rating'] );
+			update_user_meta( $user_id, $this->rating_key, wp_slash( $passed_avatar_rating ) );
 		}
 	}
 
@@ -1151,7 +1176,7 @@ class Simple_Local_Avatars {
 	 * Runs when a user clicks the Remove button for the avatar
 	 */
 	public function action_remove_simple_local_avatar() {
-		if ( ! empty( $_GET['user_id'] ) && ! empty( $_GET['_wpnonce'] ) && wp_verify_nonce( $_GET['_wpnonce'], 'remove_simple_local_avatar_nonce' ) ) {
+		if ( ! empty( $_GET['user_id'] ) && ! empty( $_GET['_wpnonce'] ) && wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'remove_simple_local_avatar_nonce' ) ) {
 			$user_id = (int) $_GET['user_id'];
 
 			if ( ! current_user_can( 'edit_user', $user_id ) ) {
@@ -1175,7 +1200,14 @@ class Simple_Local_Avatars {
 	 */
 	public function ajax_assign_simple_local_avatar_media() {
 		// check required information and permissions
-		if ( empty( $_POST['user_id'] ) || empty( $_POST['media_id'] ) || ! current_user_can( 'upload_files' ) || ! current_user_can( 'edit_user', $_POST['user_id'] ) || empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'assign_simple_local_avatar_nonce' ) ) {
+		if (
+			empty( $_POST['user_id'] )
+			|| empty( $_POST['media_id'] )
+			|| ! current_user_can( 'upload_files' )
+			|| ! current_user_can( 'edit_user', absint( wp_unslash( $_POST['user_id'] ) ) )
+			|| empty( $_POST['_wpnonce'] )
+			|| ! wp_verify_nonce( wp_unslash( $_POST['_wpnonce'] ), 'assign_simple_local_avatar_nonce' )
+		) {
 			die;
 		}
 
@@ -1556,6 +1588,11 @@ class Simple_Local_Avatars {
 			return;
 		}
 
+		// Ensure user has proper capability.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		$file_id = filter_input( INPUT_POST, 'simple-local-avatar-file-id', FILTER_SANITIZE_NUMBER_INT );
 
 		// check for uploaded files
@@ -1667,12 +1704,12 @@ class Simple_Local_Avatars {
 		}
 
 		// Bail early if nonce is not available.
-		if ( empty( sanitize_text_field( $_POST['migrateFromWpUserAvatarNonce'] ) ) ) {
+		if ( empty( $_POST['migrateFromWpUserAvatarNonce'] ) ) {
 			die;
 		}
 
 		// Bail early if nonce is invalid.
-		if ( ! wp_verify_nonce( sanitize_text_field( $_POST['migrateFromWpUserAvatarNonce'] ), 'migrate_from_wp_user_avatar_nonce' ) ) {
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['migrateFromWpUserAvatarNonce'] ) ), 'migrate_from_wp_user_avatar_nonce' ) ) {
 			die();
 		}
 
