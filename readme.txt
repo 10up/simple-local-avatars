@@ -60,17 +60,6 @@ Please report security bugs found in the source code of the Simple Local Avatars
 * **Changed:** Consider `wp_verify_nonce()` as auto-sanitized (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@dkotter](https://github.com/dkotter) via [#358](https://github.com/10up/simple-local-avatars/pull/358)).
 * **Fixed:** Ensure form data is unslashed as required (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@dkotter](https://github.com/dkotter) via [#358](https://github.com/10up/simple-local-avatars/pull/358)).
 * **Security:** (Hardening) Ensure user has `manage_option` cap before saving default avatar (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@dkotter](https://github.com/dkotter) via [#358](https://github.com/10up/simple-local-avatars/pull/358)).
-* **Developer:** Ensure our final release asset gets attached properly to the release (props [@dkotter](https://github.com/dkotter), [@jeffpaul](https://github.com/jeffpaul) via [#340](https://github.com/10up/simple-local-avatars/pull/340)).
-* **Developer:** Add Patchstack security-reporting FAQ (props [@jeffpaul](https://github.com/jeffpaul) via [#355](https://github.com/10up/simple-local-avatars/pull/355)).
-* **Developer:** Update dependencies via `npm audit fix` (props [@peterwilsoncc](https://github.com/peterwilsoncc), [@dkotter](https://github.com/dkotter) via [#354](https://github.com/10up/simple-local-avatars/pull/354)).
-* **Developer:** Bump `on-headers` from 1.0.2 to 1.1.0 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#341](https://github.com/10up/simple-local-avatars/pull/341)).
-* **Developer:** Bump `compression` from 1.7.5 to 1.8.1 (props [@dependabot](https://github.com/apps/dependabot), [@faisal-alvi](https://github.com/faisal-alvi) via [#341](https://github.com/10up/simple-local-avatars/pull/341)).
-* **Developer:** Bump `form-data` from 4.0.1 to 4.0.4 (props [@dependabot](https://github.com/apps/dependabot), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#346](https://github.com/10up/simple-local-avatars/pull/346)).
-* **Developer:** Bump `tmp` from 0.2.3 to 0.2.5 (props [@dependabot](https://github.com/apps/dependabot), [@Sidsector9](hhttps://github.com/Sidsector9) via [#347](https://github.com/10up/simple-local-avatars/pull/347)).
-* **Developer:** Bump `@wordpress/env` from 10.11.0 to 10.28.0 (props [@dependabot](https://github.com/apps/dependabot), [@Sidsector9](hhttps://github.com/Sidsector9) via [#347](https://github.com/10up/simple-local-avatars/pull/347)).
-* **Developer:** Bump `playwright` from 1.48.2 to 1.56.1 (props [@dependabot](https://github.com/apps/dependabot), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#350](https://github.com/10up/simple-local-avatars/pull/350)).
-* **Developer:** Bump `lodash` from 4.17.21 to 4.17.23 (props [@dependabot](https://github.com/apps/dependabot), [@dkotter](https://github.com/dkotter) via [#356](https://github.com/10up/simple-local-avatars/pull/356)).
-* **Developer:** Bump `lodash-es` from 4.17.22 to 4.17.23 (props [@dependabot](https://github.com/apps/dependabot), [@dkotter](https://github.com/dkotter) via [#357](https://github.com/10up/simple-local-avatars/pull/357)).
 
 = 2.8.5 - 2025-08-06 =
 

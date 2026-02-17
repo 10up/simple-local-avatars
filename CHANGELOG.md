@@ -28,6 +28,7 @@ All notable changes to this project will be documented in this file, per [the Ke
 - Bump `playwright` from 1.48.2 to 1.56.1 (props [@dependabot](https://github.com/apps/dependabot), [@peterwilsoncc](https://github.com/peterwilsoncc) via [#350](https://github.com/10up/simple-local-avatars/pull/350)).
 - Bump `lodash` from 4.17.21 to 4.17.23 (props [@dependabot](https://github.com/apps/dependabot), [@dkotter](https://github.com/dkotter) via [#356](https://github.com/10up/simple-local-avatars/pull/356)).
 - Bump `lodash-es` from 4.17.22 to 4.17.23 (props [@dependabot](https://github.com/apps/dependabot), [@dkotter](https://github.com/dkotter) via [#357](https://github.com/10up/simple-local-avatars/pull/357)).
+- Bump `qs` from 6.14.1 to 6.14.2 (props [@dependabot](https://github.com/apps/dependabot), [@dkotter](https://github.com/dkotter) via [#361](https://github.com/10up/simple-local-avatars/pull/361)).
 
 ## [2.8.5] - 2025-08-06
 ### Security
