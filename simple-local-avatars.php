@@ -49,6 +49,13 @@ global $simple_local_avatars;
 $simple_local_avatars = new Simple_Local_Avatars();
 
 /**
+ * Load S3 Compatibility if WP Offload Media is active
+ */
+if ( class_exists( 'Amazon_S3_And_CloudFront' ) || class_exists( 'AS3CF_Pro' ) || function_exists( 'as3cf_init' ) ) {
+    require_once dirname( __FILE__ ) . '/includes/class-s3-compatibility.php';
+}
+
+/**
  * More efficient to call simple local avatar directly in theme and avoid
  * gravatar setup.
  *
