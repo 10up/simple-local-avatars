@@ -171,14 +171,14 @@ class Simple_Local_Avatars_S3_Compatibility {
 					if ( $upload_handler && method_exists( $upload_handler, 'handle' ) ) {
 						$upload_handler->handle( $attachment_id, array( 'source' => 'media-library' ) );
 					}
-				}
-				// Fallback to old methods if Upload_Handler doesn't work
-				elseif ( method_exists( $as3cf, 'upload_attachment' ) ) {
+				} elseif ( method_exists( $as3cf, 'upload_attachment' ) ) {
+					// Fallback to old methods if Upload_Handler doesn't work
 					$as3cf->upload_attachment( $attachment_id );
 				} elseif ( method_exists( $as3cf, 'copy_attachment_to_s3' ) ) {
 					$as3cf->copy_attachment_to_s3( $attachment_id, null, null, false, true );
 				}
 			} catch ( Exception $e ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 				error_log( 'Simple Local Avatars: Error uploading to S3 - ' . $e->getMessage() );
 				return false;
 			}
@@ -234,9 +234,9 @@ class Simple_Local_Avatars_S3_Compatibility {
 					return $s3_info['url'];
 				}
 			}
-
 		} catch ( Exception $e ) {
 			// Silent fail, return null
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			error_log( 'Simple Local Avatars: Error getting S3 URL - ' . $e->getMessage() );
 		}
 
@@ -323,7 +323,7 @@ class Simple_Local_Avatars_S3_Compatibility {
 		if ( isset( $meta['sizes'][ $size_key ] ) && isset( $meta['sizes'][ $size_key ]['file'] ) ) {
 			// Construct the URL manually by replacing the filename
 			$path_info = pathinfo( $base_url );
-			$filename = $meta['sizes'][ $size_key ]['file'];
+			$filename  = $meta['sizes'][ $size_key ]['file'];
 
 			// The sized file is in the same directory as the full size
 			return $path_info['dirname'] . '/' . $filename;
@@ -370,7 +370,7 @@ class Simple_Local_Avatars_S3_Compatibility {
 		}
 
 		$dest_file = $editor->generate_filename( $size . 'x' . $size );
-		$saved = $editor->save( $dest_file );
+		$saved     = $editor->save( $dest_file );
 
 		if ( is_wp_error( $saved ) ) {
 			return false;
@@ -417,6 +417,7 @@ class Simple_Local_Avatars_S3_Compatibility {
 				return true;
 			}
 		} catch ( Exception $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			error_log( 'Simple Local Avatars: Error uploading thumbnail to S3 - ' . $e->getMessage() );
 		}
 
@@ -460,6 +461,7 @@ class Simple_Local_Avatars_S3_Compatibility {
 		global $wpdb;
 
 		// Check if this attachment is used in simple_local_avatar user meta
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$result = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COUNT(*) FROM {$wpdb->usermeta} 
@@ -476,7 +478,7 @@ class Simple_Local_Avatars_S3_Compatibility {
 
 		// Also check if it's the default avatar
 		$default_avatar_id = get_option( 'simple_local_avatar_default', '' );
-		if ( $default_avatar_id == $attachment_id ) {
+		if ( (int) $default_avatar_id === $attachment_id ) {
 			return true;
 		}
 
@@ -509,10 +511,13 @@ class Simple_Local_Avatars_S3_Compatibility {
 
 		// Get avatar metadata (without our filter to avoid loops)
 		global $wpdb;
-		$avatar_meta = $wpdb->get_var( $wpdb->prepare(
-			"SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key = 'simple_local_avatar'",
-			$user_id
-		) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$avatar_meta = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key = 'simple_local_avatar'",
+				$user_id
+			)
+		);
 
 		if ( ! $avatar_meta ) {
 			return $url;
@@ -571,10 +576,13 @@ class Simple_Local_Avatars_S3_Compatibility {
 
 		// Get avatar metadata directly from database to avoid filter loops
 		global $wpdb;
-		$avatar_meta = $wpdb->get_var( $wpdb->prepare(
-			"SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key = 'simple_local_avatar'",
-			$user_id
-		) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$avatar_meta = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key = 'simple_local_avatar'",
+				$user_id
+			)
+		);
 
 		if ( ! $avatar_meta ) {
 			return $avatar;
@@ -607,7 +615,7 @@ class Simple_Local_Avatars_S3_Compatibility {
 		// Replace the URL in the HTML
 		// Get upload directory to identify local URLs and S3 URLs
 		$upload_dir = wp_upload_dir();
-		$baseurl = $upload_dir['baseurl'];
+		$baseurl    = $upload_dir['baseurl'];
 
 		// Replace any local URL or old S3 URL with CDN URL
 		$avatar = preg_replace_callback(
@@ -631,7 +639,7 @@ class Simple_Local_Avatars_S3_Compatibility {
 				// Only replace if it contains local URLs or S3 URLs
 				if ( strpos( $current_srcset, $baseurl ) !== false || $this->is_s3_url( $current_srcset ) ) {
 					// For srcset, create 1x and 2x versions
-					$size_2x = $size * 2;
+					$size_2x   = $size * 2;
 					$s3_url_2x = $this->get_s3_sized_url( $media_id, $size_2x );
 					if ( ! $s3_url_2x ) {
 						$s3_url_2x = $s3_url;
@@ -690,7 +698,7 @@ class Simple_Local_Avatars_S3_Compatibility {
 		}
 
 		$upload_dir = wp_upload_dir();
-		$baseurl = $upload_dir['baseurl'];
+		$baseurl    = $upload_dir['baseurl'];
 
 		// Check if URL contains the local upload directory
 		if ( strpos( $url, $baseurl ) !== false ) {
@@ -726,7 +734,7 @@ class Simple_Local_Avatars_S3_Compatibility {
 		} elseif ( $id_or_email instanceof WP_Comment && ! empty( $id_or_email->user_id ) ) {
 			$user_id = (int) $id_or_email->user_id;
 		} elseif ( is_string( $id_or_email ) && is_email( $id_or_email ) ) {
-			$user = get_user_by( 'email', $id_or_email );
+			$user    = get_user_by( 'email', $id_or_email );
 			$user_id = $user ? $user->ID : false;
 		}
 
