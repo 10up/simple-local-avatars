@@ -154,7 +154,13 @@ jQuery(document).ready(function ($) {
 		avatar_preview.attr('height', 'auto');
 		URL.revokeObjectURL(avatar_blob);
 		if (event.target.files.length > 0) {
-			avatar_blob = URL.createObjectURL(event.target.files[0]);
+			const file = event.target.files[0];
+			if (file.type && 0 !== file.type.indexOf('image/')) {
+				avatar_input.val('');
+				avatar_preview.attr('src', current_avatar);
+				return;
+			}
+			avatar_blob = URL.createObjectURL(file);
 			avatar_preview.attr('src', avatar_blob);
 		} else {
 			avatar_preview.attr('src', current_avatar);

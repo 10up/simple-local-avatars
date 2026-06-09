@@ -990,7 +990,7 @@ class Simple_Local_Avatars {
 										?>
 										<p style="display: inline-block; width: 26em;">
 											<span class="description"><?php esc_html_e( 'Choose an image from your computer:', 'simple-local-avatars' ); ?></span><br />
-											<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
+											<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" accept="image/*" />
 										</p>
 									<?php } ?>
 									<p style="width: 28em">
