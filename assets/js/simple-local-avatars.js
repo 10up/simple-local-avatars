@@ -147,6 +147,44 @@ jQuery(document).ready(function ($) {
 	});
 
 	/**
+	 * Image MIME types the server will actually accept on upload. Mirrors the
+	 * `mimes` allow-list passed to media_handle_upload() in
+	 * Simple_Local_Avatars::edit_user_profile_update(), so the client never
+	 * previews a file the server would reject on submit.
+	 */
+	const avatar_allowed_types = ['image/jpeg', 'image/gif', 'image/png'];
+
+	/**
+	 * Show a rejection message for an invalid avatar file and announce it to
+	 * assistive technology.
+	 *
+	 * @param {string} message Human-readable reason the file was rejected.
+	 */
+	function avatar_show_error(message) {
+		let $error = $('#simple-local-avatar-error');
+		if (!$error.length) {
+			$error = $('<span/>', {
+				id: 'simple-local-avatar-error',
+				class: 'description',
+				css: { display: 'block', color: '#d63638' },
+			});
+			avatar_input.after($error);
+		}
+		$error.text(message);
+
+		if (window.wp && wp.a11y && 'function' === typeof wp.a11y.speak) {
+			wp.a11y.speak(message, 'assertive');
+		}
+	}
+
+	/**
+	 * Clear any avatar rejection message.
+	 */
+	function avatar_clear_error() {
+		$('#simple-local-avatar-error').remove();
+	}
+
+	/**
 	 * Update the Local Avatar image
 	 */
 	avatar_input.on('change', function (event) {
@@ -155,14 +193,23 @@ jQuery(document).ready(function ($) {
 		URL.revokeObjectURL(avatar_blob);
 		if (event.target.files.length > 0) {
 			const file = event.target.files[0];
-			if (file.type && 0 !== file.type.indexOf('image/')) {
+
+			// Reject anything without a MIME type (e.g. a renamed binary the
+			// browser cannot identify, where file.type is an empty string) or
+			// outside the server's accepted set. indexOf() returns -1 for an
+			// empty/unknown type, so this guard never previews an unsafe file.
+			if (-1 === avatar_allowed_types.indexOf(file.type)) {
 				avatar_input.val('');
 				avatar_preview.attr('src', current_avatar);
+				avatar_show_error(i10n_SimpleLocalAvatars.invalidFileType);
 				return;
 			}
+
+			avatar_clear_error();
 			avatar_blob = URL.createObjectURL(file);
 			avatar_preview.attr('src', avatar_blob);
 		} else {
+			avatar_clear_error();
 			avatar_preview.attr('src', current_avatar);
 		}
 	});
