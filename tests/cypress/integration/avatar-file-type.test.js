@@ -2,7 +2,9 @@ import 'cypress-file-upload';
 
 describe('Avatar upload file-type validation', () => {
     beforeEach(() => {
-        cy.login();
+        // Admins get the media-library uploader; the plain file input this suite
+        // exercises only renders for users without the upload_files capability.
+        cy.login('subscriber', 'password');
         cy.visit('/wp-admin/profile.php');
     });
 
