@@ -1,5 +1,3 @@
-import 'cypress-file-upload';
-
 describe('Avatar upload file-type validation', () => {
     beforeEach(() => {
         // Admins get the media-library uploader; the plain file input this suite
@@ -9,8 +7,8 @@ describe('Avatar upload file-type validation', () => {
     });
 
     it('Rejects a non-image file and tells the user why', () => {
-        cy.get('#simple-local-avatar').attachFile({
-            fileContent: 'not really an image',
+        cy.get('#simple-local-avatar').selectFile({
+            contents: Cypress.Buffer.from('not really an image'),
             fileName: 'not-an-image.txt',
             mimeType: 'text/plain',
         });
@@ -22,8 +20,8 @@ describe('Avatar upload file-type validation', () => {
 
     it('Rejects a file with no detectable MIME type', () => {
         // A renamed binary the browser cannot identify reports an empty type.
-        cy.get('#simple-local-avatar').attachFile({
-            fileContent: 'renamed binary, no type',
+        cy.get('#simple-local-avatar').selectFile({
+            contents: Cypress.Buffer.from('renamed binary, no type'),
             fileName: 'mystery.bin',
             mimeType: '',
         });
@@ -33,7 +31,15 @@ describe('Avatar upload file-type validation', () => {
     });
 
     it('Accepts a valid image and shows no error', () => {
-        cy.get('#simple-local-avatar').attachFile('../../../.wordpress-org/icon-256x256.png');
+        // Minimal 1x1 PNG; the guard only inspects the reported MIME type.
+        cy.get('#simple-local-avatar').selectFile({
+            contents: Cypress.Buffer.from(
+                'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+                'base64'
+            ),
+            fileName: 'avatar.png',
+            mimeType: 'image/png',
+        });
 
         cy.get('#simple-local-avatar-error').should('not.exist');
         cy.get('#simple-local-avatar').should('not.have.value', '');
