@@ -53,15 +53,23 @@ describe("Check avatar on a  post", () => {
       }
     });
 
-    cy.createPost({
-      title: "Test Simple Avatars Post",
-    }).then((post) => {
-      // Check the FE
-      cy.visit(`/?p=${post.id}`);
-      cy.get(".author-bio .avatar").should("be.visible");
-      cy.get(".author-bio .avatar")
-        .invoke("attr", "src")
-        .should("include", "icon-256x256");
-    });
+    // Use the REST API to create a post so this test is not coupled to
+    // block editor UI selectors, which change across WP versions.
+    cy.window()
+      .its("wpApiSettings.nonce")
+      .then((nonce) => {
+        cy.request({
+          method: "POST",
+          url: "/wp-json/wp/v2/posts",
+          headers: { "X-WP-Nonce": nonce },
+          body: { title: "Test Simple Avatars Post", status: "publish" },
+        }).then((response) => {
+          cy.visit(`/?p=${response.body.id}`);
+          cy.get(".author-bio .avatar").should("be.visible");
+          cy.get(".author-bio .avatar")
+            .invoke("attr", "src")
+            .should("include", "icon-256x256");
+        });
+      });
   });
 });
