@@ -55,6 +55,7 @@ describe("Check avatar on a  post", () => {
 
     // Use the REST API to create a post so this test is not coupled to
     // block editor UI selectors, which change across WP versions.
+    cy.visit("/wp-admin/");
     cy.window()
       .its("wpApiSettings.nonce")
       .then((nonce) => {
