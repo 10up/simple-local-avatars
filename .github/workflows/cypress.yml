@@ -25,7 +25,7 @@ jobs:
     name: ${{ matrix.core.name }}
     runs-on: ubuntu-latest
     strategy:
-      fast-fail: false
+      fail-fast: false
       matrix:
         core:
           - {name: 'WP latest', version: 'latest'}
