@@ -1261,7 +1261,7 @@ class Simple_Local_Avatars {
 				// derive the path for the file based on the upload directory
 				$old_avatar_path = str_replace( $upload_path['baseurl'], $upload_path['basedir'], $old_avatar );
 				if ( file_exists( $old_avatar_path ) ) {
-					unlink( $old_avatar_path );
+					wp_delete_file( $old_avatar_path );
 				}
 			}
 		}
