@@ -9,6 +9,13 @@ permissions:
   contents: read
   actions: write
 
+# Cancels all previous workflow runs for pull requests that have not completed.
+concurrency:
+  # The concurrency group contains the workflow name and the branch name for pull requests
+  # or the commit hash for any other events.
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
+  cancel-in-progress: true
+
 jobs:
   build:
       uses: 10up/simple-local-avatars/.github/workflows/build-release-zip.yml@develop
@@ -18,6 +25,7 @@ jobs:
     name: ${{ matrix.core.name }}
     runs-on: ubuntu-latest
     strategy:
+      fast-fail: false
       matrix:
         core:
           - {name: 'WP latest', version: 'latest'}
