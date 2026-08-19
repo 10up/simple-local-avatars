@@ -138,11 +138,16 @@ class Simple_Local_Avatars {
 		}
 
 		if ( 'profile.php' === $pagenow ) {
-			add_filter( 'media_view_strings', function ( $strings ) {
-				$strings['skipCropping'] = esc_html__( 'Default Crop', 'simple-local-avatars' );
+			add_filter(
+				'media_view_strings',
+				function ( $strings ) {
+					$strings['skipCropping'] = esc_html__( 'Default Crop', 'simple-local-avatars' );
 
-				return $strings;
-			}, 10, 1 );
+					return $strings;
+				},
+				10,
+				1
+			);
 		}
 
 		add_action(
@@ -846,7 +851,7 @@ class Simple_Local_Avatars {
 
 		$this->remove_nonce = wp_create_nonce( 'remove_simple_local_avatar_nonce' );
 
-		wp_enqueue_script( 'simple-local-avatars', plugins_url( '', dirname( __FILE__ ) ) . '/dist/simple-local-avatars.js', array( 'jquery' ), SLA_VERSION, true );
+		wp_enqueue_script( 'simple-local-avatars', plugins_url( '', __DIR__ ) . '/dist/simple-local-avatars.js', array( 'jquery' ), SLA_VERSION, true );
 		wp_localize_script(
 			'simple-local-avatars',
 			'i10n_SimpleLocalAvatars',
@@ -1002,12 +1007,10 @@ class Simple_Local_Avatars {
 										</a>
 									</p>
 									<?php
-								} else {
-									if ( empty( $profileuser->simple_local_avatar ) ) {
+								} elseif ( empty( $profileuser->simple_local_avatar ) ) {
 										echo '<span class="description">' . esc_html__( 'No local avatar is set. Set up your avatar at Gravatar.com.', 'simple-local-avatars' ) . '</span>';
-									} else {
-										echo '<span class="description">' . esc_html__( 'You do not have media management permissions. To change your local avatar, contact the blog administrator.', 'simple-local-avatars' ) . '</span>';
-									}
+								} else {
+									echo '<span class="description">' . esc_html__( 'You do not have media management permissions. To change your local avatar, contact the blog administrator.', 'simple-local-avatars' ) . '</span>';
 								}
 								?>
 							</div>
@@ -1292,7 +1295,7 @@ class Simple_Local_Avatars {
 		$number = 1;
 		while ( file_exists( $dir . "/$name$ext" ) ) {
 			$name = $base_name . '_' . $number;
-			$number ++;
+			++$number;
 		}
 
 		return $name . $ext;
@@ -1681,7 +1684,7 @@ class Simple_Local_Avatars {
 
 					// Record how many avatars we migrate to be used in our messaging.
 					if ( $is_saved ) {
-						$count ++;
+						++$count;
 					}
 				}
 			}
@@ -1724,7 +1727,6 @@ class Simple_Local_Avatars {
 
 		// Make sure you die when finished doing ajax output.
 		wp_die();
-
 	}
 
 	/**

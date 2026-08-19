@@ -32,7 +32,7 @@ if ( ! $compat_checker->is_plugin_compatible() ) {
 
 define( 'SLA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
-require_once dirname( __FILE__ ) . '/includes/class-simple-local-avatars.php';
+require_once __DIR__ . '/includes/class-simple-local-avatars.php';
 
 // Global constants.
 define( 'SLA_VERSION', '2.8.6' );
