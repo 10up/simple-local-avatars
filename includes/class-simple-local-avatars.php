@@ -1092,12 +1092,13 @@ class Simple_Local_Avatars {
 		}
 
 		// check for uploaded files
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated -- validated in following lines.
 		if ( ! empty( $_FILES['simple-local-avatar']['name'] ) && 0 === $_FILES['simple-local-avatar']['error'] ) :
 
 			// need to be more secure since low privilege users can upload
 			$allowed_mime_types = wp_get_mime_types();
 
-			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- validated in following lines.
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.InputNotValidated -- validated in following lines.
 			$file_mime_type = strtolower( $_FILES['simple-local-avatar']['type'] );
 			if ( ! ( 0 === strpos( $file_mime_type, 'image/' ) ) || ! in_array( $file_mime_type, $allowed_mime_types, true ) ) {
 				$this->avatar_upload_error = __( 'Only images can be uploaded as an avatar', 'simple-local-avatars' );
@@ -1106,6 +1107,7 @@ class Simple_Local_Avatars {
 			}
 
 			$max_upload_size = $this->upload_size_limit( wp_max_upload_size() );
+			//phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
 			if ( $_FILES['simple-local-avatar']['size'] > $max_upload_size ) {
 				// translators: %s: Formatted size.
 				$this->avatar_upload_error = sprintf( __( 'Max allowed avatar size is %s', 'simple-local-avatars' ), size_format( $max_upload_size ) );
@@ -1654,7 +1656,7 @@ class Simple_Local_Avatars {
 				array(
 					'blog_id'      => $blog_id,
 					'exclude'      => $processed_users,
-					'meta_key'     => $meta_key,
+					'meta_key'     => $meta_key, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- happy for the JOIN.
 					'meta_compare' => 'EXISTS',
 				)
 			);
