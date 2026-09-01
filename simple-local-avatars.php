@@ -32,7 +32,7 @@ if ( ! $compat_checker->is_plugin_compatible() ) {
 
 define( 'SLA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
-require_once dirname( __FILE__ ) . '/includes/class-simple-local-avatars.php';
+require_once __DIR__ . '/includes/class-simple-local-avatars.php';
 
 // Global constants.
 define( 'SLA_VERSION', '2.8.6' );
@@ -54,16 +54,16 @@ $simple_local_avatars = new Simple_Local_Avatars();
  *
  * Since 2.2, This function is only a proxy for get_avatar due to internal changes.
  *
- * @param int|string|object $id_or_email A user ID,  email address, or comment object
- * @param int               $size        Size of the avatar image
- * @param string            $default     URL to a default image to use if no avatar is available
- * @param string            $alt         Alternate text to use in image tag. Defaults to blank
- * @param array             $args        Optional. Extra arguments to retrieve the avatar.
+ * @param int|string|object $id_or_email     A user ID,  email address, or comment object
+ * @param int               $size            Size of the avatar image
+ * @param string            $default_url     URL to a default image to use if no avatar is available
+ * @param string            $alt             Alternate text to use in image tag. Defaults to blank
+ * @param array             $args            Optional. Extra arguments to retrieve the avatar.
  *
  * @return string <img> tag for the user's avatar
  */
-function get_simple_local_avatar( $id_or_email, $size = 96, $default = '', $alt = '', $args = array() ) {
-	return apply_filters( 'simple_local_avatar', get_avatar( $id_or_email, $size, $default, $alt, $args ) );
+function get_simple_local_avatar( $id_or_email, $size = 96, $default_url = '', $alt = '', $args = array() ) {
+	return apply_filters( 'simple_local_avatar', get_avatar( $id_or_email, $size, $default_url, $alt, $args ) );
 }
 
 register_uninstall_hook( __FILE__, 'simple_local_avatars_uninstall' );
