@@ -194,10 +194,12 @@ jQuery(document).ready(function ($) {
 		if (event.target.files.length > 0) {
 			const file = event.target.files[0];
 
-			// Reject anything without a MIME type (e.g. a renamed binary the
-			// browser cannot identify, where file.type is an empty string) or
-			// outside the server's accepted set. indexOf() returns -1 for an
-			// empty/unknown type, so this guard never previews an unsafe file.
+			/*
+			 * Reject anything without a MIME type (e.g. a renamed binary the
+			 * browser cannot identify, where file.type is an empty string) or
+			 * outside the server's accepted set. indexOf() returns -1 for an
+			 * empty/unknown type, so this guard never previews an unsafe file.
+			 */
 			if (-1 === avatar_allowed_types.indexOf(file.type)) {
 				avatar_input.val('');
 				avatar_preview.attr('src', current_avatar);
