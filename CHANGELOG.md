@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file, per [the Keep a Changelog standard](http://keepachangelog.com/).
 
 ## [Unreleased] - TBD
+### Added
+- Client-side avatar file-type validation: reject non-image and unknown-type files before preview, mirror the server's accepted JPG/GIF/PNG set, and announce rejections to assistive technology via `wp.a11y.speak` (props [@thisismyurl](https://github.com/thisismyurl), [@thrijith](https://github.com/thrijith) via [#370](https://github.com/10up/simple-local-avatars/pull/370)).
 
 ## [2.8.6] - 2026-02-17
 ### Changed
