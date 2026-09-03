@@ -33,7 +33,7 @@
     "url": "git@github.com:10up/simple-local-avatars.git"
   },
   "devDependencies": {
-    "@10up/cypress-wp-utils": "^0.4.0",
+    "@10up/cypress-wp-utils": "^0.7.2",
     "@wordpress/env": "^10.28.0",
     "@wordpress/scripts": "^30.4.0",
     "cypress": "^13.15.2",
