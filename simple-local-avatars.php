@@ -5,7 +5,7 @@
  * Description:       Adds an avatar upload field to user profiles. Generates requested sizes on demand, just like Gravatar! Simple and lightweight.
  * Version:           2.8.6
  * Requires at least: 6.6
- * Requires PHP:      7.4
+ * Requires PHP:      8.2
  * Author:            10up
  * Author URI:        https://10up.com
  * License:           GPL-2.0-or-later
@@ -24,7 +24,7 @@ require_once '10up-lib/wp-compat-validation-tool/src/Validator.php';
 $compat_checker = new \SimpleLocalAvatarsValidator\Validator();
 $compat_checker
 	->set_plugin_name( 'Simple Local Avatars' )
-	->set_php_min_required_version( '7.4' );
+	->set_php_min_required_version( '8.2' );
 
 if ( ! $compat_checker->is_plugin_compatible() ) {
 	return;

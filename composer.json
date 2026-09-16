@@ -19,7 +19,7 @@
 		"source": "https://github.com/10up/simple-local-avatars"
 	},
 	"require": {
-		"php": ">=7.4",
+		"php": ">=8.2",
 		"10up/wp-compat-validation-tool": "dev-trunk"
 	},
 	"require-dev": {
@@ -29,12 +29,12 @@
 	},
 	"scripts": {
 		"lint": [
-			"phpcs . --runtime-set testVersion 7.4-"
+			"phpcs . --runtime-set testVersion 8.2-"
 		],
 		"lint-fix": [
 			"phpcbf ."
 		],
-		"phpcs:compat": "vendor/bin/phpcs simple-local-avatars.php includes --standard=PHPCompatibilityWP --extensions=php --runtime-set testVersion 7.4-",
+		"phpcs:compat": "vendor/bin/phpcs simple-local-avatars.php includes --standard=PHPCompatibilityWP --extensions=php --runtime-set testVersion 8.2-",
 		"post-install-cmd": [
 			"./10up-lib/wp-compat-validation-tool/replace-namespace.sh SimpleLocalAvatarsValidator"
 		],

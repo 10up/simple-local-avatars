@@ -6,6 +6,7 @@ Tested up to:      7.1
 Stable tag:        2.8.6
 License:           GPL-2.0-or-later
 License URI:       https://spdx.org/licenses/GPL-2.0-or-later.html
+Requires PHP:      8.2
 
 Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!
 
