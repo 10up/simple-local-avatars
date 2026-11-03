@@ -851,7 +851,7 @@ class Simple_Local_Avatars {
 
 		$this->remove_nonce = wp_create_nonce( 'remove_simple_local_avatar_nonce' );
 
-		wp_enqueue_script( 'simple-local-avatars', plugins_url( '', __DIR__ ) . '/dist/simple-local-avatars.js', array( 'jquery' ), SLA_VERSION, true );
+		wp_enqueue_script( 'simple-local-avatars', plugins_url( '', __DIR__ ) . '/dist/simple-local-avatars.js', array( 'jquery', 'wp-a11y' ), SLA_VERSION, true );
 		wp_localize_script(
 			'simple-local-avatars',
 			'i10n_SimpleLocalAvatars',
@@ -865,6 +865,7 @@ class Simple_Local_Avatars {
 				'mediaNonce'                      => wp_create_nonce( 'assign_simple_local_avatar_nonce' ),
 				'migrateFromWpUserAvatarNonce'    => wp_create_nonce( 'migrate_from_wp_user_avatar_nonce' ),
 				'clearCacheError'                 => esc_html__( 'Something went wrong while clearing cache, please try again.', 'simple-local-avatars' ),
+				'invalidFileType'                 => esc_html__( 'Please choose a JPG, GIF, or PNG image.', 'simple-local-avatars' ),
 				'insertMediaTitle'                => esc_html__( 'Choose default avatar', 'simple-local-avatars' ),
 				'migrateFromWpUserAvatarSuccess'  => __( 'Number of avatars successfully migrated from WP User Avatar', 'simple-local-avatars' ),
 				'migrateFromWpUserAvatarFailure'  => __( 'No avatars were migrated from WP User Avatar.', 'simple-local-avatars' ),
@@ -995,7 +996,7 @@ class Simple_Local_Avatars {
 										?>
 										<p style="display: inline-block; width: 26em;">
 											<span class="description"><?php esc_html_e( 'Choose an image from your computer:', 'simple-local-avatars' ); ?></span><br />
-											<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" />
+											<input type="file" name="simple-local-avatar" id="simple-local-avatar" class="standard-text" accept="image/jpeg,image/png,image/gif" />
 										</p>
 									<?php } ?>
 									<p style="width: 28em">
