@@ -2,7 +2,7 @@
 Contributors:      jakemgold, 10up, thinkoomph, jeffpaul, faisal03, dkotter
 Donate link:       https://10up.com/plugins/simple-local-avatars-wordpress/
 Tags:              avatar, gravatar, user photos, users, profile
-Tested up to:      7.0
+Tested up to:      7.1
 Stable tag:        2.8.6
 License:           GPL-2.0-or-later
 License URI:       https://spdx.org/licenses/GPL-2.0-or-later.html

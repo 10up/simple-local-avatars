@@ -138,11 +138,16 @@ class Simple_Local_Avatars {
 		}
 
 		if ( 'profile.php' === $pagenow ) {
-			add_filter( 'media_view_strings', function ( $strings ) {
-				$strings['skipCropping'] = esc_html__( 'Default Crop', 'simple-local-avatars' );
+			add_filter(
+				'media_view_strings',
+				function ( $strings ) {
+					$strings['skipCropping'] = esc_html__( 'Default Crop', 'simple-local-avatars' );
 
-				return $strings;
-			}, 10, 1 );
+					return $strings;
+				},
+				10,
+				1
+			);
 		}
 
 		add_action(
@@ -260,17 +265,17 @@ class Simple_Local_Avatars {
 	/**
 	 * Retrieve the local avatar for a user who provided a user ID, email address or post/comment object.
 	 *
-	 * @param string            $avatar      Avatar return by original function
-	 * @param int|string|object $id_or_email A user ID, email address, or post/comment object
-	 * @param int               $size        Size of the avatar image
-	 * @param string            $default     URL to a default image to use if no avatar is available
-	 * @param string            $alt         Alternative text to use in image tag. Defaults to blank
-	 * @param array             $args        Optional. Extra arguments to retrieve the avatar.
+	 * @param string            $avatar          Avatar return by original function
+	 * @param int|string|object $id_or_email     A user ID, email address, or post/comment object
+	 * @param int               $size            Size of the avatar image
+	 * @param string            $default_url     URL to a default image to use if no avatar is available
+	 * @param string            $alt             Alternative text to use in image tag. Defaults to blank
+	 * @param array             $args            Optional. Extra arguments to retrieve the avatar.
 	 *
 	 * @return string <img> tag for the user's avatar
 	 */
-	public function get_avatar( $avatar = '', $id_or_email = '', $size = 96, $default = '', $alt = '', $args = array() ) {
-		return apply_filters( 'simple_local_avatar', get_avatar( $id_or_email, $size, $default, $alt, $args ) );
+	public function get_avatar( $avatar = '', $id_or_email = '', $size = 96, $default_url = '', $alt = '', $args = array() ) {
+		return apply_filters( 'simple_local_avatar', get_avatar( $id_or_email, $size, $default_url, $alt, $args ) );
 	}
 
 	/**
@@ -846,7 +851,7 @@ class Simple_Local_Avatars {
 
 		$this->remove_nonce = wp_create_nonce( 'remove_simple_local_avatar_nonce' );
 
-		wp_enqueue_script( 'simple-local-avatars', plugins_url( '', dirname( __FILE__ ) ) . '/dist/simple-local-avatars.js', array( 'jquery' ), SLA_VERSION, true );
+		wp_enqueue_script( 'simple-local-avatars', plugins_url( '', __DIR__ ) . '/dist/simple-local-avatars.js', array( 'jquery' ), SLA_VERSION, true );
 		wp_localize_script(
 			'simple-local-avatars',
 			'i10n_SimpleLocalAvatars',
@@ -1002,12 +1007,10 @@ class Simple_Local_Avatars {
 										</a>
 									</p>
 									<?php
-								} else {
-									if ( empty( $profileuser->simple_local_avatar ) ) {
+								} elseif ( empty( $profileuser->simple_local_avatar ) ) {
 										echo '<span class="description">' . esc_html__( 'No local avatar is set. Set up your avatar at Gravatar.com.', 'simple-local-avatars' ) . '</span>';
-									} else {
-										echo '<span class="description">' . esc_html__( 'You do not have media management permissions. To change your local avatar, contact the blog administrator.', 'simple-local-avatars' ) . '</span>';
-									}
+								} else {
+									echo '<span class="description">' . esc_html__( 'You do not have media management permissions. To change your local avatar, contact the blog administrator.', 'simple-local-avatars' ) . '</span>';
 								}
 								?>
 							</div>
@@ -1089,12 +1092,13 @@ class Simple_Local_Avatars {
 		}
 
 		// check for uploaded files
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated -- validated in following lines.
 		if ( ! empty( $_FILES['simple-local-avatar']['name'] ) && 0 === $_FILES['simple-local-avatar']['error'] ) :
 
 			// need to be more secure since low privilege users can upload
 			$allowed_mime_types = wp_get_mime_types();
 
-			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- validated in following lines.
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.InputNotValidated -- validated in following lines.
 			$file_mime_type = strtolower( $_FILES['simple-local-avatar']['type'] );
 			if ( ! ( 0 === strpos( $file_mime_type, 'image/' ) ) || ! in_array( $file_mime_type, $allowed_mime_types, true ) ) {
 				$this->avatar_upload_error = __( 'Only images can be uploaded as an avatar', 'simple-local-avatars' );
@@ -1103,6 +1107,7 @@ class Simple_Local_Avatars {
 			}
 
 			$max_upload_size = $this->upload_size_limit( wp_max_upload_size() );
+			//phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
 			if ( $_FILES['simple-local-avatar']['size'] > $max_upload_size ) {
 				// translators: %s: Formatted size.
 				$this->avatar_upload_error = sprintf( __( 'Max allowed avatar size is %s', 'simple-local-avatars' ), size_format( $max_upload_size ) );
@@ -1258,7 +1263,7 @@ class Simple_Local_Avatars {
 				// derive the path for the file based on the upload directory
 				$old_avatar_path = str_replace( $upload_path['baseurl'], $upload_path['basedir'], $old_avatar );
 				if ( file_exists( $old_avatar_path ) ) {
-					unlink( $old_avatar_path );
+					wp_delete_file( $old_avatar_path );
 				}
 			}
 		}
@@ -1292,7 +1297,7 @@ class Simple_Local_Avatars {
 		$number = 1;
 		while ( file_exists( $dir . "/$name$ext" ) ) {
 			$name = $base_name . '_' . $number;
-			$number ++;
+			++$number;
 		}
 
 		return $name . $ext;
@@ -1651,7 +1656,7 @@ class Simple_Local_Avatars {
 				array(
 					'blog_id'      => $blog_id,
 					'exclude'      => $processed_users,
-					'meta_key'     => $meta_key,
+					'meta_key'     => $meta_key, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- happy for the JOIN.
 					'meta_compare' => 'EXISTS',
 				)
 			);
@@ -1681,7 +1686,7 @@ class Simple_Local_Avatars {
 
 					// Record how many avatars we migrate to be used in our messaging.
 					if ( $is_saved ) {
-						$count ++;
+						++$count;
 					}
 				}
 			}
@@ -1724,7 +1729,6 @@ class Simple_Local_Avatars {
 
 		// Make sure you die when finished doing ajax output.
 		wp_die();
-
 	}
 
 	/**
