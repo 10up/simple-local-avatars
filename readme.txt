@@ -21,6 +21,7 @@ Just edit a user profile, and scroll down to the new "Avatar" field. The plug-in
 4. Generates the requested avatar size on demand (and stores the new size for efficiency), so it looks great, just like Gravatar!
 5. Lets you decide whether lower privilege users (subscribers, contributors) can upload their own avatar.
 6. Enables rating of local avatars, just like Gravatar.
+7. Registers Abilities API abilities so AI agents and other tools can read, assign, update and remove local avatars (WordPress 6.9+).
 
 == Support Level ==
 

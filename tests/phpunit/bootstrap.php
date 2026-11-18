@@ -21,3 +21,4 @@ if ( defined( 'WP_TESTS_MULTISITE' ) ) {
  * should be files that define the functions and classes you're going to test.
  */
 require_once __DIR__ . '/../../includes/class-simple-local-avatars.php';
+require_once __DIR__ . '/../../includes/class-simple-local-avatars-abilities.php';
