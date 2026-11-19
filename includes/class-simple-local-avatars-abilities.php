@@ -237,9 +237,6 @@ class Simple_Local_Avatars_Abilities {
 				'output_schema'       => $this->get_avatar_schema(),
 				'execute_callback'    => array( $this, 'execute_set_avatar' ),
 				'permission_callback' => array( $this, 'can_set_avatar' ),
-				// The REST API sends abilities marked both destructive and idempotent
-				// through DELETE. This ability replaces data, so it stays on POST by
-				// leaving `idempotent` unset.
 				'meta'                => $this->get_meta(
 					array(
 						'readonly'    => false,

@@ -3,8 +3,6 @@
 All notable changes to this project will be documented in this file, per [the Keep a Changelog standard](http://keepachangelog.com/).
 
 ## [Unreleased] - TBD
-### Added
-- Abilities API support (WordPress 6.9+): `get-avatar`, `list-avatars`, `set-avatar`, `update-avatar-rating` and `delete-avatar` abilities in a new `simple-local-avatars` category.
 
 ## [2.8.6] - 2026-02-17
 ### Changed
