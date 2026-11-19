@@ -365,6 +365,65 @@ class Simple_Local_Avatars {
 	}
 
 	/**
+	 * Get the user meta key that stores local avatar data.
+	 *
+	 * On multisite installs that do not share avatars, the key includes the blog ID.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return string
+	 */
+	public function get_user_meta_key() {
+		return $this->user_key;
+	}
+
+	/**
+	 * Get the available avatar ratings.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return array Rating labels, keyed by rating code (G, PG, R, X).
+	 */
+	public function get_avatar_ratings() {
+		if ( empty( $this->avatar_ratings ) || ! is_array( $this->avatar_ratings ) ) {
+			$this->define_avatar_ratings();
+		}
+
+		return $this->avatar_ratings;
+	}
+
+	/**
+	 * Get the rating stored for a user's local avatar.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param int $user_id User ID.
+	 * @return string Rating code, or an empty string when none is stored.
+	 */
+	public function get_user_avatar_rating( $user_id ) {
+		return (string) get_user_meta( $user_id, $this->rating_key, true );
+	}
+
+	/**
+	 * Store the rating for a user's local avatar.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param int    $user_id User ID.
+	 * @param string $rating  Rating code. Must be a key of get_avatar_ratings().
+	 * @return bool True when the rating is valid and saved, false otherwise.
+	 */
+	public function update_user_avatar_rating( $user_id, $rating ) {
+		if ( ! array_key_exists( $rating, $this->get_avatar_ratings() ) ) {
+			return false;
+		}
+
+		update_user_meta( $user_id, $this->rating_key, wp_slash( $rating ) );
+
+		return true;
+	}
+
+	/**
 	 * Get local avatar url.
 	 *
 	 * @since 2.2.0
