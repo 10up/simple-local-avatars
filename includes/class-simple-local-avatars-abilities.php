@@ -123,62 +123,33 @@ class Simple_Local_Avatars_Abilities {
 			'description' => __( 'Size in pixels of the square image returned in avatar_url.', 'simple-local-avatars' ),
 		);
 
-		$rating_property = array(
-			'type'        => 'string',
-			'enum'        => $rating_codes,
-			'description' => __( 'Content rating of the avatar. The site hides avatars rated above its maximum rating.', 'simple-local-avatars' ),
-		);
-
 		wp_register_ability(
-			self::PREFIX . 'get-avatar',
+			self::PREFIX . 'avatars-query',
 			array(
-				'label'               => __( 'Get local avatar', 'simple-local-avatars' ),
-				'description'         => __( 'Returns the local avatar of a user: attachment ID, image URLs, rating and alt text. When the user has no local avatar, has_local_avatar is false and avatar_url is the fallback avatar.', 'simple-local-avatars' ),
+				'label'               => __( 'Query local avatars', 'simple-local-avatars' ),
+				'description'         => __( 'Returns local avatar details: attachment ID, image URLs, rating and alt text. With user_id, returns that one user, even when the user has no local avatar. Without user_id, returns a paginated list of the users on this site who have a local avatar.', 'simple-local-avatars' ),
 				'category'            => self::CATEGORY,
 				'input_schema'        => array(
 					'type'                 => 'object',
 					'default'              => array(),
 					'properties'           => array(
-						'user_id' => $user_id_property,
-						'size'    => $size_property,
-					),
-					'additionalProperties' => false,
-				),
-				'output_schema'       => $this->get_avatar_schema(),
-				'execute_callback'    => array( $this, 'execute_get_avatar' ),
-				'permission_callback' => array( $this, 'can_view_avatar' ),
-				'meta'                => $this->get_meta(
-					array(
-						'readonly'    => true,
-						'destructive' => false,
-						'idempotent'  => true,
-					)
-				),
-			)
-		);
-
-		wp_register_ability(
-			self::PREFIX . 'list-avatars',
-			array(
-				'label'               => __( 'List local avatars', 'simple-local-avatars' ),
-				'description'         => __( 'Returns a paginated list of users on this site who have a local avatar, with each avatar\'s details.', 'simple-local-avatars' ),
-				'category'            => self::CATEGORY,
-				'input_schema'        => array(
-					'type'                 => 'object',
-					'default'              => array(),
-					'properties'           => array(
+						'user_id'  => array(
+							'type'        => 'integer',
+							'minimum'     => 1,
+							'description' => __( 'ID of one user to return. Without it, the result lists every user with a local avatar.', 'simple-local-avatars' ),
+						),
 						'page'     => array(
 							'type'        => 'integer',
 							'minimum'     => 1,
 							'default'     => 1,
-							'description' => __( 'Page of results to return.', 'simple-local-avatars' ),
+							'description' => __( 'Page of results to return. Ignored when user_id is set.', 'simple-local-avatars' ),
 						),
 						'per_page' => array(
 							'type'        => 'integer',
 							'minimum'     => 1,
 							'maximum'     => 100,
 							'default'     => 20,
-							'description' => __( 'Number of users per page.', 'simple-local-avatars' ),
+							'description' => __( 'Number of users per page. Ignored when user_id is set.', 'simple-local-avatars' ),
 						),
 						'size'     => $size_property,
 					),
@@ -193,7 +164,7 @@ class Simple_Local_Avatars_Abilities {
 						),
 						'total'       => array(
 							'type'        => 'integer',
-							'description' => __( 'Total number of users with a local avatar.', 'simple-local-avatars' ),
+							'description' => __( 'Total number of matching users.', 'simple-local-avatars' ),
 						),
 						'total_pages' => array(
 							'type'        => 'integer',
@@ -202,8 +173,8 @@ class Simple_Local_Avatars_Abilities {
 					),
 					'required'   => array( 'avatars', 'total', 'total_pages' ),
 				),
-				'execute_callback'    => array( $this, 'execute_list_avatars' ),
-				'permission_callback' => array( $this, 'can_list_avatars' ),
+				'execute_callback'    => array( $this, 'execute_query_avatars' ),
+				'permission_callback' => array( $this, 'can_query_avatars' ),
 				'meta'                => $this->get_meta(
 					array(
 						'readonly'    => true,
@@ -215,9 +186,9 @@ class Simple_Local_Avatars_Abilities {
 		);
 
 		wp_register_ability(
-			self::PREFIX . 'set-avatar',
+			self::PREFIX . 'avatar-update',
 			array(
-				'label'               => __( 'Set local avatar', 'simple-local-avatars' ),
+				'label'               => __( 'Update local avatar', 'simple-local-avatars' ),
 				'description'         => __( 'Assigns an image from the media library as the local avatar of a user. Replaces any existing local avatar and deletes its resized copies. The rating defaults to G.', 'simple-local-avatars' ),
 				'category'            => self::CATEGORY,
 				'input_schema'        => array(
@@ -229,14 +200,18 @@ class Simple_Local_Avatars_Abilities {
 							'minimum'     => 1,
 							'description' => __( 'ID of an image attachment in the media library.', 'simple-local-avatars' ),
 						),
-						'rating'   => $rating_property,
+						'rating'   => array(
+							'type'        => 'string',
+							'enum'        => $rating_codes,
+							'description' => __( 'Content rating of the avatar. The site hides avatars rated above its maximum rating.', 'simple-local-avatars' ),
+						),
 					),
 					'required'             => array( 'media_id' ),
 					'additionalProperties' => false,
 				),
 				'output_schema'       => $this->get_avatar_schema(),
-				'execute_callback'    => array( $this, 'execute_set_avatar' ),
-				'permission_callback' => array( $this, 'can_set_avatar' ),
+				'execute_callback'    => array( $this, 'execute_update_avatar' ),
+				'permission_callback' => array( $this, 'can_update_avatar' ),
 				'meta'                => $this->get_meta(
 					array(
 						'readonly'    => false,
@@ -247,35 +222,7 @@ class Simple_Local_Avatars_Abilities {
 		);
 
 		wp_register_ability(
-			self::PREFIX . 'update-avatar-rating',
-			array(
-				'label'               => __( 'Update local avatar rating', 'simple-local-avatars' ),
-				'description'         => __( 'Changes the content rating of a user\'s existing local avatar. Fails when the user has no local avatar.', 'simple-local-avatars' ),
-				'category'            => self::CATEGORY,
-				'input_schema'        => array(
-					'type'                 => 'object',
-					'properties'           => array(
-						'user_id' => $user_id_property,
-						'rating'  => $rating_property,
-					),
-					'required'             => array( 'rating' ),
-					'additionalProperties' => false,
-				),
-				'output_schema'       => $this->get_avatar_schema(),
-				'execute_callback'    => array( $this, 'execute_update_avatar_rating' ),
-				'permission_callback' => array( $this, 'can_edit_avatar' ),
-				'meta'                => $this->get_meta(
-					array(
-						'readonly'    => false,
-						'destructive' => false,
-						'idempotent'  => true,
-					)
-				),
-			)
-		);
-
-		wp_register_ability(
-			self::PREFIX . 'delete-avatar',
+			self::PREFIX . 'avatar-delete',
 			array(
 				'label'               => __( 'Delete local avatar', 'simple-local-avatars' ),
 				'description'         => __( 'Removes the local avatar of a user and deletes its resized copies. The original media library image is kept. The user then shows the fallback avatar.', 'simple-local-avatars' ),
@@ -302,7 +249,7 @@ class Simple_Local_Avatars_Abilities {
 					'required'   => array( 'user_id', 'deleted' ),
 				),
 				'execute_callback'    => array( $this, 'execute_delete_avatar' ),
-				'permission_callback' => array( $this, 'can_edit_avatar' ),
+				'permission_callback' => array( $this, 'can_delete_avatar' ),
 				'meta'                => $this->get_meta(
 					array(
 						'readonly'    => false,
@@ -389,6 +336,23 @@ class Simple_Local_Avatars_Abilities {
 	}
 
 	/**
+	 * Get the user ID that avatars-query asks for.
+	 *
+	 * Unlike get_input_user_id(), this does not fall back to the current
+	 * user. Without a user_id, avatars-query lists every user with a local avatar.
+	 *
+	 * @param mixed $input Ability input.
+	 * @return int User ID, or 0 when none is set.
+	 */
+	private function get_requested_user_id( $input ) {
+		if ( is_array( $input ) && ! empty( $input['user_id'] ) ) {
+			return absint( $input['user_id'] );
+		}
+
+		return 0;
+	}
+
+	/**
 	 * Get the requested avatar size from ability input.
 	 *
 	 * @param mixed $input Ability input.
@@ -403,19 +367,24 @@ class Simple_Local_Avatars_Abilities {
 	}
 
 	/**
-	 * Permission check: view the avatar details of a user.
+	 * Permission check: query local avatars.
 	 *
-	 * Users can view their own avatar. Viewing another user's avatar needs
-	 * `list_users` or `edit_user` for that user.
+	 * With a user_id, users can view their own avatar. Viewing another user's
+	 * avatar needs `list_users` or `edit_user` for that user. Without a
+	 * user_id, listing every user with a local avatar needs `list_users`.
 	 *
 	 * @param mixed $input Ability input.
 	 * @return bool
 	 */
-	public function can_view_avatar( $input = null ) {
-		$user_id = $this->get_input_user_id( $input );
-
-		if ( ! $user_id || ! is_user_logged_in() ) {
+	public function can_query_avatars( $input = null ) {
+		if ( ! is_user_logged_in() ) {
 			return false;
+		}
+
+		$user_id = $this->get_requested_user_id( $input );
+
+		if ( ! $user_id ) {
+			return current_user_can( 'list_users' );
 		}
 
 		if ( get_current_user_id() === $user_id ) {
@@ -423,15 +392,6 @@ class Simple_Local_Avatars_Abilities {
 		}
 
 		return current_user_can( 'list_users' ) || current_user_can( 'edit_user', $user_id );
-	}
-
-	/**
-	 * Permission check: list users with a local avatar.
-	 *
-	 * @return bool
-	 */
-	public function can_list_avatars() {
-		return current_user_can( 'list_users' );
 	}
 
 	/**
@@ -443,50 +403,49 @@ class Simple_Local_Avatars_Abilities {
 	 * @param mixed $input Ability input.
 	 * @return bool
 	 */
-	public function can_set_avatar( $input = null ) {
-		return current_user_can( 'upload_files' ) && $this->can_edit_avatar( $input );
+	public function can_update_avatar( $input = null ) {
+		return current_user_can( 'upload_files' ) && $this->can_delete_avatar( $input );
 	}
 
 	/**
-	 * Permission check: change or remove a user's avatar.
+	 * Permission check: remove a user's avatar.
 	 *
 	 * @param mixed $input Ability input.
 	 * @return bool
 	 */
-	public function can_edit_avatar( $input = null ) {
+	public function can_delete_avatar( $input = null ) {
 		$user_id = $this->get_input_user_id( $input );
 
 		return $user_id && current_user_can( 'edit_user', $user_id );
 	}
 
 	/**
-	 * Execute: get a user's avatar.
+	 * Execute: query local avatars.
 	 *
 	 * @param mixed $input Ability input.
 	 * @return array|WP_Error
 	 */
-	public function execute_get_avatar( $input = null ) {
-		$user_id = $this->get_input_user_id( $input );
-		$error   = $this->validate_user( $user_id );
+	public function execute_query_avatars( $input = null ) {
+		$input   = is_array( $input ) ? $input : array();
+		$size    = $this->get_input_size( $input );
+		$user_id = $this->get_requested_user_id( $input );
 
-		if ( is_wp_error( $error ) ) {
-			return $error;
+		if ( $user_id ) {
+			$error = $this->validate_user( $user_id );
+
+			if ( is_wp_error( $error ) ) {
+				return $error;
+			}
+
+			return array(
+				'avatars'     => array( $this->prepare_avatar( $user_id, $size ) ),
+				'total'       => 1,
+				'total_pages' => 1,
+			);
 		}
 
-		return $this->prepare_avatar( $user_id, $this->get_input_size( $input ) );
-	}
-
-	/**
-	 * Execute: list users with a local avatar.
-	 *
-	 * @param mixed $input Ability input.
-	 * @return array
-	 */
-	public function execute_list_avatars( $input = null ) {
-		$input    = is_array( $input ) ? $input : array();
 		$page     = ! empty( $input['page'] ) ? max( 1, absint( $input['page'] ) ) : 1;
 		$per_page = ! empty( $input['per_page'] ) ? min( 100, max( 1, absint( $input['per_page'] ) ) ) : 20;
-		$size     = $this->get_input_size( $input );
 
 		$query = new WP_User_Query(
 			array(
@@ -501,8 +460,8 @@ class Simple_Local_Avatars_Abilities {
 		);
 
 		$avatars = array();
-		foreach ( $query->get_results() as $user_id ) {
-			$avatars[] = $this->prepare_avatar( (int) $user_id, $size );
+		foreach ( $query->get_results() as $result_id ) {
+			$avatars[] = $this->prepare_avatar( (int) $result_id, $size );
 		}
 
 		$total = (int) $query->get_total();
@@ -520,7 +479,7 @@ class Simple_Local_Avatars_Abilities {
 	 * @param mixed $input Ability input.
 	 * @return array|WP_Error
 	 */
-	public function execute_set_avatar( $input = null ) {
+	public function execute_update_avatar( $input = null ) {
 		$input   = is_array( $input ) ? $input : array();
 		$user_id = $this->get_input_user_id( $input );
 		$error   = $this->validate_user( $user_id );
@@ -563,38 +522,6 @@ class Simple_Local_Avatars_Abilities {
 
 		// assign_new_user_avatar() clears the stored rating, so save it afterwards.
 		$this->plugin->update_user_avatar_rating( $user_id, $rating );
-
-		return $this->prepare_avatar( $user_id, self::DEFAULT_SIZE );
-	}
-
-	/**
-	 * Execute: change the rating of a user's avatar.
-	 *
-	 * @param mixed $input Ability input.
-	 * @return array|WP_Error
-	 */
-	public function execute_update_avatar_rating( $input = null ) {
-		$input   = is_array( $input ) ? $input : array();
-		$user_id = $this->get_input_user_id( $input );
-		$error   = $this->validate_user( $user_id );
-
-		if ( is_wp_error( $error ) ) {
-			return $error;
-		}
-
-		if ( empty( $this->plugin->get_user_local_avatar( $user_id ) ) ) {
-			return new WP_Error(
-				'simple_local_avatars_no_avatar',
-				__( 'This user has no local avatar.', 'simple-local-avatars' ),
-				array( 'status' => 404 )
-			);
-		}
-
-		$rating = isset( $input['rating'] ) ? (string) $input['rating'] : '';
-
-		if ( ! $this->plugin->update_user_avatar_rating( $user_id, $rating ) ) {
-			return $this->invalid_rating_error();
-		}
 
 		return $this->prepare_avatar( $user_id, self::DEFAULT_SIZE );
 	}

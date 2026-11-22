@@ -38,17 +38,17 @@ You can also use `get_simple_local_avatar()` (with the same arguments) to retrie
 
 ## Abilities API
 
-On WordPress 6.9 and later, the plugin registers these abilities in the `simple-local-avatars` category. Each ability accepts an optional `user_id`. Without it, the ability acts on the current user.
+On WordPress 6.9 and later, the plugin registers these abilities in the `simple-local-avatars` category. The names follow the WordPress core pattern: reads use the plural target and `query`, and writes use the singular target and a verb.
 
 | Ability | What it does | Permission |
 | --- | --- | --- |
-| `simple-local-avatars/get-avatar` | Returns a user's avatar: attachment ID, image URLs, rating and alt text. | Own avatar: any logged-in user. Other users: `list_users` or `edit_user`. |
-| `simple-local-avatars/list-avatars` | Returns a paginated list of users who have a local avatar. | `list_users` |
-| `simple-local-avatars/set-avatar` | Assigns a media library image (`media_id`) as the avatar, with an optional `rating`. Replaces any existing avatar. | `upload_files` and `edit_user` |
-| `simple-local-avatars/update-avatar-rating` | Changes the `rating` (G, PG, R or X) of an existing avatar. | `edit_user` |
-| `simple-local-avatars/delete-avatar` | Removes the avatar. The original media library image is kept. | `edit_user` |
+| `simple-local-avatars/avatars-query` | With `user_id`, returns that user's avatar: attachment ID, image URLs, rating and alt text. Without `user_id`, returns a paginated list of users who have a local avatar. | Own avatar: any logged-in user. Other users: `list_users` or `edit_user`. Full list: `list_users`. |
+| `simple-local-avatars/avatar-update` | Assigns a media library image (`media_id`) as the avatar, with an optional `rating`. Replaces any existing avatar. | `upload_files` and `edit_user` |
+| `simple-local-avatars/avatar-delete` | Removes the avatar. The original media library image is kept. | `edit_user` |
 
-The abilities are available in PHP through `wp_get_ability()` and over REST at `/wp-json/wp-abilities/v1/abilities/{name}/run`. The REST API uses `GET` for `get-avatar` and `list-avatars`, `DELETE` for `delete-avatar` and `POST` for the others.
+`avatar-update` and `avatar-delete` accept an optional `user_id`. Without it, they act on the current user.
+
+The abilities are available in PHP through `wp_get_ability()` and over REST at `/wp-json/wp-abilities/v1/abilities/{name}/run`. The REST API uses `GET` for `avatars-query`, `POST` for `avatar-update` and `DELETE` for `avatar-delete`.
 
 To turn the abilities off, use the `simple_local_avatars_register_abilities` filter:
 
