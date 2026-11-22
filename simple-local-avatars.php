@@ -33,6 +33,7 @@ if ( ! $compat_checker->is_plugin_compatible() ) {
 define( 'SLA_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 require_once __DIR__ . '/includes/class-simple-local-avatars.php';
+require_once __DIR__ . '/includes/class-simple-local-avatars-abilities.php';
 
 // Global constants.
 define( 'SLA_VERSION', '2.8.6' );
@@ -47,6 +48,13 @@ if ( ! defined( 'SLA_IS_NETWORK' ) ) {
  */
 global $simple_local_avatars;
 $simple_local_avatars = new Simple_Local_Avatars();
+
+/**
+ * Register abilities with the WordPress Abilities API (WordPress 6.9+).
+ */
+global $simple_local_avatars_abilities;
+$simple_local_avatars_abilities = new Simple_Local_Avatars_Abilities( $simple_local_avatars );
+$simple_local_avatars_abilities->add_hooks();
 
 /**
  * More efficient to call simple local avatar directly in theme and avoid

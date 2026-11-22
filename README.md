@@ -21,6 +21,7 @@ Just edit a user profile, and scroll down to the new "Avatar" field. The plug-in
 4. Generates the requested avatar size on demand (and stores the new size for efficiency), so it looks great, just like Gravatar!
 5. Lets you decide whether lower privilege users (subscribers, contributors) can upload their own avatar
 6. Enables rating of local avatars, just like Gravatar
+7. Registers [Abilities](https://make.wordpress.org/ai/handbook/projects/abilities-api/) so AI agents and other tools can manage local avatars (WordPress 6.9+).
 
 ![Avatar upload field on a user profile page](.wordpress-org/screenshot-1.png "Screenshot of Simple Local Avatars section within a User Profile")
 
@@ -34,6 +35,26 @@ Just edit a user profile, and scroll down to the new "Avatar" field. The plug-in
 Use avatars in your theme using WordPress' built in `get_avatar()` function: [http://codex.wordpress.org/Function_Reference/get_avatar](http://codex.wordpress.org/Function_Reference/get_avatar "get_avatar function")
 
 You can also use `get_simple_local_avatar()` (with the same arguments) to retrieve local avatars a bit faster, but this will make your theme dependent on this plug-in.
+
+## Abilities API
+
+On WordPress 6.9 and later, the plugin registers these abilities in the `simple-local-avatars` category. The names follow the WordPress core pattern: reads use the plural target and `query`, and writes use the singular target and a verb.
+
+| Ability | What it does | Permission |
+| --- | --- | --- |
+| `simple-local-avatars/avatars-query` | With `user_id`, returns that user's avatar: attachment ID, image URLs, rating and alt text. Without `user_id`, returns a paginated list of users who have a local avatar. | Own avatar: any logged-in user. Other users: `list_users` or `edit_user`. Full list: `list_users`. |
+| `simple-local-avatars/avatar-update` | Assigns a media library image (`media_id`) as the avatar, with an optional `rating`. Replaces any existing avatar. | `upload_files` and `edit_user` |
+| `simple-local-avatars/avatar-delete` | Removes the avatar. The original media library image is kept. | `edit_user` |
+
+`avatar-update` and `avatar-delete` accept an optional `user_id`. Without it, they act on the current user.
+
+The abilities are available in PHP through `wp_get_ability()` and over REST at `/wp-json/wp-abilities/v1/abilities/{name}/run`. The REST API uses `GET` for `avatars-query`, `POST` for `avatar-update` and `DELETE` for `avatar-delete`.
+
+To turn the abilities off, use the `simple_local_avatars_register_abilities` filter:
+
+```php
+add_filter( 'simple_local_avatars_register_abilities', '__return_false' );
+```
 
 ## Frequently Asked Questions
 
